@@ -1,4 +1,4 @@
--- CS367 Capstone DDL Queries
+-- CS467 Capstone DDL Queries
 -- Winter Quarter 2025
 
 SET FOREIGN_KEY_CHECKS = 0;
@@ -8,11 +8,11 @@ SET AUTOCOMMIT = 0;
 DROP TABLE IF EXISTS Tasks;
 CREATE TABLE Tasks (
 taskID INT(10) NOT NULL AUTO_INCREMENT,
-taskAssignee VARCHAR(50) NOT NULL, 
-taskAssigned DATE NOT NULL, 
-taskDue date NOT NULL, 
-taskStatus VARCHAR(50) NOT NULL, 
-taskType VARCHAR(50) NOT NULL, 
+taskAssignee VARCHAR(50) NOT NULL,
+taskAssigned DATE NOT NULL,
+taskDue date NOT NULL,
+taskStatus VARCHAR(50) NOT NULL,
+taskType VARCHAR(50) NOT NULL,
 PRIMARY KEY (taskID)
 );
 
@@ -20,10 +20,10 @@ PRIMARY KEY (taskID)
 DROP TABLE IF EXISTS Accounts;
 CREATE TABLE Accounts (
 accountID INT(10) NOT NULL AUTO_INCREMENT,
-accountUsername VARCHAR(50) NOT NULL, 
-accountFirstName VARCHAR(50) NOT NULL, 
-accountLastName VARCHAR(50) NOT NULL, 
-accountPassword VARCHAR(50) NOT NULL, 
+accountUsername VARCHAR(50) NOT NULL,
+accountFirstName VARCHAR(50) NOT NULL,
+accountLastName VARCHAR(50) NOT NULL,
+accountPassword VARCHAR(50) NOT NULL,
 accountTeam VARCHAR(50),
 accountRole VARCHAR(50),
 accountTasksAssigned VARCHAR(50),

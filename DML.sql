@@ -1,4 +1,4 @@
--- CS367 Capstone DML Queries
+-- CS467 Capstone DML Queries
 -- Winter Quarter 2025
 
 
@@ -24,7 +24,7 @@
 
 -- Statuses table CRUD operations
 INSERT INTO Statuses (statusName) VALUES (:statusNameInput);
-SELECT statusID, statusName FROM Statuses; 
+SELECT statusID, statusName FROM Statuses;
 UPDATE Statuses SET statusName = :statusNameInput WHERE statusID = :statusIDInput; --have user enter statusID in order to edit or delete existing statusName;
 DELETE FROM Statuses Statuses WHERE statusID = :statusIDInput;
 
