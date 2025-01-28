@@ -9,3 +9,5 @@ Capstone Project: Opinionated Project Management Website
 4. [Team Sharepoint](https://oregonstateuniversity.sharepoint.com/sites/CS467CapstoneTeam-OpinionatedProjectManagementWebsite/Shared%20Documents/Forms/AllItems.aspx)
 
 
+Database ERD:
+![image](https://github.com/user-attachments/assets/e616a44d-33c1-4e26-af59-f90640052c97)
