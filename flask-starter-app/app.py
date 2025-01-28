@@ -14,7 +14,6 @@ db_connection = db.connect_to_database()
 def root():
     return render_template("login.j2")
 
-
 @app.route('/bsg-people')
 def bsg_people():
     cursor = db_connection.cursor()
