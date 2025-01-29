@@ -12,8 +12,7 @@ db_connection = db.connect_to_database()
 
 @app.route('/')
 def root():
-    return render_template("main.j2")
-
+    return render_template("login.j2")
 
 @app.route('/bsg-people')
 def bsg_people():
