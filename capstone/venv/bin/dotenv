@@ -1,0 +1,10 @@
+#!/bin/sh
+'''exec' "/Users/cambrian16/Library/Mobile Documents/com~apple~CloudDocs/Hazel/z_OSU/_Winter2025/CS467_Winter2025/Code Github Repo/467_ProjectManagementWebsite/capstone/venv/bin/python3" "$0" "$@"
+' '''
+# -*- coding: utf-8 -*-
+import re
+import sys
+from dotenv.cli import cli
+if __name__ == '__main__':
+    sys.argv[0] = re.sub(r'(-script\.pyw|\.exe)?$', '', sys.argv[0])
+    sys.exit(cli())
