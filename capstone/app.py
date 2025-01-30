@@ -1,4 +1,4 @@
-from flask import Flask, render_template, json
+from flask import Flask, render_template, json, jsonify
 import os
 import database.db_connector as db
 
@@ -31,17 +31,14 @@ def help():
 def projects():
     return render_template("projects.j2")
 
-# @app.route('/sub-page')
-# def sub_page():
-#     cursor = db_connection.cursor()
-#     query = "SELECT * FROM projects-tasks;"
-
-#     cursor.execute(query)
-
-#     results = cursor.fetchall()
-#     print(results)
-#     return render_template("projects", projects=results)
-
+@app.route('/accounts', methods=['GET', 'POST'])
+def accountAdmin():
+    query = "SELECT * FROM Accounts;"
+    cursor = db.execute_query(db_connection=db_connection, query=query)
+    results = cursor.fetchall()
+    # results = json.dumps(cursor.fetchall())
+    # return results
+    return render_template("accounts.j2", accounts = results)
 
 
 # Listener
