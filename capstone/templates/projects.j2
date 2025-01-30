@@ -1,31 +1,41 @@
 <html>
 <head>
     <title>Projects</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
-
-    <div class="nav">
-    <a class="active" href="#home">Home</a>
-    <a href="#Projects">Projects</a>
-    <a href="#Tasks">Tasks</a>
-    <a href="#help">Help</a>
-    <a href="##logout">Logout</a>
-</div>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/projects.css') }}">
 </head>
 <body>
-    <h1>Projects</h1>
-    <div class="login-container">
-        <div class="login-content">
-            <h2><u>Opinionated Project Management</u></h2>
-
-            <p>Welcome _NAME_ to Opinionated Project Management </p>
-            <p>To see your projects please click the <b>Projects</b> page </p>
-            <p>To see your Tasks please click the <b>Tasks</b> page </p>
-            <br>
-            <p>For FAQsand help please click the <b>HELP</b> page </p>
-
+    <div class="nav-container">
+        <div class="nav-buttons">
+            <a href="{{ url_for('main') }}" class="nav-button">Home</a>
+            <a href="{{ url_for('projects') }}" class="nav-button projects">Projects</a>
+            <a href="{{ url_for('tasks') }}" class="nav-button">Tasks</a>
+            <a href="{{ url_for('help') }}" class="nav-button">Help</a>
+            <a href="{{ url_for('login') }}" class="nav-button">Logout</a>
         </div>
+    </div>
 
+    <div class="content">
+        <h1><span class="username">{{ username }}</span> Projects</h1>
 
+        <div class="projects-grid">
+            <a class="project-card">
+                <div class="project-content">Project 1</div>
+            </a>
+
+            <a class="project-card">
+                <div class="project-content">Project 2</div>
+            </a>
+
+            <a class="project-card">
+                <div class="project-content">Project 3</div>
+            </a>
+
+            <a class="project-card">
+                <div class="project-content">
+                    <button type="submit" class="project-button">Create New Project</button>
+                </div>
+            </a>
+        </div>
     </div>
 </body>
 </html>

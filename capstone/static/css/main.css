@@ -1,0 +1,56 @@
+.nav-container {
+    display: flex;
+    justify-content: center;
+    padding: 1em;
+    background-color: #f5f5f5;
+}
+
+.nav-buttons {
+    display: flex;
+    gap: 0;
+}
+
+.nav-button {
+    padding: 1em 2em;
+    text-decoration: none;
+    color: white;
+    background-color: #2B5875;
+    border: none;
+    margin: 0;
+    min-width: 120px;
+    text-align: center;
+}
+
+.nav-button:hover {
+    opacity: 0.9;
+}
+
+.nav-button.main {
+    background-color: #6AB04C;
+}
+.content {
+    text-align: center;
+    padding: 2em;
+}
+
+h1 {
+    text-decoration: underline;
+    margin-bottom: 1.5em;
+    font-size: 2em;
+}
+
+.instruction {
+    margin: 1em 0;
+    font-size: 1.1em;
+    line-height: 1.5;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+}
