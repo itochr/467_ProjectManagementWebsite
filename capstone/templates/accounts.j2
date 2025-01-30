@@ -1,0 +1,39 @@
+<html>
+<head>
+    <title>Admin Panel: All Accounts</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+</head>
+<body>
+    <div class="nav-container">
+        <div class="nav-buttons">
+            <a href="{{ url_for('main') }}" class="nav-button main">Home</a>
+            <a href="{{ url_for('projects') }}" class="nav-button">Projects</a>
+            <a href="{{ url_for('tasks') }}" class="nav-button">Tasks</a>
+            <a href="{{ url_for('help') }}" class="nav-button">Help</a>
+            <a href="{{ url_for('login') }}" class="nav-button">Logout</a>
+        </div>
+    </div>
+
+    <div class="content">
+	<h1>Admin Panel: All Accounts</h1>
+		<div class="instruction">
+			<table>
+				<thead>
+					<tr>
+						{% for key in accounts[0].keys() %}
+						<th>{{ key }}</th>
+						{% endfor %}
+					</tr>
+				<tbody>
+					{% for account in accounts %}
+					<tr>
+						{% for key in account.keys() %}
+						<td>{{account[key]}}</td>
+						{% endfor %}
+					</tr>
+					{% endfor %}
+			</table>
+		</div
+	</div>
+</body>
+</html>

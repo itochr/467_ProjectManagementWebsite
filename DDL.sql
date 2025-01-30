@@ -37,7 +37,7 @@ accountLastName VARCHAR(50) NOT NULL,
 accountPassword VARCHAR(50) NOT NULL,
 accountTeam VARCHAR(50),
 accountRole VARCHAR(50),
-accountTasksAssigned VARCHAR(50),
+-- accountTasksAssigned VARCHAR(50),
 PRIMARY KEY (accountID)
 );
 
@@ -85,3 +85,10 @@ projectStart DATE NOT NULL,
 projectEnd DATE NOT NULL,
 PRIMARY KEY (projectID)
 );
+
+-- INSERT INITIAL ACCOUNTS
+INSERT INTO Accounts (accountUsername, accountFirstName, accountLastName, accountPassword, accountTeam, accountRole) VALUES
+  ('sastryv', 'Vish', 'Sastry','password', 'TeamA', 'Developer'),
+  ('itoc', 'Christine', 'Ito','password', 'TeamB', 'Developer'),
+  ('tsaor', 'Robert', 'Tsao','password', 'TeamC', 'Developer'),
+  ('caiz', 'Zhiwei', 'Cai','password', 'TeamD', 'Developer');
