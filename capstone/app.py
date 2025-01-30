@@ -11,10 +11,23 @@ db_connection = db.connect_to_database()
 # Routes
 
 @app.route('/')
-def root():
+def login():
     return render_template("login.j2")
 
-@app.route('/projects')
+
+@app.route('/main', methods=['GET', 'POST'])
+def main():
+    return render_template("main.j2")
+
+@app.route('/tasks', methods=['GET', 'POST'])
+def tasks():
+    return render_template("tasks.j2")
+
+@app.route('/help', methods=['GET', 'POST'])
+def help():
+    return render_template("help.j2")
+
+@app.route('/projects', methods=['GET', 'POST'])
 def projects():
     return render_template("projects.j2")
 
