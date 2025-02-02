@@ -1,0 +1,49 @@
+<html>
+<head>
+    <title>Create Account</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/account_creation.css') }}">
+</head>
+<body>
+    <h1>Account Creation</h1>
+    <div class="account-creation-container">
+        <div class="account-creation-content">
+            <h2><u>Opinionated Project Management</u></h2>
+
+            <p>Thank you for using our website.</p>
+            <p>You will need to enter in your desired user credentials.</p>
+
+            <form action="/main" method="POST">
+                <div class="form">
+                    <div class="input">
+                        <label>Desired Username:</label>
+                        <input type="text" name="username">
+                    </div>
+                </div>
+
+                <div class="form">
+                    <div class="first_name">
+                        <label>First Name:</label>
+                        <input type="text" name="first_name">
+                    </div>
+                </div>
+
+                <div class="form">
+                    <div class="last_name">
+                        <label>Last Name:</label>
+                        <input type="text" name="last_name">
+                    </div>
+                </div>
+
+                <div class="form">
+                    <div class="password">
+                        <label>Password:</label>
+                        <input type="text" name="password">
+                    </div>
+                </div>
+                
+                <input type="submit" value="Create Account" name="Create_Account" class="btn btn-primary" style="margin:.5rem;">
+            </form>
+        </div>
+    </div>
+</body>
+</html>
