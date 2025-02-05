@@ -1,41 +1,26 @@
-<html>
-<head>
-    <title>Projects</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/projects.css') }}">
-</head>
+<title>Projects</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/projects.css') }}">
+{% extends 'nav.j2' %}
+{% block body %}
 <body>
-    <div class="nav-container">
-        <div class="nav-buttons">
-            <a href="{{ url_for('main') }}" class="nav-button">Home</a>
-            <a href="{{ url_for('projects') }}" class="nav-button projects">Projects</a>
-            <a href="{{ url_for('tasks') }}" class="nav-button">Tasks</a>
-            <a href="{{ url_for('help') }}" class="nav-button">Help</a>
-            <a href="{{ url_for('login') }}" class="nav-button">Logout</a>
-        </div>
-    </div>
 
-    <div class="content">
-        <h1><span class="username">{{ username }}</span> Projects</h1>
+<div class="content">
+	<h1><span class="username">{{ username }}</span> Projects</h1>
 
-        <div class="projects-grid">
-            <a class="project-card">
-                <div class="project-content">Project 1</div>
-            </a>
+	<div class="projects-grid">
+		<a class="project-card"><div class="project-content">Project 1</div></a>
+		<a class="project-card"><div class="project-content">Project 2</div></a>
+		<a class="project-card"><div class="project-content">Project 3</div></a>
 
-            <a class="project-card">
-                <div class="project-content">Project 2</div>
-            </a>
+		<a class="project-card">
+			<div class="project-content">
+				<button type="submit" class="project-button">Create New Project</button>
+			</div>
+		</a>
+	</div>
 
-            <a class="project-card">
-                <div class="project-content">Project 3</div>
-            </a>
+</div>
 
-            <a class="project-card">
-                <div class="project-content">
-                    <button type="submit" class="project-button">Create New Project</button>
-                </div>
-            </a>
-        </div>
-    </div>
+{% endblock %}
 </body>
 </html>

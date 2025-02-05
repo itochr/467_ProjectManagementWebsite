@@ -1,0 +1,21 @@
+<html>
+<head>
+	<title>Home - Opinionated Project Management</title>
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+	<link rel="icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
+</head>
+<body>
+	<div class="nav-container">
+		<div class="nav-buttons">
+			<a href="{{ url_for('main') }}" class="nav-button main">Home</a>
+			<a href="{{ url_for('projects') }}" class="nav-button">Projects</a>
+			<a href="{{ url_for('tasks') }}" class="nav-button">Tasks</a>
+			<a href="{{ url_for('help') }}" class="nav-button">Help</a>
+			<a href="{{ url_for('login') }}" class="nav-button">Logout</a>
+		</div>
+	</div>
+
+{% block body %}
+{% endblock %}
+</body>
+</html>
