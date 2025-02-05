@@ -2,23 +2,17 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/tasks.css') }}">
 {% extends 'nav.j2' %}
 {% block body %}
-<body>
 
 <div class="content">
 	<h1><span class="username">{{ username }}</span> Tasks</h1>
 
 	<div class="tasks-grid">
-		<a class="task-card">
-			<div class="task-content">Task 1</div>
-		</a>
 
-		<a class="task-card">
-			<div class="task-content">Task 2</div>
-		</a>
+		<a class="task-card"><div class="task-content">Task 1</div></a>
 
-		<a class="task-card">
-			<div class="task-content">Task 3</div>
-		</a>
+		<a class="task-card"><div class="task-content">Task 2</div></a>
+
+		<a class="task-card"><div class="task-content">Task 3</div></a>
 
 		<a class="task-card">
 			<div class="task-content">
@@ -28,5 +22,3 @@
 	</div>
 </div>
 {% endblock %}
-</body>
-</html>

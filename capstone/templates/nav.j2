@@ -5,6 +5,7 @@
 	<link rel="icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
 </head>
 <body>
+<header>
 	<div class="nav-container">
 		<div class="nav-buttons">
 			<a href="{{ url_for('main') }}" class="nav-button main">Home</a>
@@ -14,6 +15,7 @@
 			<a href="{{ url_for('login') }}" class="nav-button">Logout</a>
 		</div>
 	</div>
+</header>
 
 {% block body %}
 {% endblock %}
