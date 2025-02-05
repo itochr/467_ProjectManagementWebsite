@@ -98,21 +98,27 @@ INSERT INTO Statuses (statusName) VALUES
 ('Backlog'), ('In progress'), ('Completed');
 
 -- INSERT SAMPLE DATA INTO PROJECTS
-INSERT INTO Projects (projectStart, projectEnd) VALUES 
-(2024-10-01, 2024-12-31),  --Oct-Dec 24
-(2025-01-01, 2025-04-01)    --Jan-Apr 25
+INSERT INTO Projects (projectStart, projectEnd) VALUES
+('2024-10-01', '2024-12-31'),
+('2025-01-01', '2025-04-01');
 
 -- INSERT SAMPLE DATA INTO SPRINTS
-INSERT INTO Sprints (sprintProject, sprintStart, sprintEnd) VALUES 
-((SELECT projectID FROM Projects WHERE projectStart = 2025-01-01), 2025-02-01, 2025-02-28),
-((SELECT projectID FROM Projects WHERE projectStart = 2024-10-01), 2024-10-01, 2024-12-31);
+INSERT INTO Sprints (sprintProject, sprintStart, sprintEnd) VALUES
+((SELECT projectID FROM Projects WHERE projectStart = '2025-01-01'), '2025-02-01', '2025-02-28'),
+((SELECT projectID FROM Projects WHERE projectStart = '2024-10-01'), '2024-10-01', '2024-12-31');
 
--- INSERT SAMPLE DATA INTO TASKS 
+-- INSERT SAMPLE DATA INTO TASKS
 INSERT INTO Tasks (taskAssignee, taskAssigned, taskDue, taskStatus, taskSprint, taskType) VALUES
-((SELECT accountID FROM Accounts WHERE accountLastName = 'Ito'), 2025-02-02, 2025-02-10, (SELECT taskStatus FROM Statuses WHERE statusName = 'In progress'), (SELECT sprintID FROM Sprints WHERE sprintStart = 2025-02-01), 'Testing1'),
-((SELECT accountID FROM Accounts WHERE accountLastName = 'Sastry'), 2024-12-01, 2025-12-31, (SELECT taskStatus FROM Statuses WHERE statusName = 'Completed'), (SELECT sprintID FROM Sprints WHERE sprintStart = 10-01-2024), 'Testing2');
+((SELECT accountID FROM Accounts WHERE accountLastName = 'Ito'), '2025-02-02', '2025-02-10', (SELECT statusID FROM Statuses WHERE statusName = 'In progress'), (SELECT sprintID FROM Sprints WHERE sprintStart = '2025-02-01'), 'Testing1'),
+((SELECT accountID FROM Accounts WHERE accountLastName = 'Sastry'), '2024-12-01', '2025-12-31', (SELECT statusID FROM Statuses WHERE statusName = 'Completed'), (SELECT sprintID FROM Sprints WHERE sprintStart = '2024-10-01'), 'Testing2');
 
 -- INSERT SAMPLE DATA INTO ACCOUNTTASKS (M:M)
 INSERT INTO AccountTasks (accountID, taskID) VALUES
-((SELECT accountID FROM Accounts WHERE accountLastName = 'Ito'), (SELECT taskID FROM Tasks WHERE taskType = 'Testing1')),
-((SELECT accountID FROM Accounts WHERE accountLastName = 'Sastry'), SELECT taskID FROM Tasks WHERE taskType = 'Testing2');
+((SELECT accountID FROM Accounts WHERE accountLastName = 'Ito'), 1),
+((SELECT accountID FROM Accounts WHERE accountLastName = 'Sastry'), 2);
+
+--  ((SELECT accountID FROM Accounts WHERE accountLastName = 'Ito'), (SELECT taskID FROM Tasks WHERE taskType = 'Testing1')),
+--  ((SELECT accountID FROM Accounts WHERE accountLastName = 'Sastry'), SELECT taskID FROM Tasks WHERE taskType = 'Testing2');
+
+SET FOREIGN_KEY_CHECKS=1;
+COMMIT;
