@@ -5,8 +5,12 @@
 <div class="content">
 	<h1>Opinionated Project Management</h1>
 
-	<div class="instruction">
-		Welcome {{ first_name }} to Opinionated Project Management.
+	<div class="welcome">
+		{% if accountFirstName is defined %}
+		Welcome <span class= "accountName">{{ accountFirstName }} </span>  to Opinionated Project Management.
+		{% else %}
+		Welcome <span class="accountName"> Administrator </span> to Opinionated Project Management.
+		{% endif %}
 	</div>
 
 	<div class="instruction">

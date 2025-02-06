@@ -11,23 +11,31 @@
 
 		<p>Thank you for using our project management website. Please enter in your user credentials below:</p>
 
-		<form action="/main" method="POST">
+		<form action="/login" method="POST">
+			{% if screenMsg is defined and screenMsg %}
+			<div class="announcement">{{ screenMsg }}</div>
+			{% endif %}
+
+
 			<div class="form">
 				<div class="input">
 					<label>Username:</label>
-					<input type="text" name="username">
+					<input type="text" id="accountUsername" name="accountUsername">
 				</div>
 			</div>
 
 			<div class="form">
 				<div class="input">
 					<label>Password:</label>
-					<input type="password" name="password">
+					<input type="password" id="password" name="password" >
 				</div>
 			</div>
 
-			<button type="submit" class="login-button">Login</button>
+			<button type="submit" class="login-button">Login with Username & Password</button>
 		</form>
+
+		<form action="/main" method="POST"><button type="submit" class="login-button-admin">Login BYPASS</button></form>
+		<form action="/login" method="POST"><button type="submit" class="login-button-admin">Page Refresh</button></form>
 	</div>
 </div>
 </body>
