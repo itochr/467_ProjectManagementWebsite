@@ -71,3 +71,11 @@ input[type="password"] {
     margin-top: 20px;
 }
 
+.login-button-admin {
+    background-color: green;
+    color: white;
+    border: none;
+    padding: 10px 40px;
+    cursor: pointer;
+    margin-top: 0px;
+}
