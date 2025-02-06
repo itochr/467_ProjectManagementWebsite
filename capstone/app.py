@@ -6,7 +6,7 @@ import database.db_connector as db
 # Configuration
 
 app = Flask(__name__)
-app.secret_key = 'sadfadsgdsfhs'
+app.secret_key = 'secretsecretsecret'
 # app.config["SESSION_PERMANENT"] = True
 # app.config["PERMANENT_SESSION_LIFETIME"] = 300
 app.config['SESSION_TYPE'] = 'filesystem'
@@ -15,6 +15,7 @@ app.config['SESSION_TYPE'] = 'filesystem'
 
 db_connection = db.connect_to_database()
 cursor = db_connection.cursor(pymysql.cursors.DictCursor)
+# cursor = db.execute_query(db_connection=db_connection, query=query)
 
 
 # Routes
@@ -32,16 +33,21 @@ def login():
 		cursor.execute(query, inputs)
 		user = cursor.fetchone()
 
+		# For Testing
 		# results = json.dumps(cursor.fetchone())
 		# return results
 		if user:
 			session['loggedin'] = True
 			session['accountID'] = user['accountID']
 			session['accountUsername'] = user['accountUsername']
-			# session['accountFirstName'] = user['accountFirstName']
+			session['accountFirstName'] = user['accountFirstName']
+			session['accountLastName'] = user['accountLastName']
+			session['accountTeamID'] = user['accountTeamID']
+			session['accountRole'] = user['accountRole']
+
 			screenMsg = 'Logged in successfully !'
-			accountFirstName = user['accountFirstName']
-			return render_template('main.j2', accountFirstName = accountFirstName)
+			# accountFirstName = user['accountFirstName']
+			return render_template('main.j2', accountFirstName = user['accountFirstName'])
 		else:
 			screenMsg = 'Please enter correct username / password!'
 		return render_template('login.j2', screenMsg = screenMsg)
@@ -61,31 +67,27 @@ def help():
 
 @app.route('/projects', methods=['GET', 'POST'])
 def projects():
-	screenMsg = ''
-	if request.method == 'POST' and 'accountUsername' in request.form and 'password' in request.form:
-		accountUsername = request.form['accountUsername']
-		password = request.form['password']
-		query = 'SELECT * FROM Accounts WHERE accountUsername = %s AND accountPassword = %s'
-
-		# Citation: https://stackoverflow.com/a/47957611/18182802
-		inputs = (accountUsername, password)
-		cursor.execute(query, inputs)
-		user = cursor.fetchone()
-
-		# results = json.dumps(cursor.fetchone())
-		# return results
-		if user:
-			session['loggedin'] = True
-			session['accountID'] = user['accountID']
-			session['accountUsername'] = user['accountUsername']
-			# session['accountFirstName'] = user['accountFirstName']
-			screenMsg = 'Logged in successfully !'
-			accountFirstName = user['accountFirstName']
-			return render_template('main.j2', accountFirstName = accountFirstName)
-		else:
-			screenMsg = 'Please enter correct username / password!'
+	if 'loggedin' not in session or not session['loggedin']:
+		screenMsg = 'Please login to continue'
 		return render_template('login.j2', screenMsg = screenMsg)
-	return render_template("projects.j2")
+	query = 'SELECT * FROM Projects'
+	# query = 'SELECT * FROM Accounts WHERE accountUsername = %s AND accountPassword = %s'
+
+	# inputs = (accountUsername, password)
+
+	# cursor.execute(query, inputs)
+	cursor.execute(query)
+
+	# projects = cursor.fetchone()
+	# projects = json.dumps(cursor.fetchall())
+	projects = cursor.fetchall()
+
+	if projects:
+		screenMsg = json.dumps(projects)
+		return render_template('projects.j2', screenMsg = screenMsg, accountUsername = session['accountUsername'] )
+	else:
+		screenMsg = 'Please enter correct username and password'
+		return render_template('login.j2', screenMsg = screenMsg)
 
 @app.route('/accounts', methods=['GET', 'POST'])
 def accountAdmin():

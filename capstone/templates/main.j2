@@ -1,5 +1,8 @@
-<link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
 {% extends 'nav.j2' %}
+{% block head %}
+<title>Main</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+{% endblock %}
 {% block body %}
 
 <div class="content">

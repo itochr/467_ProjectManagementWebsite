@@ -35,10 +35,21 @@ accountUsername VARCHAR(50) NOT NULL,
 accountFirstName VARCHAR(50) NOT NULL,
 accountLastName VARCHAR(50) NOT NULL,
 accountPassword VARCHAR(50) NOT NULL,
-accountTeam VARCHAR(50),
+accountTeamID INT,
 accountRole VARCHAR(50),
 -- accountTasksAssigned VARCHAR(50),
-PRIMARY KEY (accountID)
+PRIMARY KEY (accountID),
+  FOREIGN KEY (accountTeamID) REFERENCES AccountTeams(accountTeamID)
+	ON UPDATE CASCADE
+    ON DELETE CASCADE
+);
+
+-- Create AccountTeams Table
+DROP TABLE IF EXISTS AccountTeams;
+CREATE TABLE AccountsTeams (
+accountTeamID INT NOT NULL AUTO_INCREMENT,
+accountTeamName VARCHAR(50)
+PRIMARY KEY (accountTeamID)
 );
 
 -- Create AccountTasks Table (M:M)
@@ -81,37 +92,44 @@ PRIMARY KEY (statusID)
 DROP TABLE IF EXISTS Projects;
 CREATE TABLE Projects (
 projectID INT NOT NULL AUTO_INCREMENT,
+projectName VARCHAR(50) NOT NULL,
 projectStart DATE NOT NULL,
 projectEnd DATE NOT NULL,
-projectOwner VARCHAR(50),
+teamOwnerID INT,
 PRIMARY KEY (projectID),
--- FOREIGN KEY (projectOwner) REFERENCES Accounts(accountID)
-FOREIGN KEY (projectOwner) REFERENCES Accounts(accountTeam)
+FOREIGN KEY (teamOwnerID) REFERENCES AccountTeams(accountTeamID)
 	ON UPDATE CASCADE
     ON DELETE CASCADE
 );
 
 -- INSERT SAMPLE DATA INTO ACCOUNTS
-INSERT INTO Accounts (accountUsername, accountFirstName, accountLastName, accountPassword, accountTeam, accountRole) VALUES
-  ('sastryv', 'Vish', 'Sastry','password', 'TeamA', 'Developer'),
-  ('itoc', 'Christine', 'Ito','password', 'TeamB', 'Developer'),
-  ('tsaor', 'Robert', 'Tsao','password', 'TeamC', 'Developer'),
-  ('caiz', 'Zhiwei', 'Cai','password', 'TeamD', 'Developer');
+INSERT INTO Accounts (accountUsername, accountFirstName, accountLastName, accountPassword, accountTeamID, accountRole) VALUES
+  ('sastryv', 'Vish', 'Sastry','password', 1, 'Developer'),
+  ('itoc', 'Christine', 'Ito','password', 2, 'Developer'),
+  ('tsaor', 'Robert', 'Tsao','password', 3, 'Developer'),
+  ('caiz', 'Zhiwei', 'Cai','password', 4, 'Developer');
 
 -- INSERT SAMPLE DATA INTO STATUSES
 INSERT INTO Statuses (statusName) VALUES
 ('Backlog'), ('In progress'), ('Completed');
 
+-- INSERT SAMPLE DATA INTO ACCOUNTTEAMS
+INSERT INTO AccountTeams (accountTeamID, accountTeamName) VALUES
+(1, 'TeamA'),
+(2, 'TeamB'),
+(3, 'TeamC'),
+(4, 'TeamD');
+
 -- INSERT SAMPLE DATA INTO PROJECTS
-INSERT INTO Projects (projectStart, projectEnd, projectOwner) VALUES
-('2024-10-01', '2024-12-31', 'TeamA'),
-('2025-01-01', '2025-04-01', 'TeamA');
-('2024-10-02', '2025-01-01', 'TeamB'),
-('2025-01-02', '2025-04-02', 'TeamB');
-('2024-10-03', '2025-01-03', 'TeamC'),
-('2025-01-03', '2025-04-03', 'TeamC');
-('2024-10-04', '2025-01-04', 'TeamD'),
-('2025-01-04', '2025-04-04', 'TeamD');
+INSERT INTO Projects (projectName, projectStart, projectEnd, projectOwner) VALUES
+('ProjectA','2024-10-01', '2024-12-31', 1),
+('ProjectB','2025-01-01', '2025-04-01', 1);
+('ProjectC','2024-10-02', '2025-01-01', 2),
+('ProjectD','2025-01-02', '2025-04-02', 2);
+('ProjectE','2024-10-03', '2025-01-03', 3),
+('ProjectF','2025-01-03', '2025-04-03', 3);
+('ProjectG','2024-10-04', '2025-01-04', 4),
+('ProjectH','2025-01-04', '2025-04-04', 4);
 
 -- INSERT SAMPLE DATA INTO SPRINTS
 INSERT INTO Sprints (sprintProject, sprintStart, sprintEnd) VALUES
@@ -127,9 +145,6 @@ INSERT INTO Tasks (taskAssignee, taskAssigned, taskDue, taskStatus, taskSprint, 
 INSERT INTO AccountTasks (accountID, taskID) VALUES
 ((SELECT accountID FROM Accounts WHERE accountLastName = 'Ito'), 1),
 ((SELECT accountID FROM Accounts WHERE accountLastName = 'Sastry'), 2);
-
---  ((SELECT accountID FROM Accounts WHERE accountLastName = 'Ito'), (SELECT taskID FROM Tasks WHERE taskType = 'Testing1')),
---  ((SELECT accountID FROM Accounts WHERE accountLastName = 'Sastry'), SELECT taskID FROM Tasks WHERE taskType = 'Testing2');
 
 SET FOREIGN_KEY_CHECKS=1;
 COMMIT;

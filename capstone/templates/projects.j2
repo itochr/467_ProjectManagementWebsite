@@ -1,10 +1,20 @@
+{% extends 'nav.j2' %}
+{% block head %}
 <title>Projects</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='css/projects.css') }}">
-{% extends 'nav.j2' %}
+{% endblock %}
 {% block body %}
 
 <div class="content">
-	<h1><span class="username">{{ username }}</span> Projects</h1>
+	<h1><span class="username">{{accountUsername}}</span> Projects</h1>
+
+	{% if screenMsg is defined %}
+			<div class="announcement">{{ screenMsg }}</div>
+	{% endif %}
+
+{% if sessionDump is defined %}
+			<div class="announcement">{{ sessionDump }}</div>
+	{% endif %}
 
 	<div class="projects-grid">
 		<a class="project-card"><div class="project-content">Project 1</div></a>

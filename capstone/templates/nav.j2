@@ -3,6 +3,7 @@
 	<title>Home - Opinionated Project Management</title>
 	<link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
 	<link rel="icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
+	{% block head %}{% endblock %}
 </head>
 <body>
 <header>
@@ -16,8 +17,6 @@
 		</div>
 	</div>
 </header>
-
-{% block body %}
-{% endblock %}
+{% block body %}{% endblock %}
 </body>
 </html>
