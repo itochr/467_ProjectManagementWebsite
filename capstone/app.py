@@ -56,39 +56,57 @@ def main():
 
 @app.route('/tasks', methods=['GET', 'POST'])
 def tasks():
-	if 'loggedin' not in session or not session['loggedin']:
-		screenMsg = 'Please login to continue'
-		return render_template('login.j2', screenMsg = screenMsg)
-	# query = 'SELECT * FROM Projects'					# [Vish]: Uncomment to use without parameters
-	queryUserTasks = """
-	SELECT * FROM Tasks t
-	JOIN Accounts a ON t.taskAssignee=a.accountID
-	WHERE t.taskAssignee = %s
-	"""
+	if request.method == "GET":
+		if 'loggedin' not in session or not session['loggedin']:
+			screenMsg = 'Please login to continue'
+			return render_template('login.j2', screenMsg = screenMsg)
+		# query = 'SELECT * FROM Projects'					# [Vish]: Uncomment to use without parameters
+		queryUserTasks = """
+		SELECT * FROM Tasks t
+		JOIN Accounts a ON t.taskAssignee=a.accountID
+		WHERE t.taskAssignee = %s
+		"""
 
-	userInputs = (session['accountID'])
-	queryTeamTasks = """
-	SELECT * FROM Tasks t
-	JOIN Accounts a ON t.taskAssignee=a.accountID
-	JOIN AccountTeams at ON  a.accountTeamID=at.accountTeamID
-	WHERE a.accountTeamID = %s
-	"""
+		userInputs = (session['accountID'])
+		queryTeamTasks = """
+		SELECT * FROM Tasks t
+		JOIN Accounts a ON t.taskAssignee=a.accountID
+		JOIN AccountTeams at ON  a.accountTeamID=at.accountTeamID
+		WHERE a.accountTeamID = %s
+		"""
 
-	teamInputs = (session['accountTeamID'])
-	cursor.execute(queryUserTasks, userInputs)
-	userTasksFetch = cursor.fetchall()
-	cursor.execute(queryTeamTasks, teamInputs)
-	teamTasksFetch = cursor.fetchall()
-	# cursor.execute(query)  									# [Vish]: Uncomment to use without parameters
+		teamInputs = (session['accountTeamID'])
+		cursor.execute(queryUserTasks, userInputs)
+		userTasksFetch = cursor.fetchall()
+		cursor.execute(queryTeamTasks, teamInputs)
+		teamTasksFetch = cursor.fetchall()
+		# cursor.execute(query)  									# [Vish]: Uncomment to use without parameters
 
-	if userTasksFetch and teamTasksFetch:
-		# screenMsg = json.dumps(userTasksFetch)				# [Vish]: Uncomment to get json of query
-		screenMsg = f"Printing Tasks for account {session['accountUsername']}"
-		return render_template('tasks.j2', screenMsg = screenMsg, accountUsername = session['accountUsername'], userTasks = userTasksFetch, teamTasks = teamTasksFetch)
+		if userTasksFetch and teamTasksFetch:
+			# screenMsg = json.dumps(userTasksFetch)				# [Vish]: Uncomment to get json of query
+			screenMsg = f"Printing Tasks for account {session['accountUsername']}"
+			return render_template('tasks.j2', screenMsg = screenMsg, accountUsername = session['accountUsername'], userTasks = userTasksFetch, teamTasks = teamTasksFetch)
+		else:
+			screenMsg = 'Please enter correct username and password'
+			return render_template('login.j2', screenMsg = screenMsg)
+
+	if request.method == "POST":
+		if request.form.get("addTaskSubmit"):
+			tAssignee = request.form["tAssignee"]
+			tAssignedDate = request.form["tAssignedDate"]
+			tDueDate = request.form["tDueDate"]
+			tStatus = request.form["tStatus"]
+			tSprint = request.form["tSprint"]
+			tSubject = request.form["tSubject"]
+
+			query = "INSERT INTO Tasks (taskAssignee, taskAssigned, taskDue, taskStatus, taskSprint, taskSubject) VALUES (%s, %s,%s,%s, %s, %s)"
+			cursor.execute(query, (tAssignee, tAssignedDate, tDueDate, tStatus, tSprint, tSubject ))
+			cursor.connection.commit()
+
+			# redirect back to people page
+			return redirect("/tasks")
 	else:
-		screenMsg = 'Please enter correct username and password'
-		return render_template('login.j2', screenMsg = screenMsg)
-	return render_template("login.j2")
+		return render_template("tasks.j2")
 
 @app.route('/help', methods=['GET', 'POST'])
 def help():

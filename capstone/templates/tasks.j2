@@ -67,5 +67,38 @@
 			</table>
 		</div>
 
+
+	<div id="addTaskDiv">
+		<!-- form to INSERT new data into bsg_people-->
+		<form id="addTask" action="/tasks" method="post">
+			<legend><strong>Add Task</strong></legend>
+			<fieldset>
+				<label for="assignee">Assignee</label>
+				<input type="number" id="tAssignee" name="tAssignee" required>
+
+				<label for="assigned">Assigned Date</label>
+				<input type="date" id="tAssignedDate" name="tAssignedDate" required>
+
+
+				<label for="due">Due Date</label>
+				<input type="date" class="" id="tDueDate" name="tDueDate" required>
+
+				<label for="status">Status</label>
+				<input type="number" class="" id="tStatus" name="tStatus" required>
+
+				<label for="sprint">Sprint</label>
+				<input type="number" class="" id="tSprint" name="tSprint" required>
+
+				<label for="subject">Subject</label>
+				<input type="text" class="" id="tSubject" name="tSubject" pattern="[A-Za-z]{1,}" placeholder="" required>
+
+
+            </fieldset>
+
+            <!-- Create 'Add Person' and 'Cancel' buttons -->
+			<input type="submit" value="Add Task" name="addTaskSubmit" class="btn btn-primary" style="margin:.5rem;">
+        </form>
+	</div><!--insert-->
+
 </div>
 {% endblock %}
