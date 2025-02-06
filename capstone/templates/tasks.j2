@@ -2,11 +2,16 @@
 {% block head %}
 <title>Tasks</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='css/tasks.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
 {% endblock %}
 {% block body %}
 
 <div class="content">
-	<h1><span class="username">{{ username }}</span> Tasks</h1>
+	<h1><span class="username">{{accountUsername}}</span>Tasks</h1>
+
+	{% if screenMsg is defined %}
+			<div class="announcement">{{ screenMsg }}</div>
+	{% endif %}
 
 	<div class="tasks-grid">
 
@@ -22,5 +27,45 @@
 			</div>
 		</a>
 	</div>
+<h2>User Tasks as a table</h2>
+		<div class="instruction">
+			<table>
+				<thead>
+					<tr>
+						{% for key in userTasks[0].keys() %}
+						<th>{{ key }}</th>
+						{% endfor %}
+					</tr>
+				<tbody>
+					{% for userTask in userTasks %}
+					<tr>
+						{% for key in userTask.keys() %}
+						<td>{{userTask[key]}}</td>
+						{% endfor %}
+					</tr>
+					{% endfor %}
+			</table>
+		</div>
+
+<h2>Team Tasks as a table</h2>
+		<div class="instruction">
+			<table>
+				<thead>
+					<tr>
+						{% for key in teamTasks[0].keys() %}
+						<th>{{ key }}</th>
+						{% endfor %}
+					</tr>
+				<tbody>
+					{% for teamTask in teamTasks %}
+					<tr>
+						{% for key in teamTask.keys() %}
+						<td>{{teamTask[key]}}</td>
+						{% endfor %}
+					</tr>
+					{% endfor %}
+			</table>
+		</div>
+
 </div>
 {% endblock %}

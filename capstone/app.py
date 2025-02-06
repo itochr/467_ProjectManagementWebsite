@@ -4,37 +4,25 @@ import os
 import database.db_connector as db
 
 # Configuration
-
 app = Flask(__name__)
 app.secret_key = 'secretsecretsecret'
-
 # app.config['SESSION_TYPE'] = 'filesystem'
-
-
-
 db_connection = db.connect_to_database()
 cursor = db_connection.cursor(pymysql.cursors.DictCursor)
-# cursor = db.execute_query(db_connection=db_connection, query=query)
 
 
 # Routes
 @app.route('/')
 @app.route('/login', methods =['GET', 'POST'])
 def login():
-	screenMsg = ''
 	if request.method == 'POST' and 'accountUsername' in request.form and 'password' in request.form:
 		accountUsername = request.form['accountUsername']
 		password = request.form['password']
 		query = 'SELECT * FROM Accounts WHERE accountUsername = %s AND accountPassword = %s'
-
 		# Citation: https://stackoverflow.com/a/47957611/18182802
 		inputs = (accountUsername, password)
 		cursor.execute(query, inputs)
 		user = cursor.fetchone()
-
-		# For Testing
-		# results = json.dumps(cursor.fetchone())
-		# return results
 		if user:
 			session['loggedin'] = True
 			session['accountID'] = user['accountID']
@@ -43,9 +31,7 @@ def login():
 			session['accountLastName'] = user['accountLastName']
 			session['accountTeamID'] = user['accountTeamID']
 			session['accountRole'] = user['accountRole']
-
 			screenMsg = 'Logged in successfully !'
-			# accountFirstName = user['accountFirstName']
 			return render_template('main.j2', accountFirstName = user['accountFirstName'])
 		else:
 			screenMsg = 'Please enter correct username / password!'
@@ -70,7 +56,39 @@ def main():
 
 @app.route('/tasks', methods=['GET', 'POST'])
 def tasks():
-	return render_template("tasks.j2")
+	if 'loggedin' not in session or not session['loggedin']:
+		screenMsg = 'Please login to continue'
+		return render_template('login.j2', screenMsg = screenMsg)
+	# query = 'SELECT * FROM Projects'					# [Vish]: Uncomment to use without parameters
+	queryUserTasks = """
+	SELECT * FROM Tasks t
+	JOIN Accounts a ON t.taskAssignee=a.accountID
+	WHERE t.taskAssignee = %s
+	"""
+
+	userInputs = (session['accountID'])
+	queryTeamTasks = """
+	SELECT * FROM Tasks t
+	JOIN Accounts a ON t.taskAssignee=a.accountID
+	JOIN AccountTeams at ON  a.accountTeamID=at.accountTeamID
+	WHERE a.accountTeamID = %s
+	"""
+
+	teamInputs = (session['accountTeamID'])
+	cursor.execute(queryUserTasks, userInputs)
+	userTasksFetch = cursor.fetchall()
+	cursor.execute(queryTeamTasks, teamInputs)
+	teamTasksFetch = cursor.fetchall()
+	# cursor.execute(query)  									# [Vish]: Uncomment to use without parameters
+
+	if userTasksFetch and teamTasksFetch:
+		# screenMsg = json.dumps(userTasksFetch)				# [Vish]: Uncomment to get json of query
+		screenMsg = f"Printing Tasks for account {session['accountUsername']}"
+		return render_template('tasks.j2', screenMsg = screenMsg, accountUsername = session['accountUsername'], userTasks = userTasksFetch, teamTasks = teamTasksFetch)
+	else:
+		screenMsg = 'Please enter correct username and password'
+		return render_template('login.j2', screenMsg = screenMsg)
+	return render_template("login.j2")
 
 @app.route('/help', methods=['GET', 'POST'])
 def help():
@@ -81,21 +99,19 @@ def projects():
 	if 'loggedin' not in session or not session['loggedin']:
 		screenMsg = 'Please login to continue'
 		return render_template('login.j2', screenMsg = screenMsg)
-	# query = 'SELECT * FROM Projects'
+	# query = 'SELECT * FROM Projects'					# [Vish]: Uncomment to use without parameters
 	query = 'SELECT * FROM Projects WHERE accountTeamID = %s'
 
 	inputs = (session['accountTeamID'])
 
 	cursor.execute(query, inputs)
-	# cursor.execute(query)
+	# cursor.execute(query)  							# [Vish]: Uncomment to use without parameters
 
-	# projects = cursor.fetchone()
-	# projects = json.dumps(cursor.fetchall())
+	# projects = cursor.fetchone()  					# [Vish]: Uncomment to get single record in query
+	# projects = json.dumps(cursor.fetchall()) 			# [Vish]: Uncomment to get json of query
 	projects = cursor.fetchall()
-
 	if projects:
-		# screenMsg = json.dumps(projects)
-		# screenMsg = "Printing Projects for accountTeamID %s", session['accountTeamID']
+		# screenMsg = json.dumps(projects)				# [Vish]: Uncomment to get json of query
 		screenMsg = f"Printing Projects for accountTeamID {session['accountTeamID']}"
 		return render_template('projects.j2', screenMsg = screenMsg, accountUsername = session['accountUsername'], projects = projects)
 	else:
