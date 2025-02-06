@@ -7,9 +7,8 @@ import database.db_connector as db
 
 app = Flask(__name__)
 app.secret_key = 'secretsecretsecret'
-# app.config["SESSION_PERMANENT"] = True
-# app.config["PERMANENT_SESSION_LIFETIME"] = 300
-app.config['SESSION_TYPE'] = 'filesystem'
+
+# app.config['SESSION_TYPE'] = 'filesystem'
 
 
 
@@ -53,6 +52,18 @@ def login():
 		return render_template('login.j2', screenMsg = screenMsg)
 	return render_template("login.j2")
 
+@app.route('/logout')
+def logout():
+	session.pop('loggedin', None)
+	session.pop('accountID', None)
+	session.pop('accountUsername', None)
+	session.pop('accountFirstName', None)
+	session.pop('accountLastName', None)
+	session.pop('accountTeamID', None)
+	session.pop('accountRole', None)
+	session.pop('accountPassword', None)
+	return redirect(url_for('login'))
+
 @app.route('/main', methods=['GET', 'POST'])
 def main():
 	return render_template("main.j2")
@@ -70,21 +81,23 @@ def projects():
 	if 'loggedin' not in session or not session['loggedin']:
 		screenMsg = 'Please login to continue'
 		return render_template('login.j2', screenMsg = screenMsg)
-	query = 'SELECT * FROM Projects'
-	# query = 'SELECT * FROM Accounts WHERE accountUsername = %s AND accountPassword = %s'
+	# query = 'SELECT * FROM Projects'
+	query = 'SELECT * FROM Projects WHERE accountTeamID = %s'
 
-	# inputs = (accountUsername, password)
+	inputs = (session['accountTeamID'])
 
-	# cursor.execute(query, inputs)
-	cursor.execute(query)
+	cursor.execute(query, inputs)
+	# cursor.execute(query)
 
 	# projects = cursor.fetchone()
 	# projects = json.dumps(cursor.fetchall())
 	projects = cursor.fetchall()
 
 	if projects:
-		screenMsg = json.dumps(projects)
-		return render_template('projects.j2', screenMsg = screenMsg, accountUsername = session['accountUsername'] )
+		# screenMsg = json.dumps(projects)
+		# screenMsg = "Printing Projects for accountTeamID %s", session['accountTeamID']
+		screenMsg = f"Printing Projects for accountTeamID {session['accountTeamID']}"
+		return render_template('projects.j2', screenMsg = screenMsg, accountUsername = session['accountUsername'], projects = projects)
 	else:
 		screenMsg = 'Please enter correct username and password'
 		return render_template('login.j2', screenMsg = screenMsg)

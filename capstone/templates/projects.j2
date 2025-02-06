@@ -2,6 +2,7 @@
 {% block head %}
 <title>Projects</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='css/projects.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
 {% endblock %}
 {% block body %}
 
@@ -27,6 +28,26 @@
 			</div>
 		</a>
 	</div>
+
+<h2>Projects as a table</h2>
+		<div class="instruction">
+			<table>
+				<thead>
+					<tr>
+						{% for key in projects[0].keys() %}
+						<th>{{ key }}</th>
+						{% endfor %}
+					</tr>
+				<tbody>
+					{% for project in projects %}
+					<tr>
+						{% for key in project.keys() %}
+						<td>{{project[key]}}</td>
+						{% endfor %}
+					</tr>
+					{% endfor %}
+			</table>
+		</div
 
 </div>
 
