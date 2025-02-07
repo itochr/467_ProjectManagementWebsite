@@ -32,7 +32,7 @@ def login():
 			session['accountTeamID'] = user['accountTeamID']
 			session['accountRole'] = user['accountRole']
 			screenMsg = 'Logged in successfully !'
-			return render_template('main.j2', accountFirstName = user['accountFirstName'])
+			return redirect(url_for('main'))
 		else:
 			screenMsg = 'Please enter correct username / password!'
 		return render_template('login.j2', screenMsg = screenMsg)
@@ -52,7 +52,7 @@ def logout():
 
 @app.route('/main', methods=['GET', 'POST'])
 def main():
-	return render_template("main.j2")
+	return render_template("main.j2", accountFirstName=session['accountFirstName'])
 
 @app.route('/tasks', methods=['GET', 'POST'])
 def tasks():
