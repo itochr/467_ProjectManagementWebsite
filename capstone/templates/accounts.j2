@@ -21,6 +21,8 @@
 						{% for key in account.keys() %}
 						<td>{{account[key]}}</td>
 						{% endfor %}
+
+						<td><a href="delete_account/{{account.accountID}}" class="btn btn-default">Delete</a></td>
 					</tr>
 					{% endfor %}
 			</table>
@@ -37,10 +39,10 @@
 				<label for="first_name">First name: </label>
 				<input type="text" id="accountFirstName" name="accountFirstName" required>
 
-				<label for="accountLastName">Laste name: </label>
+				<label for="accountLastName">Last name: </label>
 				<input type="text" id="accountLastName" name="accountLastName" required>
 
-				<label for="accountPassword">Password</label>
+				<label for="accountPassword">Password: </label>
 				<input type="text" class="" id="accountPassword" name="accountPassword" required>
 
 				<label for="accountTeamID">Team ID</label>

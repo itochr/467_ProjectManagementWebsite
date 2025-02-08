@@ -180,7 +180,7 @@ def accountAdmin():
 			accountTeamID = request.form["accountTeamID"]
 			accountRole = request.form["accountRole"]
 
-			query = "INSERT INTO Accounts (accountUsername, accountFirstName, accountLastName, accountPassword, accountTeamID, accountRole) VALUES (%s, %s,%s,%s, %s, %s)"
+			query = "INSERT INTO Accounts (accountUsername, accountFirstName, accountLastName, accountPassword, accountTeamID, accountRole) VALUES (%s, %s, %s, %s, %s, %s)"
 			cursor.execute(query, (accountUsername, accountFirstName, accountLastName, accountPassword, accountTeamID, accountRole ))
 			cursor.connection.commit()
 
@@ -188,6 +188,16 @@ def accountAdmin():
 			return redirect("/accounts")
 
 	return render_template("accounts.j2", accounts = results)
+
+@app.route("/delete_account/<int:id>")
+def delete_account(id):
+	print("Delete Account Reached")
+	# mySQL query to delete the person with our passed id
+	query = "DELETE FROM Accounts WHERE accountID = '%s';"
+	cursor = db.execute_query(db_connection=db_connection, query=query, query_params=(id))
+	results = cursor.fetchall()
+
+	return redirect("/accounts")
 
 
 # Listener
