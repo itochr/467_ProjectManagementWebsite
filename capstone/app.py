@@ -187,7 +187,7 @@ def accountAdmin():
 			# redirect back to people page
 			return redirect("/accounts")
 
-	return render_template("accounts.j2", accounts = results)
+	return render_template("accounts.j2", data = results)
 
 @app.route("/delete_account/<int:id>")
 def delete_account(id):
@@ -198,6 +198,18 @@ def delete_account(id):
 	results = cursor.fetchall()
 
 	return redirect("/accounts")
+
+# route for edit functionality, updating the attributes of a person in bsg_people
+# similar to our delete route, we want to the pass the 'id' value of that person on button click (see HTML) via the route
+@app.route("/edit_accounts/<int:id>", methods=["POST", "GET"])
+def edit_account(accountID):
+	if request.method == "GET":
+		query = "SELECT * FROM Accounts WHERE accountID = %s" % (accountID)
+		cursor = db.execute_query(db_connection=db_connection, query=query)
+		data = cursor.fetchall()
+
+		return render_template("account_edit.j2", data=data)
+	
 
 
 # Listener

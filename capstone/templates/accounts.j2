@@ -11,17 +11,18 @@
 			<table>
 				<thead>
 					<tr>
-						{% for key in accounts[0].keys() %}
+						{% for key in data[0].keys() %}
 						<th>{{ key }}</th>
 						{% endfor %}
 					</tr>
 				<tbody>
-					{% for account in accounts %}
+					{% for account in data %}
 					<tr>
 						{% for key in account.keys() %}
 						<td>{{account[key]}}</td>
 						{% endfor %}
 
+						<td><a href="edit_account/{{account.accountID}}" class="btn btn-default">Edit</a></td>
 						<td><a href="delete_account/{{account.accountID}}" class="btn btn-default">Delete</a></td>
 					</tr>
 					{% endfor %}
@@ -51,10 +52,10 @@
 				<label for="accountRole">Account Role:</label>
 				<select class="form-control" id="accountRole" name="accountRole" pattern="[0-4]{1}" placeholder="" >
 				<!-- these are hard coded, but you can add code to make this dynamic -->
-					<option value="0">&nbsp;</option>
-					<option value="1">Developer</option>
-					<option value="2">Scrum Master</option>
-					<option value="3">Project Leader</option>
+					<option value="">&nbsp;</option>
+					<option value="Developer">Developer</option>
+					<option value="Scrum Master">Scrum Master</option>
+					<option value="Project Leader">Project Leader</option>
 				</select>
 
             </fieldset>
@@ -62,6 +63,39 @@
             <!-- Create 'Add Person' and 'Cancel' buttons -->
 			<input type="submit" value="Add Account" name="addAccountSubmit" class="btn btn-primary" style="margin:.5rem;">
         </form>
+
+		<div id="edit">
+		<!-- form to edit data in bsg_people-->
+		<form id="editAccount" action="/edit_account/{{data[0].id}}" method="post">
+			<legend><strong>Edit Account (NOT READY TO USE YET)</strong></legend>
+			<fieldset>
+				<input type="hidden" value="{{data[0].accountID}}" class="form-control" id="accountID" name="accountID" required>
+				<label for="accountID">first name:</label>
+
+				<input type="text" class="form-control" id="accountFirstName" name="accountFirstName" pattern="[A-Za-z]{1,}" placeholder="{{data[0].accountFirstName}}" required>
+				<label for="accountFirstName">First name:</label>
+
+				<input type="text" class="form-control" id="accountLastName" name="accountLastName" pattern="[A-Za-z0-9]{1,}" placeholder="{{data[0].accountLastName}}" required>
+				<label for="accountLastName">Last name:</label>
+
+				<input type="text" class="form-control" id="accountPassword" name="accountPassword" pattern="[A-Za-z0-9]{1,}" placeholder="{{data[0].accountPassword}}" required>
+				<label for="accountPassword">Password:</label>
+
+				<input type="number" class="form-control" id="accountTeamID" name="accountTeamID" pattern="[A-Za-z0-9]{1,}" placeholder="{{data[0].accountTeamID}}">
+				<label for="accountTeamID">Team ID:</label>
+
+				<select class="form-control" id="accountRole" name="accountRole" pattern="[0-4]{1}" placeholder=""> 
+					<option value="0">&nbsp;</option>
+					<option value="1">Developer</option>
+					<option value="2">Scrum Master</option>
+					<option value="3">Project Leader</option>
+                    </select>
+
+				<label for="color">age:</label>
+				<input type="text" class="form-control" id="age" name="age" pattern="[A-Za-z0-9]{1,}" placeholder="{{data[0].age}}" required> </fieldset>
+				<input class="btn" type="button" value="Cancel" onClick="browsePeople()" style="margin:.5rem;"> 
+        </form>
+	</div><!--edit-->
 	</div><!--insert-->
 </div>
 {% endblock %}
