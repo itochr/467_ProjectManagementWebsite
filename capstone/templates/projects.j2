@@ -35,7 +35,7 @@
     </div>
 </div>
 
-<!-- Create Modal -->
+<!-- Create -->
 <div id="createProjectModal" class="modal">
     <div class="modal-content">
         <span class="close" onclick="closeModal('createProjectModal')">&times;</span>
@@ -61,13 +61,13 @@
     </div>
 </div>
 
-<!-- Details Modal -->
+<!-- Details -->
 <div id="projectDetailsModal" class="modal">
     <div class="modal-content">
         <span class="close" onclick="closeModal('projectDetailsModal')">&times;</span>
         <h2>Project Details</h2>
 
-        <!-- Edit Form -->
+        <!-- Edit -->
         <form action="{{ url_for('projects') }}" method="POST">
             <input type="hidden" id="projectID" name="projectID">
             <div class="form-group">

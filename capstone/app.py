@@ -133,7 +133,6 @@ def projects():
 			db_connection.commit()
 
 		elif 'editProject' in request.form:
-			# Handle edit project
 			projectID = request.form['projectID']
 			projectName = request.form['projectName']
 			projectStart = request.form['projectStart']
@@ -148,13 +147,11 @@ def projects():
 			db_connection.commit()
 
 		elif 'deleteProject' in request.form:
-			# Handle delete project
 			projectID = request.form['projectID']
 			delete_query = "DELETE FROM Projects WHERE projectID = %s AND accountTeamID = %s"
 			cursor.execute(delete_query, (projectID, session['accountTeamID']))
 			db_connection.commit()
 
-		# Redirect to refresh the page
 		return redirect(url_for('projects'))
 
 	# query = 'SELECT * FROM Projects'					# [Vish]: Uncomment to use without parameters
