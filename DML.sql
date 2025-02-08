@@ -1,12 +1,22 @@
--- CS467 Capstone DML Queries
+-- CS467 Capstone Data Manipulation Queries
 -- Winter Quarter 2025
+-- : used to denote values that will contain variables readable by Flask
 
 
--- User table CRUD operations
+-- Accounts table CRUD operations
+SELECT Accounts.accountID, Accounts.accountUsername, Accounts.accountFirstName, Accounts.accountLastName, Accounts.accountPassword, Accounts.accountTeam, Accounts.accountRole
+    FROM Accounts;
+
+INSERT INTO Accounts (accountUsername, accountFirstName, accountLastName, accountPassword, accountTeam, accountRole)
+VALUES (:usernameInput, :accountFirstName, :accountLastName, :accountPassword, :accountTeam, :accountRole);
+
+-- do update later
+
+DELETE FROM Accounts WHERE Accounts.accountUsername = :usernameInput;
 
 
 
--- userTasks table CRUD operations (M:M intersection table)
+-- AccountTasks table CRUD operations (M:M intersection table)
 
 
 
@@ -19,7 +29,11 @@
 
 
 -- Projects table CRUD operations
+SELECT Projects.projectID, Projects.projectStart, Projects.projectEnd
+FROM Projects;
 
+INSERT INTO Projects (projectStart, projectEnd)
+VALUES (:projectStart, :projectEnd);
 
 
 -- Statuses table CRUD operations
