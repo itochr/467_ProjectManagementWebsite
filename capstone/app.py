@@ -136,6 +136,34 @@ def projects():
 		screenMsg = 'Please enter correct username and password'
 		return render_template('login.j2', screenMsg = screenMsg)
 
+@app.route('/account_creation', methods=['GET', 'POST'])
+def accountCreation():
+
+    if request.method == "POST":
+        # fire off i user presses Create Account
+        if request.form.get("Create_Account"):
+            # grab user form inputs
+            username = request.form["username"]
+            first_name = request.form["first_name"]
+            last_name = request.form["last_name"]
+            password = request.form["password"]
+            accountTeam = "TeamA"
+            accountRole = "Developer"
+            
+
+            # account for null age AND homeworld
+            if username != "" and first_name != "" and last_name != "" and password != "":
+                # mySQL query to insert a new person into bsg_people with our form inputs
+                query = "INSERT INTO Accounts (accountUsername, accountFirstName, accountLastName, accountPassword, accountTeam, accountRole) VALUES (%s, %s, %s, %s, %s, %s)"
+                # cur = mysql.connection.cursor()
+                # cur.execute(query, (username, first_name, last_name, password, accountTeam, accountRole))
+                # mysql.connection.commit()
+                cursor = db.execute_query(db_connection=db_connection, query=query, query_params=(first_name, last_name, password, accountTeam, accountRole))
+                results = cursor.fetchall()
+                return render_template("/accounts")
+
+    return render_template("account_creation.j2")
+
 @app.route('/accounts', methods=['GET', 'POST'])
 def accountAdmin():
 	query = "SELECT * FROM Accounts;"
@@ -143,6 +171,22 @@ def accountAdmin():
 	results = cursor.fetchall()
 	# results = json.dumps(cursor.fetchall())
 	# return results
+	if request.method == "POST":
+		if request.form.get("addAccountSubmit"):
+			accountUsername = request.form["accountUsername"]
+			accountFirstName = request.form["accountFirstName"]
+			accountLastName = request.form["accountLastName"]
+			accountPassword = request.form["accountPassword"]
+			accountTeamID = request.form["accountTeamID"]
+			accountRole = request.form["accountRole"]
+
+			query = "INSERT INTO Accounts (accountUsername, accountFirstName, accountLastName, accountPassword, accountTeamID, accountRole) VALUES (%s, %s,%s,%s, %s, %s)"
+			cursor.execute(query, (accountUsername, accountFirstName, accountLastName, accountPassword, accountTeamID, accountRole ))
+			cursor.connection.commit()
+
+			# redirect back to people page
+			return redirect("/accounts")
+
 	return render_template("accounts.j2", accounts = results)
 
 

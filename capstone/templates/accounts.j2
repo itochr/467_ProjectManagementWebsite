@@ -25,5 +25,41 @@
 					{% endfor %}
 			</table>
 		</div
+
+		<div id="addAccount">
+		<!-- form to INSERT new data into bsg_people-->
+		<form id="addAccount" action="/accounts" method="post">
+			<legend><strong>Add Account</strong></legend>
+			<fieldset>
+				<label for="username">Username: </label>
+				<input type="text" id ="accountUsername" name="accountUsername" required>
+
+				<label for="first_name">First name: </label>
+				<input type="text" id="accountFirstName" name="accountFirstName" required>
+
+				<label for="accountLastName">Laste name: </label>
+				<input type="text" id="accountLastName" name="accountLastName" required>
+
+				<label for="accountPassword">Password</label>
+				<input type="text" class="" id="accountPassword" name="accountPassword" required>
+
+				<label for="accountTeamID">Team ID</label>
+				<input type="number" class="" id="accountTeamID" name="accountTeamID">
+
+				<label for="accountRole">Account Role:</label>
+				<select class="form-control" id="accountRole" name="accountRole" pattern="[0-4]{1}" placeholder="" >
+				<!-- these are hard coded, but you can add code to make this dynamic -->
+					<option value="0">&nbsp;</option>
+					<option value="1">Developer</option>
+					<option value="2">Scrum Master</option>
+					<option value="3">Project Leader</option>
+				</select>
+
+            </fieldset>
+
+            <!-- Create 'Add Person' and 'Cancel' buttons -->
+			<input type="submit" value="Add Account" name="addAccountSubmit" class="btn btn-primary" style="margin:.5rem;">
+        </form>
+	</div><!--insert-->
 </div>
 {% endblock %}
