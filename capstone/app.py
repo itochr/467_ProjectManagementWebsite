@@ -201,18 +201,18 @@ def delete_account(id):
 
 # route for edit functionality, updating the attributes of a person in bsg_people
 # similar to our delete route, we want to the pass the 'id' value of that person on button click (see HTML) via the route
-@app.route("/edit_account/<int:accountID>", methods=["POST", "GET"])
-def edit_account(accountID):
+@app.route("/edit_accounts/<int:accountID>", methods=["POST", "GET"])
+def edit_accounts(accountID):
+	print("here")
 	if request.method == "GET":
 		query = "SELECT * FROM Accounts WHERE accountID = %s" % (accountID)
 		cursor = db.execute_query(db_connection=db_connection, query=query)
 		data = cursor.fetchall()
 
-		return render_template("edit_account.j2", data=data)
+		return render_template("edit_accounts.j2", data=data)
 	
+	print("POST IF reached")
 	if request.method == "POST":
-		# fire off if user clicks the 'Edit Account' button
-		print("made it here: 1")
 		if request.form.get("Edit_Account"):
 			print("made it here")
 			# grab account form inputs
@@ -223,8 +223,9 @@ def edit_account(accountID):
 			accountTeamID = request.form["accountTeamID"]
 			accountRole = request.form["accountRole"]
 
-			query = "UPDATE Accounts SET Accounts.accountUsername = %s, Accounts.accountFirstName = %s, Accounts.accountLastName = %s, Accounts.accountPassword = %s, Accounts.accountTeamID = %s, Accounts.accountRole = %s WHERE Accounts.accountID = %s"
+			query = "UPDATE Accounts SET Accounts.accountUsername = ASDF, Accounts.accountFirstName = %s, Accounts.accountLastName = %s, Accounts.accountPassword = %s, Accounts.accountTeamID = %s, Accounts.accountRole = %s WHERE Accounts.accountID = %s"
 			cursor = db.execute_query(db_connection=db_connection, query=query, query_params=(accountUsername, accountFirstName, accountLastName, accountPassword, accountTeamID, accountRole, accountID ))
+
 			cursor.connection.commit()
 
 			# redirect back to people page
