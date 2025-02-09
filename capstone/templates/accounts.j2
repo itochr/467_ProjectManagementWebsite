@@ -64,44 +64,6 @@
 			<input type="submit" value="Add Account" name="addAccountSubmit" class="btn btn-primary" style="margin:.5rem;">
         </form>
 
-		<div id="edit">
-		<!-- form to edit data in bsg_people-->
-		<form id="editAccount" action="/edit_accounts/{{data[0].id}}" method="post">
-                <legend><strong>Edit Person</strong></legend>
-                <fieldset>
-                    <!-- We can preset form inputs to match attributes currently stored for 'id' of person to be updated via value= and accessing our passed data tuple -->
-                    <!-- Create hidden form input to store the passed 'id' of the person we are editing so we can access it easily in our 'POST' method in our app.py -->
-					<label for="accountID">accountID:</label>
-                    <input type="text" value="{{data[0].accountID}}" class="form-control" id="accountID" name="accountID" readonly>
-
-                    <label for="accountUsername">Username:</label>
-                    <input type="text" class="form-control" id="accountUsername" name="accountUsername" pattern="[A-Za-z]{1,}" placeholder="{{data[0].accountUsername}}" required>
-
-                    <label for="accountID">First name:</label>
-                    <input type="text" class="form-control" id="accountFirstName" name="accountFirstName" pattern="[A-Za-z]{1,}" placeholder="{{data[0].accountFirstName}}" required>
-                    
-                    <label for="accountFirstName">Last name:</label>
-                    <input type="text" class="form-control" id="accountLastName" name="accountLastName" pattern="[A-Za-z0-9]{1,}" placeholder="{{data[0].accountLastName}}" required>
-                    
-                    <label for="accountLastName">Password:</label>
-                    <input type="text" class="form-control" id="accountPassword" name="accountPassword" pattern="[A-Za-z0-9]{1,}" placeholder="{{data[0].accountPassword}}" required>
-                    
-                    <label for="accountPassword">Team ID:</label>
-                    <input type="number" class="form-control" id="accountTeamID" name="accountTeamID" pattern="[A-Za-z0-9]{1,}" placeholder="{{data[0].accountTeamID}}" required>
-                    
-                    <label for="accountRole">Account Role:</label>
-                    <select class="form-control" id="accountRole" name="accountRole" pattern="[0-4]{1}" placeholder="" required> 
-                        <option value="">&nbsp;</option>
-                        <option value="Developer">Developer</option>
-                        <option value="Scrum Master">Scrum Master</option>
-                        <option value="Project Leader">Project Leader</option>
-                    </select>
-                
-                </fieldset>
-                <input type="submit" value="Edit Account" name="Edit_Account" class="btn btn-primary" style="margin:.5rem;">
-                <a href='/accounts'><input class="btn" type="button" value="cancel"></a>
-            </form>
-		</div><!--edit-->
 	</div><!--insert-->
 </div>
 {% endblock %}

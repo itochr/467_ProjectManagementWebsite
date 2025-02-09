@@ -70,7 +70,7 @@
                     </select>
                 
                 </fieldset>
-                <input type="submit" value="Edit Account" name="Edit_Account" class="btn btn-primary" style="margin:.5rem;">
+                <button type="submit" formaction="{{ url_for('update_account') }}" formmethod="post" name="update_account" value="Update Account">Update</button>
                 <a href='/accounts'><input class="btn" type="button" value="cancel"></a>
             </form>
 </html>

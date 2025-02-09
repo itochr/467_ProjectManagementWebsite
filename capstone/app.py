@@ -138,31 +138,28 @@ def projects():
 
 @app.route('/account_creation', methods=['GET', 'POST'])
 def accountCreation():
+	query = "SELECT * FROM Accounts;"
+	cursor = db.execute_query(db_connection=db_connection, query=query)
+	results = cursor.fetchall()
+	# results = json.dumps(cursor.fetchall())
+	# return results
+	if request.method == "POST":
+		if request.form.get("addAccountSubmit"):
+			accountUsername = request.form["accountUsername"]
+			accountFirstName = request.form["accountFirstName"]
+			accountLastName = request.form["accountLastName"]
+			accountPassword = request.form["accountPassword"]
+			accountTeamID = request.form["accountTeamID"]
+			accountRole = request.form["accountRole"]
+			
+			query = "INSERT INTO Accounts (accountUsername, accountFirstName, accountLastName, accountPassword, accountTeamID, accountRole) VALUES (%s, %s, %s, %s, %s, %s)"
+			cursor.execute(query, (accountUsername, accountFirstName, accountLastName, accountPassword, accountTeamID, accountRole ))
+			cursor.connection.commit()
 
-    if request.method == "POST":
-        # fire off i user presses Create Account
-        if request.form.get("Create_Account"):
-            # grab user form inputs
-            username = request.form["username"]
-            first_name = request.form["first_name"]
-            last_name = request.form["last_name"]
-            password = request.form["password"]
-            accountTeam = "TeamA"
-            accountRole = "Developer"
-            
+			# redirect back to people page
+			return redirect(url_for('login'))
 
-            # account for null age AND homeworld
-            if username != "" and first_name != "" and last_name != "" and password != "":
-                # mySQL query to insert a new person into bsg_people with our form inputs
-                query = "INSERT INTO Accounts (accountUsername, accountFirstName, accountLastName, accountPassword, accountTeam, accountRole) VALUES (%s, %s, %s, %s, %s, %s)"
-                # cur = mysql.connection.cursor()
-                # cur.execute(query, (username, first_name, last_name, password, accountTeam, accountRole))
-                # mysql.connection.commit()
-                cursor = db.execute_query(db_connection=db_connection, query=query, query_params=(first_name, last_name, password, accountTeam, accountRole))
-                results = cursor.fetchall()
-                return render_template("/accounts")
-
-    return render_template("account_creation.j2")
+	return render_template("account_creation.j2", data = results)
 
 @app.route('/accounts', methods=['GET', 'POST'])
 def accountAdmin():
@@ -210,26 +207,27 @@ def edit_accounts(accountID):
 		data = cursor.fetchall()
 
 		return render_template("edit_accounts.j2", data=data)
-	
-	print("POST IF reached")
-	if request.method == "POST":
-		if request.form.get("Edit_Account"):
-			print("made it here")
-			# grab account form inputs
-			accountUsername = request.form["accountUsername"]
-			accountFirstName = request.form["accountFirstName"]
-			accountLastName = request.form["accountLastName"]
-			accountPassword = request.form["accountPassword"]
-			accountTeamID = request.form["accountTeamID"]
-			accountRole = request.form["accountRole"]
 
-			query = "UPDATE Accounts SET Accounts.accountUsername = ASDF, Accounts.accountFirstName = %s, Accounts.accountLastName = %s, Accounts.accountPassword = %s, Accounts.accountTeamID = %s, Accounts.accountRole = %s WHERE Accounts.accountID = %s"
-			cursor = db.execute_query(db_connection=db_connection, query=query, query_params=(accountUsername, accountFirstName, accountLastName, accountPassword, accountTeamID, accountRole, accountID ))
 
-			cursor.connection.commit()
+@app.route("/update_account", methods=["POST"])
+def update_account():
+	# grab account form inputs
+	accountID = request.form["accountID"]
+	accountUsername = request.form["accountUsername"]
+	accountFirstName = request.form["accountFirstName"]
+	accountLastName = request.form["accountLastName"]
+	accountPassword = request.form["accountPassword"]
+	accountTeamID = request.form["accountTeamID"]
+	accountRole = request.form["accountRole"]
 
-			# redirect back to people page
-			return redirect("/accounts")
+	query = "UPDATE Accounts SET accountUsername = %s, accountFirstName = %s, accountLastName = %s, accountPassword = %s, accountTeamID = %s, accountRole = %s WHERE accountID = %s"
+	print(query)
+	cursor = db.execute_query(db_connection=db_connection, query=query, query_params=(accountUsername, accountFirstName, accountLastName, accountPassword, accountTeamID, accountRole, accountID ))
+	cursor.connection.commit()
+
+	# redirect back to people page
+	return redirect("/accounts")
+
 
 # Listener
 if __name__ == "__main__":
