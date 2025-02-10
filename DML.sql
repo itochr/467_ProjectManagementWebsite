@@ -25,7 +25,18 @@ DELETE FROM Accounts WHERE Accounts.accountUsername = :usernameInput;
 
 
 -- Sprints table CRUD operations
+SELECT Sprints.sprintID, Sprints.sprintProject, Sprints.sprintStart, Sprints.sprintEnd
+FROM Sprints;
 
+INSERT INTO Sprints (sprintProject, sprintStart, sprintEnd)
+VALUES (:sprintProject, :sprintStart, :sprintEnd);
+
+--update Sprints- user enters ID of sprint they want to edit, then they can update project, start, and end
+UPDATE Sprints 
+SET sprintProject = :sprintProjectInput, sprintStart = :sprintStartInput, sprintEnd = :sprintEndInput
+WHERE sprintID = :sprintIDInput;
+
+DELETE FROM Sprints WHERE Sprints.sprintID = :sprintInput;
 
 
 -- Projects table CRUD operations
