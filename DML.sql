@@ -3,9 +3,9 @@
 -- : used to denote values that will contain variables readable by Flask
 
 
--- Accounts table CRUD operations
+-- Accounts table CRUD operations------------------------------------------------------------------------------------
 SELECT Accounts.accountID, Accounts.accountUsername, Accounts.accountFirstName, Accounts.accountLastName, Accounts.accountPassword, Accounts.accountTeam, Accounts.accountRole
-    FROM Accounts;
+FROM Accounts;
 
 INSERT INTO Accounts (accountUsername, accountFirstName, accountLastName, accountPassword, accountTeam, accountRole)
 VALUES (:usernameInput, :accountFirstName, :accountLastName, :accountPassword, :accountTeam, :accountRole);
@@ -17,19 +17,35 @@ WHERE accountID = :accountIDInput;
 DELETE FROM Accounts WHERE Accounts.accountUsername = :usernameInput;
 
 
--- AccountTasks table CRUD operations (M:M intersection table)
+--AccountTeams CRUD operations-----------------------------------------------------------------------------------
+SELECT AccountTeams.accountTeamID, AccountTeams.accountTeamName
+FROM AccountTeams;
+
+INSERT INTo AccountTeams (accountTeamName)
+VALUES (:accountTeamNameInput);
+
+--user enters teamID to delete or update
+DELETE FROM AccountTeams WHERE AccountTeams.accountTeamID = :teamIDInput;
+
+UPDATE AccountTeams
+SET AccountTeams.accountTeamName = :accountTeamNameInput
+WHERE AccountTeams.accountTeamID = :teamIDInput;
+
+
+-- AccountTasks table CRUD operations (M:M intersection table)--------------------------------------------------------
 
 
 
--- Tasks table CRUD operations
+
+
+-- Tasks table CRUD operations-------------------------------------------------------------------------------------
 
 
 
--- Sprints table CRUD operations
+-- Sprints table CRUD operations--------------------------------------------------------------------------------------
 SELECT Sprints.sprintID, Sprints.sprintProject, Sprints.sprintStart, Sprints.sprintEnd
 FROM Sprints;
 
---
 INSERT INTO Sprints (sprintProject, sprintStart, sprintEnd)
 VALUES ((SELECT projectID FROM Projects WHERE :projectInput = Projects.projectStart), :sprintStart, :sprintEnd);
 
@@ -41,7 +57,7 @@ WHERE sprintID = :sprintIDInput;
 DELETE FROM Sprints WHERE Sprints.sprintID = :sprintInput;
 
 
--- Projects table CRUD operations
+-- Projects table CRUD operations------------------------------------------------------------------------------
 SELECT Projects.projectID, Projects.projectName, Projects.projectStart, Projects.projectEnd
 FROM Projects;
 
@@ -55,7 +71,7 @@ WHERE projectID = :projectIDInput;
 DELETE FROM Projects WHERE Projects.projectID = :projectIDInput
 
 
--- Statuses table CRUD operations
+-- Statuses table CRUD operations----------------------------------------------------------------------------------
 INSERT INTO Statuses (statusName) VALUES (:statusNameInput);
 SELECT statusID, statusName FROM Statuses;
 UPDATE Statuses SET statusName = :statusNameInput WHERE statusID = :statusIDInput; --have user enter statusID in order to edit or delete existing statusName;
