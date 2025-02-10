@@ -10,10 +10,11 @@ SELECT Accounts.accountID, Accounts.accountUsername, Accounts.accountFirstName, 
 INSERT INTO Accounts (accountUsername, accountFirstName, accountLastName, accountPassword, accountTeam, accountRole)
 VALUES (:usernameInput, :accountFirstName, :accountLastName, :accountPassword, :accountTeam, :accountRole);
 
--- do update later
+UPDATE Accounts
+SET Accounts.accountUsername = :usernameInput, Accounts.accountFirstName = :firstNameInput, Accounts.accountLastName = :lastNameInput, Accounts.accountPassword = :passwordInput, Accounts.accountTeam = :teamInput, Accounts.accountRole = :roleInput
+WHERE accountID = :accountIDInput;
 
 DELETE FROM Accounts WHERE Accounts.accountUsername = :usernameInput;
-
 
 
 -- AccountTasks table CRUD operations (M:M intersection table)
@@ -28,8 +29,9 @@ DELETE FROM Accounts WHERE Accounts.accountUsername = :usernameInput;
 SELECT Sprints.sprintID, Sprints.sprintProject, Sprints.sprintStart, Sprints.sprintEnd
 FROM Sprints;
 
+--
 INSERT INTO Sprints (sprintProject, sprintStart, sprintEnd)
-VALUES (:sprintProject, :sprintStart, :sprintEnd);
+VALUES ((SELECT projectID FROM Projects WHERE :projectInput = Projects.projectStart), :sprintStart, :sprintEnd);
 
 --update Sprints- user enters ID of sprint they want to edit, then they can update project, start, and end
 UPDATE Sprints 
@@ -45,6 +47,12 @@ FROM Projects;
 
 INSERT INTO Projects (projectStart, projectEnd)
 VALUES (:projectStart, :projectEnd);
+
+-- user enters ID of project they want to edit, then they can update start and end dates
+UPDATE Projects 
+SET projectStart = :projectStartInput, projectEnd = :projectEndInput 
+WHERE projectID = :projectIDInput;
+DELETE FROM Projects WHERE Projects.projectID = :projectIDInput
 
 
 -- Statuses table CRUD operations
