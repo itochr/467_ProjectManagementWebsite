@@ -42,10 +42,10 @@ DELETE FROM Sprints WHERE Sprints.sprintID = :sprintInput;
 
 
 -- Projects table CRUD operations
-SELECT Projects.projectID, Projects.projectStart, Projects.projectEnd
+SELECT Projects.projectID, Projects.projectName, Projects.projectStart, Projects.projectEnd
 FROM Projects;
 
-INSERT INTO Projects (projectStart, projectEnd)
+INSERT INTO Projects (projectName, projectStart, projectEnd)
 VALUES (:projectStart, :projectEnd);
 
 -- user enters ID of project they want to edit, then they can update start and end dates
