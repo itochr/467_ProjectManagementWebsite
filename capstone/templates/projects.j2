@@ -7,48 +7,125 @@
 {% block body %}
 
 <div class="content">
-	<h1><span class="username">{{accountUsername}}</span> Projects</h1>
+    <h1><span class="username">{{accountUsername}}</span> Projects</h1>
 
-	{% if screenMsg is defined %}
-			<div class="announcement">{{ screenMsg }}</div>
-	{% endif %}
+    {% if screenMsg is defined %}
+          <div class="announcement">{{ screenMsg }}</div>
+    {% endif %}
 
-{% if sessionDump is defined %}
-			<div class="announcement">{{ sessionDump }}</div>
-	{% endif %}
+    <div class="projects-grid">
+        {% for project in projects %}
+        <div class="project-card" onclick='showProjectDetails({{ project|tojson|safe }})'>
+            <div class="project-content">
+                <h3>{{ project.projectName }}</h3>
+                <p>Status: {{ project.projectStatus }}</p>
+                <p>Due: {{ project.projectEnd }}</p>
+            </div>
+        </div>
+        {% endfor %}
 
-	<div class="projects-grid">
-		<a class="project-card"><div class="project-content">Project 1</div></a>
-		<a class="project-card"><div class="project-content">Project 2</div></a>
-		<a class="project-card"><div class="project-content">Project 3</div></a>
-
-		<a class="project-card">
-			<div class="project-content">
-				<button type="submit" class="project-button">Create New Project</button>
-			</div>
-		</a>
-	</div>
-
-<h2>Projects as a table</h2>
-		<div class="instruction">
-			<table>
-				<thead>
-					<tr>
-						{% for key in projects[0].keys() %}
-						<th>{{ key }}</th>
-						{% endfor %}
-					</tr>
-				<tbody>
-					{% for project in projects %}
-					<tr>
-						{% for key in project.keys() %}
-						<td>{{project[key]}}</td>
-						{% endfor %}
-					</tr>
-					{% endfor %}
-			</table>
-		</div
-
+        <!-- Add New Project Card -->
+        <div class="project-card" onclick="openCreateModal()">
+            <div class="project-content">
+                <div class="add-project-placeholder">
+                    <h3>Create New Project</h3>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
+<!-- Create -->
+<div id="createProjectModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('createProjectModal')">&times;</span>
+        <h2>Create New Project</h2>
+        <form action="{{ url_for('projects') }}" method="POST">
+            <div class="form-group">
+                <label for="projectName">Project Name:</label>
+                <input type="text" name="projectName" required>
+            </div>
+            <div class="form-group">
+                <label for="projectStart">Start Date:</label>
+                <input type="date" name="projectStart" required>
+            </div>
+            <div class="form-group">
+                <label for="projectEnd">End Date:</label>
+                <input type="date" name="projectEnd" required>
+            </div>
+            <div class="form-actions">
+                <button type="submit" name="createProject" class="submit-button">Create</button>
+                <button type="button" class="cancel-button" onclick="closeModal('createProjectModal')">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Details -->
+<div id="projectDetailsModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('projectDetailsModal')">&times;</span>
+        <h2>Project Details</h2>
+
+        <!-- Edit -->
+        <form action="{{ url_for('projects') }}" method="POST">
+            <input type="hidden" id="projectID" name="projectID">
+            <div class="form-group">
+                <label for="projectName">Project Name:</label>
+                <input type="text" id="editProjectName" name="projectName" required>
+            </div>
+            <div class="form-group">
+                <label for="projectStart">Start Date:</label>
+                <input type="date" id="editProjectStart" name="projectStart" required>
+            </div>
+            <div class="form-group">
+                <label for="projectEnd">End Date:</label>
+                <input type="date" id="editProjectEnd" name="projectEnd" required>
+            </div>
+            <div class="form-actions">
+                <button type="submit" name="editProject" class="button submit-button">Save</button>
+                <button type="button" class="button cancel-button" onclick="closeModal('projectDetailsModal')">Cancel</button>
+                <button type="button" class="button delete-button" onclick="confirmDelete()">Delete</button>
+            </div>
+        </form>
+
+        <form id="deleteForm" action="{{ url_for('projects') }}" method="POST" style="display: none;">
+            <input type="hidden" id="deleteProjectID" name="projectID">
+            <input type="hidden" name="deleteProject" value="true">
+        </form>
+    </div>
+</div>
+
+<script>
+function openCreateModal() {
+    document.getElementById('createProjectModal').style.display = 'block';
+}
+
+function showProjectDetails(project) {
+    console.log('Project:', project);
+    document.getElementById('projectID').value = project.projectID;
+    document.getElementById('editProjectName').value = project.projectName;
+    document.getElementById('editProjectStart').value = project.projectStart;
+    document.getElementById('editProjectEnd').value = project.projectEnd;
+    document.getElementById('projectDetailsModal').style.display = 'block';
+}
+
+function closeModal(modalId) {
+    document.getElementById(modalId).style.display = 'none';
+}
+
+function confirmDelete() {
+    if (confirm('Are you sure you want to delete this project?')) {
+        const projectID = document.getElementById('projectID').value;
+        document.getElementById('deleteProjectID').value = projectID;
+        document.getElementById('deleteForm').submit();
+    }
+}
+
+window.onclick = function(event) {
+    if (event.target.classList.contains('modal')) {
+        event.target.style.display = 'none';
+    }
+}
+</script>
 {% endblock %}

@@ -32,7 +32,7 @@ def login():
 			session['accountTeamID'] = user['accountTeamID']
 			session['accountRole'] = user['accountRole']
 			screenMsg = 'Logged in successfully !'
-			return render_template('main.j2', accountFirstName = user['accountFirstName'])
+			return redirect(url_for('main'))
 		else:
 			screenMsg = 'Please enter correct username / password!'
 		return render_template('login.j2', screenMsg = screenMsg)
@@ -52,7 +52,7 @@ def logout():
 
 @app.route('/main', methods=['GET', 'POST'])
 def main():
-	return render_template("main.j2")
+	return render_template("main.j2", accountFirstName=session['accountFirstName'])
 
 @app.route('/tasks', methods=['GET', 'POST'])
 def tasks():
@@ -117,6 +117,43 @@ def projects():
 	if 'loggedin' not in session or not session['loggedin']:
 		screenMsg = 'Please login to continue'
 		return render_template('login.j2', screenMsg = screenMsg)
+
+	if request.method == 'POST':
+		if 'createProject' in request.form:
+			projectName = request.form['projectName']
+			projectStart = request.form['projectStart']
+			projectEnd = request.form['projectEnd']
+			accountTeamID = session['accountTeamID']
+
+			insert_query = """
+			INSERT INTO Projects (projectName, projectStart, projectEnd, accountTeamID) 
+			VALUES (%s, %s, %s, %s)
+			"""
+			cursor.execute(insert_query, (projectName, projectStart, projectEnd, accountTeamID))
+			db_connection.commit()
+
+		elif 'editProject' in request.form:
+			projectID = request.form['projectID']
+			projectName = request.form['projectName']
+			projectStart = request.form['projectStart']
+			projectEnd = request.form['projectEnd']
+
+			update_query = """
+					UPDATE Projects 
+					SET projectName = %s, projectStart = %s, projectEnd = %s 
+					WHERE projectID = %s AND accountTeamID = %s
+					"""
+			cursor.execute(update_query, (projectName, projectStart, projectEnd, projectID, session['accountTeamID']))
+			db_connection.commit()
+
+		elif 'deleteProject' in request.form:
+			projectID = request.form['projectID']
+			delete_query = "DELETE FROM Projects WHERE projectID = %s AND accountTeamID = %s"
+			cursor.execute(delete_query, (projectID, session['accountTeamID']))
+			db_connection.commit()
+
+		return redirect(url_for('projects'))
+
 	# query = 'SELECT * FROM Projects'					# [Vish]: Uncomment to use without parameters
 	query = 'SELECT * FROM Projects WHERE accountTeamID = %s'
 

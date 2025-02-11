@@ -7,15 +7,15 @@
 </head>
 <body>
 <header>
-	<div class="nav-container">
-		<div class="nav-buttons">
-			<a href="{{ url_for('main') }}" class="nav-button main">Home</a>
-			<a href="{{ url_for('projects') }}" class="nav-button">Projects</a>
-			<a href="{{ url_for('tasks') }}" class="nav-button">Tasks</a>
-			<a href="{{ url_for('help') }}" class="nav-button">Help</a>
-			<a href="/logout" class="nav-button">Logout</a>
-		</div>
-	</div>
+    <div class="nav-container">
+        <div class="nav-buttons">
+            <a href="{{ url_for('main') }}" class="nav-button {% if request.endpoint == 'main' %}active{% endif %}">Home</a>
+            <a href="{{ url_for('projects') }}" class="nav-button {% if request.endpoint == 'projects' %}active{% endif %}">Projects</a>
+            <a href="{{ url_for('tasks') }}" class="nav-button {% if request.endpoint == 'tasks' %}active{% endif %}">Tasks</a>
+            <a href="{{ url_for('help') }}" class="nav-button {% if request.endpoint == 'help' %}active{% endif %}">Help</a>
+            <a href="/logout" class="nav-button {% if request.endpoint == 'logout' %}active{% endif %}">Logout</a>
+        </div>
+    </div>
 </header>
 {% block body %}{% endblock %}
 </body>

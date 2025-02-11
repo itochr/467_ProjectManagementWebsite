@@ -25,7 +25,7 @@
     opacity: 0.9;
 }
 
-.nav-button.main {
+.nav-button.active {
     background-color: #6AB04C;
 }
 .content {
