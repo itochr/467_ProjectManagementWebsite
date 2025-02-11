@@ -4,14 +4,17 @@
 
 
 -- Accounts table CRUD operations------------------------------------------------------------------------------------
-SELECT Accounts.accountID, Accounts.accountUsername, Accounts.accountFirstName, Accounts.accountLastName, Accounts.accountPassword, Accounts.accountTeam, Accounts.accountRole
-FROM Accounts;
+SELECT Accounts.accountID, Accounts.accountUsername, Accounts.accountFirstName, Accounts.accountLastName, Accounts.accountPassword, Accounts.accountTeamName as Team, Accounts.accountRole
+FROM Accounts
+INNER JOIN AccountTeams ON AccountTeams.accountTeamID = Accounts.accountTeam; --matches the team name in Accounts to team name in Teams and returns the Name, not the ID
 
-INSERT INTO Accounts (accountUsername, accountFirstName, accountLastName, accountPassword, accountTeam, accountRole)
+--user enters team name, and query matches it with the ID from AccountTeams to enter into table
+INSERT INTO Accounts (accountUsername, accountFirstName, accountLastName, accountPassword, (SELECT accountTeamID FROM AccountTeams WHERE :teamInput = AccountTeams.accountTeamName), accountRole)
 VALUES (:usernameInput, :accountFirstName, :accountLastName, :accountPassword, :accountTeam, :accountRole);
 
+--user enters Team Name and query matches it to the ID in AccountTeams
 UPDATE Accounts
-SET Accounts.accountUsername = :usernameInput, Accounts.accountFirstName = :firstNameInput, Accounts.accountLastName = :lastNameInput, Accounts.accountPassword = :passwordInput, Accounts.accountTeam = :teamInput, Accounts.accountRole = :roleInput
+SET Accounts.accountUsername = :usernameInput, Accounts.accountFirstName = :firstNameInput, Accounts.accountLastName = :lastNameInput, Accounts.accountPassword = :passwordInput, Accounts.accountTeam = (SELECT accountTeamID FROM AccountTeams WHERE :teamInput = AccountTeams.accountTeamName), Accounts.accountRole = :roleInput
 WHERE accountID = :accountIDInput;
 
 DELETE FROM Accounts WHERE Accounts.accountUsername = :usernameInput;
