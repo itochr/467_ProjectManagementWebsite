@@ -45,6 +45,18 @@ h1 {
     line-height: 1.5;
 }
 
+.welcome {
+    margin: 1em 0;
+    font-size: 1.5em;
+    line-height: 1.5;
+}
+
+.accountName {
+    color: darkgreen;
+    text-transform: uppercase;
+    text-shadow: 1px 1px red;
+}
+
 body {
     margin: 0;
     padding: 0;

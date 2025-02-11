@@ -1,6 +1,4 @@
-#!/bin/sh
-'''exec' "/Users/cambrian16/Library/Mobile Documents/com~apple~CloudDocs/Hazel/z_OSU/_Winter2025/CS467_Winter2025/Code Github Repo/467_ProjectManagementWebsite/capstone/venv/bin/python3" "$0" "$@"
-' '''
+#!/Users/cambrian16/Desktop/Hazel_Cambrian16/_CS467/467_ProjectManagementWebsite/capstone/venv/bin/python3.13
 # -*- coding: utf-8 -*-
 import re
 import sys
