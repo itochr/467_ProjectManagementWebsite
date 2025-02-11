@@ -35,10 +35,21 @@ accountUsername VARCHAR(50) NOT NULL,
 accountFirstName VARCHAR(50) NOT NULL,
 accountLastName VARCHAR(50) NOT NULL,
 accountPassword VARCHAR(50) NOT NULL,
-accountTeam VARCHAR(50),
+accountTeamID INT NOT NULL,
 accountRole VARCHAR(50),
 -- accountTasksAssigned VARCHAR(50),
-PRIMARY KEY (accountID)
+PRIMARY KEY (accountID), 
+FOREIGN KEY (accountTeamID) REFERENCES AccountTeams(accountTeamID)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
+);
+
+-- Create AccountTeams Table
+DROP TABLE IF EXISTS AccountTeams;
+CREATE TABLE AccountTeams (
+accountTeamID INT NOT NULL AUTO_INCREMENT,
+accountTeamName VARCHAR(50),
+PRIMARY KEY (accountTeamID)
 );
 
 -- Create AccountTasks Table (M:M)
@@ -81,6 +92,7 @@ PRIMARY KEY (statusID)
 DROP TABLE IF EXISTS Projects;
 CREATE TABLE Projects (
 projectID INT NOT NULL AUTO_INCREMENT,
+projectName VARCHAR(50) NOT NULL,
 projectStart DATE NOT NULL,
 projectEnd DATE NOT NULL,
 projectOwner VARCHAR(50),
@@ -91,12 +103,19 @@ FOREIGN KEY (projectOwner) REFERENCES Accounts(accountTeam)
     ON DELETE CASCADE
 );
 
+-- INSERT SAMPLE DATA INTO ACCOUNTTEAMS
+INSERT INTO AccountTeams (accountTeamID, accountTeamName) VALUES
+(1, 'TeamA'),
+(2, 'TeamB'),
+(3, 'TeamC'),
+(4, 'TeamD');
+
 -- INSERT SAMPLE DATA INTO ACCOUNTS
 INSERT INTO Accounts (accountUsername, accountFirstName, accountLastName, accountPassword, accountTeam, accountRole) VALUES
-  ('sastryv', 'Vish', 'Sastry','password', 'TeamA', 'Developer'),
-  ('itoc', 'Christine', 'Ito','password', 'TeamB', 'Developer'),
-  ('tsaor', 'Robert', 'Tsao','password', 'TeamC', 'Developer'),
-  ('caiz', 'Zhiwei', 'Cai','password', 'TeamD', 'Developer');
+  ('sastryv', 'Vish', 'Sastry','password', '1', 'Developer'),
+  ('itoc', 'Christine', 'Ito','password', '2', 'Developer'),
+  ('tsaor', 'Robert', 'Tsao','password', '3', 'Developer'),
+  ('caiz', 'Zhiwei', 'Cai','password', '4', 'Developer');
 
 -- INSERT SAMPLE DATA INTO STATUSES
 INSERT INTO Statuses (statusName) VALUES
