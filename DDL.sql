@@ -99,11 +99,11 @@ PRIMARY KEY (projectID)
 );
 
 -- INSERT SAMPLE DATA INTO ACCOUNTTEAMS
-INSERT INTO AccountTeams (accountTeamID, accountTeamName) VALUES
-(1, 'TeamA'),
-(2, 'TeamB'),
-(3, 'TeamC'),
-(4, 'TeamD');
+INSERT INTO AccountTeams (accountTeamName) VALUES
+('TeamA'),
+('TeamB'),
+('TeamC'),
+('TeamD');
 
 -- INSERT SAMPLE DATA INTO ACCOUNTS
 INSERT INTO Accounts (accountUsername, accountFirstName, accountLastName, accountPassword, accountTeam, accountRole) VALUES
