@@ -21,18 +21,20 @@ DELETE FROM Accounts WHERE Accounts.accountUsername = :usernameInput;
 
 
 --AccountTeams CRUD operations-----------------------------------------------------------------------------------
+-- user will always enter Team Name, NOT ID. Queries in this table and Accounts match the name entered to the ID
+
 SELECT AccountTeams.accountTeamID, AccountTeams.accountTeamName
 FROM AccountTeams;
 
-INSERT INTo AccountTeams (accountTeamName)
+INSERT INTO AccountTeams (accountTeamName)
 VALUES (:accountTeamNameInput);
 
 --user enters teamID to delete or update
-DELETE FROM AccountTeams WHERE AccountTeams.accountTeamID = :teamIDInput;
+DELETE FROM AccountTeams WHERE AccountTeams.accountTeamName = :teamNameInput;
 
 UPDATE AccountTeams
-SET AccountTeams.accountTeamName = :accountTeamNameInput
-WHERE AccountTeams.accountTeamID = :teamIDInput;
+SET AccountTeams.accountTeamName = :newTeamNameInput
+WHERE AccountTeams.accountTeamName = :oldTeamNameInput;
 
 
 -- AccountTasks table CRUD operations (M:M intersection table)--------------------------------------------------------
