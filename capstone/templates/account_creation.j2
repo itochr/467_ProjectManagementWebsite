@@ -1,4 +1,4 @@
-{% extends 'nav.j2' %}
+
 {% block head %}
 <title>Accounts Admin</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
@@ -6,32 +6,11 @@
 {% block body %}
 
 <div class="content">
-	<h1>Admin Panel: All Accounts</h1>
-		<div class="instruction">
-			<table>
-				<thead>
-					<tr>
-						{% for key in data[0].keys() %}
-						<th>{{ key }}</th>
-						{% endfor %}
-					</tr>
-				<tbody>
-					{% for account in data %}
-					<tr>
-						{% for key in account.keys() %}
-						<td>{{account[key]}}</td>
-						{% endfor %}
-
-						<td><a href="edit_accounts/{{account.accountID}}" class="btn btn-default">Edit</a></td>
-						<td><a href="delete_account/{{account.accountID}}" class="btn btn-default">Delete</a></td>
-					</tr>
-					{% endfor %}
-			</table>
-		</div
+	<h1>Account Creation</h1>
 
 		<div id="addAccount">
 		<!-- form to INSERT new data into bsg_people-->
-		<form id="addAccount" action="/accounts" method="post">
+		<form id="addAccount" action="/account_creation" method="post">
 			<legend><strong>Add Account</strong></legend>
 			<fieldset>
 				<label for="username">Username: </label>
