@@ -11,19 +11,59 @@
 			<table>
 				<thead>
 					<tr>
-						{% for key in accounts[0].keys() %}
+						{% for key in data[0].keys() %}
 						<th>{{ key }}</th>
 						{% endfor %}
 					</tr>
 				<tbody>
-					{% for account in accounts %}
+					{% for account in data %}
 					<tr>
 						{% for key in account.keys() %}
 						<td>{{account[key]}}</td>
 						{% endfor %}
+
+						<td><a href="edit_accounts/{{account.accountID}}" class="btn btn-default">Edit</a></td>
+						<td><a href="delete_account/{{account.accountID}}" class="btn btn-default">Delete</a></td>
 					</tr>
 					{% endfor %}
 			</table>
 		</div
+
+		<div id="addAccount">
+		<!-- form to INSERT new data into bsg_people-->
+		<form id="addAccount" action="/accounts" method="post">
+			<legend><strong>Add Account</strong></legend>
+			<fieldset>
+				<label for="username">Username: </label>
+				<input type="text" id ="accountUsername" name="accountUsername" required>
+
+				<label for="first_name">First name: </label>
+				<input type="text" id="accountFirstName" name="accountFirstName" required>
+
+				<label for="accountLastName">Last name: </label>
+				<input type="text" id="accountLastName" name="accountLastName" required>
+
+				<label for="accountPassword">Password: </label>
+				<input type="text" class="" id="accountPassword" name="accountPassword" required>
+
+				<label for="accountTeamID">Team ID</label>
+				<input type="number" class="" id="accountTeamID" name="accountTeamID" required>
+
+				<label for="accountRole">Account Role:</label>
+				<select class="form-control" id="accountRole" name="accountRole" pattern="[0-4]{1}" placeholder="" required>
+				<!-- these are hard coded, but you can add code to make this dynamic -->
+					<option value="">&nbsp;</option>
+					<option value="Developer">Developer</option>
+					<option value="Scrum Master">Scrum Master</option>
+					<option value="Project Leader">Project Leader</option>
+				</select>
+
+            </fieldset>
+
+            <!-- Create 'Add Person' and 'Cancel' buttons -->
+			<input type="submit" value="Add Account" name="addAccountSubmit" class="btn btn-primary" style="margin:.5rem;">
+        </form>
+
+	</div><!--insert-->
 </div>
 {% endblock %}

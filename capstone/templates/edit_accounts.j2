@@ -1,0 +1,76 @@
+<html>
+
+<head>
+	<title>Edit Account</title>
+    <link href="style.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+    <div>
+        <table border="1" cellpadding="5"> 
+            <caption> Editing User: </caption>
+            <!-- Access data tuple passed from app.py -->
+            {% if data %}
+                <thead>
+                    <tr>
+                        <!-- Iterate through each key in the first entry to get the column name -->
+                        {% for key in data[0].keys() %}
+
+                        <!-- Create a <th> tag with the key inside of it, this will be our header row -->
+                        <th scope="col" data-field="{{ key }}" data-filter-control="input">{{ key }}</th>
+                        
+                        <!-- End of this for loop -->
+                        {% endfor %} 
+                    </tr>
+
+                <tbody>
+                    <!-- Now, iterate through every item in data -->
+                    {% for item in data %}
+                    <tr>
+                        <!-- Then iterate through every key in the current item dictionary -->
+                        {% for key in item.keys() %}
+                        
+                        <!-- Create a <td> element with the value of that key in it -->
+                        <td>{{item[key]}}</td> {% endfor %} 
+                    </tr> 
+                    {% endfor %} 
+            {% endif %} 
+        </table>
+
+    <div id="edit">
+            <!-- form to edit data in bsg_people-->
+            <form id="editAccount" action="/edit_accounts/{{data[0].id}}" method="post">
+                <legend><strong>Edit Person</strong></legend>
+                <fieldset>
+                    <!-- We can preset form inputs to match attributes currently stored for 'id' of person to be updated via value= and accessing our passed data tuple -->
+                    <!-- Create hidden form input to store the passed 'id' of the person we are editing so we can access it easily in our 'POST' method in our app.py -->
+                    <input type="hidden" value="{{data[0].accountID}}" class="form-control" id="accountID" name="accountID" required>
+
+                    <label for="accountUsername">Username:</label>
+                    <input type="text" class="form-control" id="accountUsername" name="accountUsername" pattern="[A-Za-z]{1,}" placeholder="{{data[0].accountUsername}}" required>
+
+                    <label for="accountID">First name:</label>
+                    <input type="text" class="form-control" id="accountFirstName" name="accountFirstName" pattern="[A-Za-z]{1,}" placeholder="{{data[0].accountFirstName}}" required>
+                    
+                    <label for="accountFirstName">Last name:</label>
+                    <input type="text" class="form-control" id="accountLastName" name="accountLastName" pattern="[A-Za-z0-9]{1,}" placeholder="{{data[0].accountLastName}}" required>
+                    
+                    <label for="accountLastName">Password:</label>
+                    <input type="text" class="form-control" id="accountPassword" name="accountPassword" pattern="[A-Za-z0-9]{1,}" placeholder="{{data[0].accountPassword}}" required>
+                    
+                    <label for="accountPassword">Team ID:</label>
+                    <input type="number" class="form-control" id="accountTeamID" name="accountTeamID" pattern="[A-Za-z0-9]{1,}" placeholder="{{data[0].accountTeamID}}" required>
+                    
+                    <label for="accountRole">Account Role:</label>
+                    <select class="form-control" id="accountRole" name="accountRole" pattern="[0-4]{1}" placeholder="" required> 
+                        <option value="">&nbsp;</option>
+                        <option value="Developer">Developer</option>
+                        <option value="Scrum Master">Scrum Master</option>
+                        <option value="Project Leader">Project Leader</option>
+                    </select>
+                
+                </fieldset>
+                <button type="submit" formaction="{{ url_for('update_account') }}" formmethod="post" name="update_account" value="Update Account">Update</button>
+                <a href='/accounts'><input class="btn" type="button" value="cancel"></a>
+            </form>
+</html>
