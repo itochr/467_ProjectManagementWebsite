@@ -95,6 +95,7 @@ projectID INT NOT NULL AUTO_INCREMENT,
 projectName VARCHAR(50) NOT NULL,
 projectStart DATE NOT NULL,
 projectEnd DATE NOT NULL,
+projectStatus VARCHAR(50) NOT NULL,
 PRIMARY KEY (projectID)
 );
 
