@@ -95,7 +95,8 @@ projectID INT NOT NULL AUTO_INCREMENT,
 projectName VARCHAR(50) NOT NULL,
 projectStart DATE NOT NULL,
 projectEnd DATE NOT NULL,
-projectOwner VARCHAR(50),
+projectOwner VARCHAR(50) NOT NULL,
+projectStatus VARCHAR(50) NOT NULL,
 PRIMARY KEY (projectID),
 -- FOREIGN KEY (projectOwner) REFERENCES Accounts(accountID)
 FOREIGN KEY (projectOwner) REFERENCES Accounts(accountTeam)

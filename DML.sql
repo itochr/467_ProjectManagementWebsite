@@ -47,6 +47,7 @@ WHERE AccountTeams.accountTeamName = :oldTeamNameInput;
 
 
 
+
 -- Sprints table CRUD operations--------------------------------------------------------------------------------------
 SELECT Sprints.sprintID, Sprints.sprintProject, Sprints.sprintStart, Sprints.sprintEnd
 FROM Sprints;
@@ -63,17 +64,18 @@ DELETE FROM Sprints WHERE Sprints.sprintID = :sprintInput;
 
 
 -- Projects table CRUD operations------------------------------------------------------------------------------
-SELECT Projects.projectID, Projects.projectName, Projects.projectStart, Projects.projectEnd
+SELECT Projects.projectID, Projects.projectName, Projects.projectStart, Projects.projectEnd, Projects.projectStatus
 FROM Projects;
 
-INSERT INTO Projects (projectName, projectStart, projectEnd)
-VALUES (:projectStart, :projectEnd);
+INSERT INTO Projects (projectName, projectStart, projectEnd, projectStatus)
+VALUES (:projectName, :projectStart, :projectEnd, :projectStatus);
 
--- user enters ID of project they want to edit, then they can update start and end dates
+-- user enters ID of project they want to edit, then they can update start/end date and status
 UPDATE Projects 
-SET projectStart = :projectStartInput, projectEnd = :projectEndInput 
+SET projectStart = :projectStartInput, projectEnd = :projectEndInput, projectStatus = :projectStatusInput 
 WHERE projectID = :projectIDInput;
-DELETE FROM Projects WHERE Projects.projectID = :projectIDInput
+
+DELETE FROM Projects WHERE Projects.projectID = :projectIDInput;
 
 
 -- Statuses table CRUD operations----------------------------------------------------------------------------------
