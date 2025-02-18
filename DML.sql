@@ -37,16 +37,19 @@ SET AccountTeams.accountTeamName = :newTeamNameInput
 WHERE AccountTeams.accountTeamName = :oldTeamNameInput;
 
 
--- AccountTasks table CRUD operations (M:M intersection table)--------------------------------------------------------
-
-
-
-
-
 -- Tasks table CRUD operations-------------------------------------------------------------------------------------
+SELECT * FROM Tasks JOIN Accounts ON Tasks.taskAssignee = Accounts.accountID
+WHERE Tasks.taskAssignee = :assigneeInput;
 
+-- enters username to retrieve accountID from Accounts
+INSERT INTO Tasks (taskAssignee, taskAssigned, taskDue, taskStatus, taskSprint, taskSubject)
+VALUES (SELECT accountID FROM Accounts WHERE :assigneeInput = Accounts.accountUsername), :taskAssigned, :taskDue, :taskStatus, :taskSprint, :taskSubject;
 
+UPDATE Tasks 
+SET Tasks.taskAssignee= :AssigneeInput, Tasks.taskAssigned = :AssignedInput, Tasks.taskDue = :DueInput, Tasks.taskStatus = :statusInput, Tasks.taskSprint = :sprintInput, Tasks.taskSubject = :subjectInput
+WHERE Tasks.taskID = :taskIDInput; 
 
+DELETE FROM Tasks WHERE Tasks.taskID = :taskIDInput;
 
 -- Sprints table CRUD operations--------------------------------------------------------------------------------------
 SELECT Sprints.sprintID, Sprints.sprintProject, Sprints.sprintStart, Sprints.sprintEnd
