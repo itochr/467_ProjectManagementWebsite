@@ -37,15 +37,19 @@ SET AccountTeams.accountTeamName = :newTeamNameInput
 WHERE AccountTeams.accountTeamName = :oldTeamNameInput;
 
 
--- AccountTasks table CRUD operations (M:M intersection table)--------------------------------------------------------
-
-
-
-
-
 -- Tasks table CRUD operations-------------------------------------------------------------------------------------
+SELECT * FROM Tasks JOIN Accounts ON Tasks.taskAssignee = Accounts.accountID
+WHERE Tasks.taskAssignee = :assigneeInput;
 
+-- enters username to retrieve accountID from Accounts
+INSERT INTO Tasks (taskAssignee, taskAssigned, taskDue, taskStatus, taskSprint, taskSubject)
+VALUES (SELECT accountID FROM Accounts WHERE :assigneeInput = Accounts.accountUsername), :taskAssigned, :taskDue, :taskStatus, :taskSprint, :taskSubject;
 
+UPDATE Tasks 
+SET Tasks.taskAssignee= :AssigneeInput, Tasks.taskAssigned = :AssignedInput, Tasks.taskDue = :DueInput, Tasks.taskStatus = :statusInput, Tasks.taskSprint = :sprintInput, Tasks.taskSubject = :subjectInput
+WHERE Tasks.taskID = :taskIDInput; 
+
+DELETE FROM Tasks WHERE Tasks.taskID = :taskIDInput;
 
 -- Sprints table CRUD operations--------------------------------------------------------------------------------------
 SELECT Sprints.sprintID, Sprints.sprintProject, Sprints.sprintStart, Sprints.sprintEnd
@@ -63,17 +67,18 @@ DELETE FROM Sprints WHERE Sprints.sprintID = :sprintInput;
 
 
 -- Projects table CRUD operations------------------------------------------------------------------------------
-SELECT Projects.projectID, Projects.projectName, Projects.projectStart, Projects.projectEnd
+SELECT Projects.projectID, Projects.projectName, Projects.projectStart, Projects.projectEnd, Projects.projectStatus
 FROM Projects;
 
-INSERT INTO Projects (projectName, projectStart, projectEnd)
-VALUES (:projectStart, :projectEnd);
+INSERT INTO Projects (projectName, projectStart, projectEnd, projectStatus)
+VALUES (:projectName, :projectStart, :projectEnd, :projectStatus);
 
--- user enters ID of project they want to edit, then they can update start and end dates
+-- user enters ID of project they want to edit, then they can update start/end date and status
 UPDATE Projects 
-SET projectStart = :projectStartInput, projectEnd = :projectEndInput 
+SET projectStart = :projectStartInput, projectEnd = :projectEndInput, projectStatus = :projectStatusInput 
 WHERE projectID = :projectIDInput;
-DELETE FROM Projects WHERE Projects.projectID = :projectIDInput
+
+DELETE FROM Projects WHERE Projects.projectID = :projectIDInput;
 
 
 -- Statuses table CRUD operations----------------------------------------------------------------------------------

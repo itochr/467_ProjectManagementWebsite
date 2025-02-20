@@ -32,6 +32,7 @@ def login():
 			session['accountTeamID'] = user['accountTeamID']
 			session['accountRole'] = user['accountRole']
 			screenMsg = 'Logged in successfully !'
+
 			return redirect(url_for('main'))
 		else:
 			screenMsg = 'Please enter correct username / password!'
@@ -48,6 +49,7 @@ def logout():
 	session.pop('accountTeamID', None)
 	session.pop('accountRole', None)
 	session.pop('accountPassword', None)
+
 	return redirect(url_for('login'))
 
 @app.route('/main', methods=['GET', 'POST'])
@@ -64,6 +66,9 @@ def tasks():
 		queryUserTasks = """
 		SELECT * FROM Tasks t
 		JOIN Accounts a ON t.taskAssignee=a.accountID
+		JOIN Statuses stat on t.taskStatus=stat.statusID
+		JOIN Sprints sp on t.taskSprint=sp.sprintID
+		JOIN Projects p on sp.sprintProject=p.projectID
 		WHERE t.taskAssignee = %s
 		"""
 
@@ -72,22 +77,30 @@ def tasks():
 		SELECT * FROM Tasks t
 		JOIN Accounts a ON t.taskAssignee=a.accountID
 		JOIN AccountTeams at ON  a.accountTeamID=at.accountTeamID
+		JOIN Statuses stat on t.taskStatus=stat.statusID
+		JOIN Sprints sp on t.taskSprint=sp.sprintID
+		JOIN Projects p on sp.sprintProject=p.projectID
 		WHERE a.accountTeamID = %s
 		"""
 
+		queryStatuses = 'SELECT * FROM Statuses'
 		teamInputs = (session['accountTeamID'])
 		cursor.execute(queryUserTasks, userInputs)
 		userTasksFetch = cursor.fetchall()
 		cursor.execute(queryTeamTasks, teamInputs)
 		teamTasksFetch = cursor.fetchall()
+		cursor.execute(queryStatuses)
+		statusFetch = cursor.fetchall()
 		# cursor.execute(query)  									# [Vish]: Uncomment to use without parameters
 
 		if userTasksFetch and teamTasksFetch:
 			# screenMsg = json.dumps(userTasksFetch)				# [Vish]: Uncomment to get json of query
 			screenMsg = f"Printing Tasks for account {session['accountUsername']}"
-			return render_template('tasks.j2', screenMsg = screenMsg, accountUsername = session['accountUsername'], userTasks = userTasksFetch, teamTasks = teamTasksFetch)
+			# cursor.close()
+			return render_template('tasks.j2', screenMsg = screenMsg, accountUsername = session['accountUsername'], userTasks = userTasksFetch, teamTasks = teamTasksFetch, statuses = statusFetch)
 		else:
 			screenMsg = 'Please enter correct username and password'
+
 			return render_template('login.j2', screenMsg = screenMsg)
 
 	if request.method == "POST":
@@ -102,7 +115,6 @@ def tasks():
 			query = "INSERT INTO Tasks (taskAssignee, taskAssigned, taskDue, taskStatus, taskSprint, taskSubject) VALUES (%s, %s,%s,%s, %s, %s)"
 			cursor.execute(query, (tAssignee, tAssignedDate, tDueDate, tStatus, tSprint, tSubject ))
 			cursor.connection.commit()
-
 			# redirect back to people page
 			return redirect("/tasks")
 	else:
@@ -131,6 +143,12 @@ def projects():
 		    VALUES (%s, %s, %s, %s, %s)
 		    """
 			cursor.execute(insert_query, (projectName, projectStart, projectEnd, accountTeamID, projectStatus))
+# =======
+# 			INSERT INTO Projects (projectName, projectStart, projectEnd, accountTeamID)
+# 			VALUES (%s, %s, %s, %s)
+# 			"""
+# 			cursor.execute(insert_query, (projectName, projectStart, projectEnd, accountTeamID))
+# >>>>>>> vish-dev
 			db_connection.commit()
 
 		elif 'editProject' in request.form:
@@ -140,8 +158,8 @@ def projects():
 			projectEnd = request.form['projectEnd']
 
 			update_query = """
-					UPDATE Projects 
-					SET projectName = %s, projectStart = %s, projectEnd = %s 
+					UPDATE Projects
+					SET projectName = %s, projectStart = %s, projectEnd = %s
 					WHERE projectID = %s AND accountTeamID = %s
 					"""
 			cursor.execute(update_query, (projectName, projectStart, projectEnd, projectID, session['accountTeamID']))
@@ -181,8 +199,10 @@ def projects():
 	if projects:
 		# screenMsg = json.dumps(projects)				# [Vish]: Uncomment to get json of query
 		screenMsg = f"Printing Projects for accountTeamID {session['accountTeamID']}"
+
 		return render_template('projects.j2', screenMsg = screenMsg, accountUsername = session['accountUsername'], projects = projects)
 	else:
+
 		screenMsg = 'Please enter correct username and password'
 		return render_template('login.j2', screenMsg = screenMsg)
 
@@ -201,7 +221,7 @@ def accountCreation():
 			accountPassword = request.form["accountPassword"]
 			accountTeamID = request.form["accountTeamID"]
 			accountRole = request.form["accountRole"]
-			
+
 			query = "INSERT INTO Accounts (accountUsername, accountFirstName, accountLastName, accountPassword, accountTeamID, accountRole) VALUES (%s, %s, %s, %s, %s, %s)"
 			cursor.execute(query, (accountUsername, accountFirstName, accountLastName, accountPassword, accountTeamID, accountRole ))
 			cursor.connection.commit()
@@ -226,12 +246,13 @@ def accountAdmin():
 			accountPassword = request.form["accountPassword"]
 			accountTeamID = request.form["accountTeamID"]
 			accountRole = request.form["accountRole"]
-			
+
 			query = "INSERT INTO Accounts (accountUsername, accountFirstName, accountLastName, accountPassword, accountTeamID, accountRole) VALUES (%s, %s, %s, %s, %s, %s)"
 			cursor.execute(query, (accountUsername, accountFirstName, accountLastName, accountPassword, accountTeamID, accountRole ))
 			cursor.connection.commit()
 
 			# redirect back to people page
+
 			return redirect("/accounts")
 
 	return render_template("accounts.j2", data = results)
