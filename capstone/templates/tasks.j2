@@ -7,26 +7,49 @@
 {% block body %}
 
 <div class="content">
+
+<div id ="hello">
+	{% if accountUsername is defined %}
 	<h1><span class="username">{{accountUsername}}</span>Tasks</h1>
+	{% else %}
+		Welcome <span class="accountName"> Administrator </span> to Opinionated Project Management.
+		{% endif %}
 
 	{% if screenMsg is defined %}
 			<div class="announcement">{{ screenMsg }}</div>
 	{% endif %}
+</div>
 
-	<div class="tasks-grid">
+<div class="tasks-grid">
+    <a class="task-card"><div class="task-content">Task 1</div></a>
+    <a class="task-card"><div class="task-content">Task 2</div></a>
+    <a class="task-card"><div class="task-content">Task 3</div></a>
+    <a class="task-card">
+      <div class="task-content">
+        <button type="submit" class="task-button">Create New Task</button>
+      </div>
+    </a>
+{#  #}
+  {% for userTask in userTasks | unique(attribute="taskID") %}
+  <a class="task-card"><div class="task-content">{{userTask.taskSubject}}</div></a>
+  {% endfor %}
+{#  #}
 
-		<a class="task-card"><div class="task-content">Task 1</div></a>
+  {% for userTask in userTasks %}
+  <div class="task-card" onclick='showProjectDetails({{ userTask|tojson|safe }})'>
+    <div class="task-content">
+      <h3>{{ userTask.taskSubject }}</h3>
+      <p>Status: {{ userTask.statusName }}</p>
+      <p>Due: {{ userTask.taskDue }}</p>
+    </div>
+  </div>
+  {% endfor %}
+  </div>
 
-		<a class="task-card"><div class="task-content">Task 2</div></a>
-
-		<a class="task-card"><div class="task-content">Task 3</div></a>
-
-		<a class="task-card">
-			<div class="task-content">
-				<button type="submit" class="task-button">Create New Task</button>
-			</div>
-		</a>
-	</div>
+{% if userTasks %}
+{% if teamTasks %}
+{% if statuses %}
+<div id="tasks-as-tables">
 <h2>User Tasks as a table</h2>
 		<div class="instruction">
 			<table>
@@ -66,39 +89,46 @@
 					{% endfor %}
 			</table>
 		</div>
-
-
-	<div id="addTaskDiv">
-		<!-- form to INSERT new data into bsg_people-->
-		<form id="addTask" action="/tasks" method="post">
-			<legend><strong>Add Task</strong></legend>
-			<fieldset>
-				<label for="assignee">Assignee</label>
-				<input type="number" id="tAssignee" name="tAssignee" required>
-
-				<label for="assigned">Assigned Date</label>
-				<input type="date" id="tAssignedDate" name="tAssignedDate" required>
-
-
-				<label for="due">Due Date</label>
-				<input type="date" class="" id="tDueDate" name="tDueDate" required>
-
-				<label for="status">Status</label>
-				<input type="number" class="" id="tStatus" name="tStatus" required>
-
-				<label for="sprint">Sprint</label>
-				<input type="number" class="" id="tSprint" name="tSprint" required>
-
-				<label for="subject">Subject</label>
-				<input type="text" class="" id="tSubject" name="tSubject" pattern="[A-Za-z]{1,}" placeholder="" required>
-
-
-            </fieldset>
-
-            <!-- Create 'Add Person' and 'Cancel' buttons -->
-			<input type="submit" value="Add Task" name="addTaskSubmit" class="btn btn-primary" style="margin:.5rem;">
-        </form>
-	</div><!--insert-->
-
 </div>
+
+<div id="addTaskDiv">
+	<!-- form to INSERT new data into Tasks-->
+	<form id="addTask" action="/tasks" method="post">
+		<legend><strong>Add Task</strong></legend>
+		<fieldset>
+			<select name="tAssignee" id="tAssignee">
+				<option value="-1">Choose Assignee</option>
+				{% for teamTask in teamTasks| unique(attribute="accountID") | sort(attribute="accountFirstName") %}
+				<option value="{{teamTask.accountID}}">{{teamTask.accountFirstName}} {{teamTask.accountLastName}}</option>
+				{% endfor %}
+			</select>
+			<label for="assigned">Assigned Date</label>
+			<input type="date" id="tAssignedDate" name="tAssignedDate" required>
+			<label for="due">Due Date</label>
+			<input type="date" class="" id="tDueDate" name="tDueDate" required>
+			<select name="tStatus" id="tStatus">
+				<option value="-1">Choose Status</option>
+				{% for status in statuses|  sort(attribute="statusName")%}
+				<option value="{{status.statusID}}">{{status.statusName}}</option>
+				{% endfor %}
+			</select>
+			<select name="tSprint" id="tSprint">
+				<option value="-1">Choose Sprint</option>
+				{% for teamTask in teamTasks| unique(attribute="taskSprint") | sort(attribute="taskSprint") %}
+				<option value="{{teamTask.taskSprint}}">{{teamTask.taskSprint}} : {{teamTask.sprintStart}} - {{teamTask.sprintEnd}}</option>
+				{% endfor %}
+			</select>
+			<label for="subject">Subject</label>
+			<input type="text" class="" id="tSubject" name="tSubject" placeholder="" required>
+		</fieldset>
+		<!-- Create 'Add Task' button -->
+		<input type="submit" value="Add Task" name="addTaskSubmit" class="btn btn-primary" style="margin:.5rem;">
+	</form>
+</div>
+
+{% endif %}
+{% endif %}
+{% endif %}
+</div>
+
 {% endblock %}
