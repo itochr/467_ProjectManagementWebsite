@@ -123,13 +123,14 @@ def projects():
 			projectName = request.form['projectName']
 			projectStart = request.form['projectStart']
 			projectEnd = request.form['projectEnd']
+			projectStatus = request.form['projectStatus']
 			accountTeamID = session['accountTeamID']
 
 			insert_query = """
-			INSERT INTO Projects (projectName, projectStart, projectEnd, accountTeamID) 
-			VALUES (%s, %s, %s, %s)
-			"""
-			cursor.execute(insert_query, (projectName, projectStart, projectEnd, accountTeamID))
+		    INSERT INTO Projects (projectName, projectStart, projectEnd, accountTeamID, projectStatus) 
+		    VALUES (%s, %s, %s, %s, %s)
+		    """
+			cursor.execute(insert_query, (projectName, projectStart, projectEnd, accountTeamID, projectStatus))
 			db_connection.commit()
 
 		elif 'editProject' in request.form:
@@ -150,6 +151,18 @@ def projects():
 			projectID = request.form['projectID']
 			delete_query = "DELETE FROM Projects WHERE projectID = %s AND accountTeamID = %s"
 			cursor.execute(delete_query, (projectID, session['accountTeamID']))
+			db_connection.commit()
+
+		elif 'updateStatus' in request.form:
+			projectID = request.form['projectID']
+			newStatus = request.form['projectStatus']
+
+			update_query = """
+		    UPDATE Projects 
+		    SET projectStatus = %s 
+		    WHERE projectID = %s AND accountTeamID = %s
+		    """
+			cursor.execute(update_query, (newStatus, projectID, session['accountTeamID']))
 			db_connection.commit()
 
 		return redirect(url_for('projects'))

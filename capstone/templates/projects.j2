@@ -13,29 +13,51 @@
           <div class="announcement">{{ screenMsg }}</div>
     {% endif %}
 
-    <div class="projects-grid">
-        {% for project in projects %}
-        <div class="project-card" onclick='showProjectDetails({{ project|tojson|safe }})'>
-            <div class="project-content">
-                <h3>{{ project.projectName }}</h3>
-                <p>Status: {{ project.projectStatus }}</p>
-                <p>Due: {{ project.projectEnd }}</p>
+    <!-- kanban board with drag & drop -->
+    <div class="kanban-board">
+        <div class="status-column" data-status="Planning" ondrop="drop(event)" ondragover="allowDrop(event)">
+            <h2>Planning</h2>
+            <div class="column-content">
+                {% for project in projects %}
+                <div class="project-card"
+                     draggable="true"
+                     ondragstart="drag(event)"
+                     onclick='showProjectDetails({{ project|tojson|safe }})'
+                     id="project-{{ project.projectID }}">
+                    <div class="project-content">
+                        <h3>{{ project.projectName }}</h3>
+                        <p>Due: {{ project.projectEnd }}</p>
+                    </div>
+                </div>
+                {% endfor %}
             </div>
         </div>
-        {% endfor %}
 
-        <!-- Add New Project Card -->
-        <div class="project-card" onclick="openCreateModal()">
+        <div class="status-column" data-status="In Progress" ondrop="drop(event)" ondragover="allowDrop(event)">
+            <h2>In Progress</h2>
+            <div class="column-content">
+            </div>
+        </div>
+
+        <div class="status-column" data-status="Completed" ondrop="drop(event)" ondragover="allowDrop(event)">
+            <h2>Completed</h2>
+            <div class="column-content">
+            </div>
+        </div>
+
+        <!-- Keep your original Add New Project card -->
+        <div class="project-card add-new-card" onclick="openCreateModal()">
             <div class="project-content">
                 <div class="add-project-placeholder">
                     <h3>Create New Project</h3>
+                    <span class="plus-symbol">+</span>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Create -->
+<!-- Create Project Modal -->
 <div id="createProjectModal" class="modal">
     <div class="modal-content">
         <span class="close" onclick="closeModal('createProjectModal')">&times;</span>
@@ -44,6 +66,14 @@
             <div class="form-group">
                 <label for="projectName">Project Name:</label>
                 <input type="text" name="projectName" required>
+            </div>
+            <div class="form-group">
+                <label for="projectStatus">Status:</label>
+                <select name="projectStatus" required>
+                    <option value="Backlog">Backlog</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Completed">Completed</option>
+                </select>
             </div>
             <div class="form-group">
                 <label for="projectStart">Start Date:</label>
@@ -61,7 +91,7 @@
     </div>
 </div>
 
-<!-- Details -->
+<!-- Project Details Modal -->
 <div id="projectDetailsModal" class="modal">
     <div class="modal-content">
         <span class="close" onclick="closeModal('projectDetailsModal')">&times;</span>
@@ -119,6 +149,28 @@ function confirmDelete() {
         const projectID = document.getElementById('projectID').value;
         document.getElementById('deleteProjectID').value = projectID;
         document.getElementById('deleteForm').submit();
+    }
+}
+
+// drag and drop functions
+function drag(event) {
+    event.dataTransfer.setData("text", event.target.id);
+}
+
+function allowDrop(event) {
+    event.preventDefault();
+}
+
+function drop(event) {
+    event.preventDefault();
+    const projectId = event.dataTransfer.getData("text");
+    const projectCard = document.getElementById(projectId);
+
+    // Find the column-content div to append to
+    const column = event.target.closest('.status-column');
+    if (column) {
+        const columnContent = column.querySelector('.column-content');
+        columnContent.appendChild(projectCard);
     }
 }
 
