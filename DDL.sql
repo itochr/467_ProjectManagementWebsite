@@ -96,6 +96,7 @@ projectName VARCHAR(50) NOT NULL,
 projectStart DATE NOT NULL,
 projectEnd DATE NOT NULL,
 accountTeamID INT,
+projectStatus VARCHAR(50) NOT NULL,
 PRIMARY KEY (projectID),
 FOREIGN KEY (accountTeamID) REFERENCES AccountTeams(accountTeamID)
 	ON UPDATE CASCADE
