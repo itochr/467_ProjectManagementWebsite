@@ -38,7 +38,7 @@ accountPassword VARCHAR(50) NOT NULL,
 accountTeamID INT NOT NULL,
 accountRole VARCHAR(50),
 -- accountTasksAssigned VARCHAR(50),
-PRIMARY KEY (accountID), 
+PRIMARY KEY (accountID),
 FOREIGN KEY (accountTeamID) REFERENCES AccountTeams(accountTeamID)
     ON UPDATE CASCADE
     ON DELETE CASCADE
@@ -96,6 +96,7 @@ projectName VARCHAR(50) NOT NULL,
 projectStart DATE NOT NULL,
 projectEnd DATE NOT NULL,
 accountTeamID INT,
+projectStatus VARCHAR(50) NOT NULL,
 PRIMARY KEY (projectID),
 FOREIGN KEY (accountTeamID) REFERENCES AccountTeams(accountTeamID)
 	ON UPDATE CASCADE

@@ -87,6 +87,25 @@ body {
     font-family: Arial, sans-serif;
 }
 
+h1 .username {
+    text-decoration: underline;
+}
+
+.parent {
+    float: left;
+    margin-left: 5px;
+    height: 200px;
+    width: 200px;
+    border: 3px solid black
+  }
+
+.child {
+    height: 50px;
+    width: 50px;
+    background-color: khaki;
+    border: 3px solid red;
+  }
+
 * {
     box-sizing: border-box;
 }
