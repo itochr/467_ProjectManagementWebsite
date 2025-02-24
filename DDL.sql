@@ -14,7 +14,7 @@ taskAssigned DATE NOT NULL,
 taskDue DATE NOT NULL,
 taskStatus INT NOT NULL,
 taskSprint INT NOT NULL,
-taskType VARCHAR(50),
+taskSubject VARCHAR(50),    // used to be taskType
 PRIMARY KEY (taskID),
 FOREIGN KEY (taskAssignee) REFERENCES Accounts(accountID)
 	ON UPDATE CASCADE
@@ -95,11 +95,9 @@ projectID INT NOT NULL AUTO_INCREMENT,
 projectName VARCHAR(50) NOT NULL,
 projectStart DATE NOT NULL,
 projectEnd DATE NOT NULL,
-projectOwner VARCHAR(50) NOT NULL,
-projectStatus VARCHAR(50) NOT NULL,
+accountTeamID INT,
 PRIMARY KEY (projectID),
--- FOREIGN KEY (projectOwner) REFERENCES Accounts(accountID)
-FOREIGN KEY (projectOwner) REFERENCES Accounts(accountTeam)
+FOREIGN KEY (accountTeamID) REFERENCES AccountTeams(accountTeamID)
 	ON UPDATE CASCADE
     ON DELETE CASCADE
 );
