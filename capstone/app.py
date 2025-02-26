@@ -211,8 +211,7 @@ def accountCreation():
 	query = "SELECT * FROM Accounts;"
 	cursor = db.execute_query(db_connection=db_connection, query=query)
 	results = cursor.fetchall()
-	# results = json.dumps(cursor.fetchall())
-	# return results
+
 	if request.method == "POST":
 		if request.form.get("addAccountSubmit"):
 			accountUsername = request.form["accountUsername"]
@@ -236,8 +235,7 @@ def accountAdmin():
 	query = "SELECT * FROM Accounts;"
 	cursor = db.execute_query(db_connection=db_connection, query=query)
 	results = cursor.fetchall()
-	# results = json.dumps(cursor.fetchall())
-	# return results
+
 	if request.method == "POST":
 		if request.form.get("addAccountSubmit"):
 			accountUsername = request.form["accountUsername"]
@@ -259,19 +257,17 @@ def accountAdmin():
 
 @app.route("/delete_account/<int:id>")
 def delete_account(id):
-	print("Delete Account Reached")
-	# mySQL query to delete the person with our passed id
+	# mySQL query to delete the account with our passed id
 	query = "DELETE FROM Accounts WHERE accountID = '%s';"
 	cursor = db.execute_query(db_connection=db_connection, query=query, query_params=(id))
 	results = cursor.fetchall()
 
 	return redirect("/accounts")
 
-# route for edit functionality, updating the attributes of a person in bsg_people
+# route for edit functionality, updating the attributes of the account
 # similar to our delete route, we want to the pass the 'id' value of that person on button click (see HTML) via the route
 @app.route("/edit_accounts/<int:accountID>", methods=["POST", "GET"])
 def edit_accounts(accountID):
-	print("here")
 	if request.method == "GET":
 		query = "SELECT * FROM Accounts WHERE accountID = %s" % (accountID)
 		cursor = db.execute_query(db_connection=db_connection, query=query)
@@ -296,7 +292,7 @@ def update_account():
 	cursor = db.execute_query(db_connection=db_connection, query=query, query_params=(accountUsername, accountFirstName, accountLastName, accountPassword, accountTeamID, accountRole, accountID ))
 	cursor.connection.commit()
 
-	# redirect back to people page
+	# redirect back to accounts page
 	return redirect("/accounts")
 
 
