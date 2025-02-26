@@ -30,7 +30,7 @@
 		</div
 
 		<div id="addAccount">
-		<!-- form to INSERT new data into bsg_people-->
+		<!-- form to INSERT new data into accounts-->
 		<form id="addAccount" action="/accounts" method="post">
 			<legend><strong>Add Account</strong></legend>
 			<fieldset>
@@ -46,6 +46,7 @@
 				<label for="accountPassword">Password: </label>
 				<input type="text" class="" id="accountPassword" name="accountPassword" required>
 
+				<!-- Admin can create new accountTeamID. User will not be able when creating account. -->
 				<label for="accountTeamID">Team ID</label>
 				<input type="number" class="" id="accountTeamID" name="accountTeamID" required>
 
@@ -60,7 +61,7 @@
 
             </fieldset>
 
-            <!-- Create 'Add Person' and 'Cancel' buttons -->
+            <!-- Create 'Add accounts' -->
 			<input type="submit" value="Add Account" name="addAccountSubmit" class="btn btn-primary" style="margin:.5rem;">
         </form>
 
