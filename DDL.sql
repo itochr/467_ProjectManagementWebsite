@@ -119,7 +119,7 @@ INSERT INTO Accounts (accountUsername, accountFirstName, accountLastName, accoun
 
 -- INSERT SAMPLE DATA INTO STATUSES
 INSERT INTO Statuses (statusName) VALUES
-('Backlog'), ('In progress'), ('Completed');
+('Backlog'), ('In Progress'), ('Completed');
 
 -- INSERT SAMPLE DATA INTO PROJECTS
 INSERT INTO Projects (projectStart, projectEnd, projectOwner) VALUES
