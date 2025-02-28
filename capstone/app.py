@@ -97,7 +97,7 @@ def tasks():
 			# screenMsg = json.dumps(userTasksFetch)				# [Vish]: Uncomment to get json of query
 			screenMsg = f"Printing Tasks for account {session['accountUsername']}"
 			# cursor.close()
-			return render_template('tasks.j2', screenMsg = screenMsg, accountUsername = session['accountUsername'], userTasks = userTasksFetch, teamTasks = teamTasksFetch, statuses = statusFetch)
+			return render_template('tasks.j2', screenMsg = screenMsg, accountUsername = session['accountUsername'], accountFirstName = session['accountFirstName'], accountLastName = session['accountLastName'], userTasks = userTasksFetch, teamTasks = teamTasksFetch, statuses = statusFetch)
 		else:
 			screenMsg = 'Please enter correct username and password'
 

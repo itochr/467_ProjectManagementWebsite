@@ -10,15 +10,16 @@
 <div class="content">
 
 <div id ="hello">
-	{% if accountUsername is defined %}
-	<h1><span class="username">{{accountUsername}}</span>Tasks</h1>
-	{% else %}
+	{# {% if accountUsername is defined %} #}
+	{# <h1><span class="username">{{accountUsername}}</span> Tasks</h1> #}
+	<h1><span class="username">{{accountFirstName}} {{accountLastName}}'s</span> Tasks</h1>
+	{# {% else %}
 		Welcome <span class="accountName"> Administrator </span> to Opinionated Project Management.
 		{% endif %}
 
 	{% if screenMsg is defined %}
-			<div class="announcement">{{ screenMsg }}</div>
-	{% endif %}
+			<div class="announcement">{{ screenMsg }}</div> #}
+	{# {% endif %} #}
 </div>
 
 <div class="kanban-board">
@@ -46,6 +47,44 @@
         </div>
 {% endfor %}
 </div>
+
+{# TEAM TASKS #}
+	{% if teamTasks[0].accountTeamID is defined %}
+	<h1><span class="username">{{teamTasks[0].accountTeamName}}</span> Tasks</h1>
+
+
+<div class="kanban-board">
+{% for status in statuses %}
+<div class="status-column" data-status-id="{{status.statusID}}" data-status="{{status.statusName}}" ondrop="drop(event)" ondragover="allowDrop(event)">
+
+            <h2>{{status.statusName}}</h2>
+            <div class="column-content">
+			{% for teamTask in teamTasks %}
+			{% if teamTask.taskStatus == status.statusID %}
+                <div class="project-card"
+                     draggable="true"
+                     ondragstart="drag(event)"
+
+                     id="{{ teamTask.taskID }}">
+                    <div class="project-content">
+                        <h3>{{ teamTask.taskSubject }}</h3>
+						<p>Status: {{ teamTask.statusName }}</p>
+						<p>Start: {{ teamTask.taskAssigned }}</p>
+                        <p>Due: {{ teamTask.taskDue }}</p>
+						<p>Assignee: {{ teamTask.accountFirstName }} {{ teamTask.accountLastName }}</p>
+                    </div>
+                </div>
+				{% endif %}
+                {% endfor %}
+            </div>
+        </div>
+{% endfor %}
+</div>
+
+{% endif %}
+
+
+
 <div class="project-card add-new-card" onclick="openCreateModal()">
             <div class="project-content">
                 <div class="add-project-placeholder">
@@ -56,8 +95,68 @@
         </div>
 
 
+<div id="addTaskDiv" class="modal">
+<div class="modal-content">
+        <span class="close" onclick="closeModal('addTaskDiv')">&times;</span>
+	<!-- form to INSERT new data into Tasks-->
 
+	<form id="addTask" action="/tasks" method="post">
+		<legend><strong>Add Task</strong></legend>
+		<fieldset>
 
+		<div class="form-group">
+			<select name="tAssignee" id="tAssignee">
+				<option value="-1">Choose Assignee</option>
+				{% for teamTask in teamTasks| unique(attribute="accountID") | sort(attribute="accountFirstName") %}
+				<option value="{{teamTask.accountID}}">{{teamTask.accountFirstName}} {{teamTask.accountLastName}}</option>
+				{% endfor %}
+			</select>
+			</div>
+
+			<div class="form-group">
+			<label for="assigned">Assigned Date</label>
+			<input type="date" id="tAssignedDate" name="tAssignedDate" required>
+			</div>
+
+			<div class="form-group">
+			<label for="due">Due Date</label>
+			<input type="date" class="" id="tDueDate" name="tDueDate" required>
+			</div>
+
+			<div class="form-group">
+			<select name="tStatus" id="tStatus">
+				<option value="-1">Choose Status</option>
+				{% for status in statuses|  sort(attribute="statusName")%}
+				<option value="{{status.statusID}}">{{status.statusName}}</option>
+				{% endfor %}
+			</select>
+			</div>
+
+			<div class="form-group">
+			<select name="tSprint" id="tSprint">
+				<option value="-1">Choose Sprint</option>
+				{% for teamTask in teamTasks| unique(attribute="taskSprint") | sort(attribute="taskSprint") %}
+				<option value="{{teamTask.taskSprint}}">{{teamTask.taskSprint}} : {{teamTask.sprintStart}} - {{teamTask.sprintEnd}}</option>
+				{% endfor %}
+			</select>
+			</div>
+
+			<div class="form-group">
+			<label for="subject">Task Subject/Description</label>
+			<input type="text" class="" id="tSubject" name="tSubject" placeholder="" required>
+			</div>
+
+		</fieldset>
+
+		<!-- Create 'Add Task' button -->
+		{# <input type="submit" value="Add Task" name="addTaskSubmit" class="btn btn-primary" style="margin:.5rem;"> #}
+		<div class="form-actions">
+                <button type="submit" name="addTaskSubmit" class="submit-button">Create</button>
+                <button type="button" class="cancel-button" onclick="closeModal('addTaskDiv')">Cancel</button>
+            </div>
+	</form>
+	</div>
+</div>
 
 
 
@@ -77,10 +176,13 @@
   {% endfor %}
   </div> #}
 
+
+<button id="toggleTables" onclick="showHide('tasks-as-tables')">Toggle Tables</button>
+
 {% if userTasks %}
 {% if teamTasks %}
 {% if statuses %}
-<div id="tasks-as-tables">
+<div id="tasks-as-tables" style="display: none;">
 <h2>User Tasks as a table</h2>
 		<div class="instruction">
 			<table>
@@ -122,74 +224,33 @@
 		</div>
 </div>
 
-<div id="addTaskDiv">
-	<!-- form to INSERT new data into Tasks-->
-	<form id="addTask" action="/tasks" method="post">
-		<legend><strong>Add Task</strong></legend>
-		<fieldset>
-			<select name="tAssignee" id="tAssignee">
-				<option value="-1">Choose Assignee</option>
-				{% for teamTask in teamTasks| unique(attribute="accountID") | sort(attribute="accountFirstName") %}
-				<option value="{{teamTask.accountID}}">{{teamTask.accountFirstName}} {{teamTask.accountLastName}}</option>
-				{% endfor %}
-			</select>
-			<label for="assigned">Assigned Date</label>
-			<input type="date" id="tAssignedDate" name="tAssignedDate" required>
-			<label for="due">Due Date</label>
-			<input type="date" class="" id="tDueDate" name="tDueDate" required>
-			<select name="tStatus" id="tStatus">
-				<option value="-1">Choose Status</option>
-				{% for status in statuses|  sort(attribute="statusName")%}
-				<option value="{{status.statusID}}">{{status.statusName}}</option>
-				{% endfor %}
-			</select>
-			<select name="tSprint" id="tSprint">
-				<option value="-1">Choose Sprint</option>
-				{% for teamTask in teamTasks| unique(attribute="taskSprint") | sort(attribute="taskSprint") %}
-				<option value="{{teamTask.taskSprint}}">{{teamTask.taskSprint}} : {{teamTask.sprintStart}} - {{teamTask.sprintEnd}}</option>
-				{% endfor %}
-			</select>
-			<label for="subject">Subject</label>
-			<input type="text" class="" id="tSubject" name="tSubject" placeholder="" required>
-		</fieldset>
-		<!-- Create 'Add Task' button -->
-		<input type="submit" value="Add Task" name="addTaskSubmit" class="btn btn-primary" style="margin:.5rem;">
-	</form>
-</div>
+
 
 {% endif %}
 {% endif %}
 {% endif %}
+
+
+
+<button id="toggleTestSection" onclick="showHide('testDebugSection')">Toggle Test Section</button>
+<div id="testDebugSection" style="display: none;">
+<button id="myButton">Click me</button>
+<button id="hideButton" onclick="showHide(this)">Hide me</button>
+<button id="hideButton2" onclick="showHide2()" style="display: block;">Hide me2</button>
+<button id="hideButton3" onclick="showHide(this)" style="display: block;">Hide me3</button>
+<button id="hideButton4" onclick="showHide()" style="display: block;">Hide me4</button>
+
+<button id="hideButton5" onclick="showHide(this.id)" style="display: block;">Hide me5</button>  {# WORKSS!! #}
+<div class="project-card" onclick="divClick()">Click Me Function Alert Popup</div>
 </div>
+
+
+</div>
+
 
 
 
 <script>
-function openCreateModal() {
-    document.getElementById('createProjectModal').style.display = 'block';
-}
-
-function showProjectDetails(project) {
-    console.log('Project:', project);
-    document.getElementById('projectID').value = project.projectID;
-    document.getElementById('editProjectName').value = project.projectName;
-    document.getElementById('editProjectStart').value = project.projectStart;
-    document.getElementById('editProjectEnd').value = project.projectEnd;
-    document.getElementById('projectDetailsModal').style.display = 'block';
-}
-
-function closeModal(modalId) {
-    document.getElementById(modalId).style.display = 'none';
-}
-
-function confirmDelete() {
-    if (confirm('Are you sure you want to delete this project?')) {
-        const projectID = document.getElementById('projectID').value;
-        document.getElementById('deleteProjectID').value = projectID;
-        document.getElementById('deleteForm').submit();
-    }
-}
-// drag and drop functions
 function drag(event) {
     event.dataTransfer.setData("text", event.target.id);
 }
@@ -211,25 +272,20 @@ function drop(event) {
 
         // Get the new task status from the column's data-status attribute
         const newStatusName = column.getAttribute('data-status');
-		const newStatusID = column.getAttribute('data-status-id');
+        const newStatusID = column.getAttribute('data-status-id');
 
         // Send AJAX POST request to update the task status
         var xhr = new XMLHttpRequest();
         xhr.open("POST", "/updateTaskStatus", true);
         xhr.setRequestHeader("Content-Type", "application/json");
         xhr.send(JSON.stringify({
-            taskID: projectId,  // The task ID from the dragged element
-            taskStatus: newStatusID  // The new status from the drop target
+            taskID: projectId, // The task ID from the dragged element
+            taskStatus: newStatusID // The new status from the drop target
         }));
     }
 }
-
-window.onclick = function(event) {
-    if (event.target.classList.contains('modal')) {
-        event.target.style.display = 'none';
-    }
-};
-
 </script>
+<script src="{{ url_for('static', filename='js/tasks.js') }}" defer></script>
 
+{# <script src="/capstone/static/js/tasks.js"></script> #}
 {% endblock %}
