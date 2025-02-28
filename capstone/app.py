@@ -115,10 +115,44 @@ def tasks():
 			query = "INSERT INTO Tasks (taskAssignee, taskAssigned, taskDue, taskStatus, taskSprint, taskSubject) VALUES (%s, %s,%s,%s, %s, %s)"
 			cursor.execute(query, (tAssignee, tAssignedDate, tDueDate, tStatus, tSprint, tSubject ))
 			cursor.connection.commit()
-			# redirect back to people page
 			return redirect("/tasks")
+	# if request.method == "PUT":
+	# 	taskID = request.form["taskID"]
+	# 	taskStatus = request.form["taskStatus"]
+	# 	query = "UPDATE Tasks SET Tasks.taskStatus = %s WHERE Tasks.taskID = %s"
+	# 	cursor.execute(query, (taskStatus, taskID))
+	# 	cursor.connection.commit()
+	# 	return redirect("/tasks")
 	else:
 		return render_template("tasks.j2")
+
+@app.route("/updateTaskStatus", methods=['GET', 'POST'])
+def update_task_status():
+	try:
+		# Parse JSON request
+		data = request.get_json()
+		taskID = data.get("taskID")
+		taskStatus = data.get("taskStatus")
+		# Validate request data
+		if not taskID or not taskStatus:
+			return jsonify({"error": "Missing taskID or taskStatus"}), 400
+		query = "UPDATE Tasks SET taskStatus = %s WHERE taskID = %s"
+		cursor.execute(query, (taskStatus, taskID))
+		cursor.connection.commit()
+		return jsonify({"message": "Task status update success", "taskID": taskID, "newStatus": taskStatus}), 200
+	except Exception as e:
+		return jsonify({"error": str(e)}), 500
+
+#     query = "UPDATE Task SET taskStatus.fname = %s, bsg_people.lname = %s, bsg_people.homeworld = NULL, bsg_people.age = NULL WHERE bsg_people.id = %s"
+# 	# query = "UPDATE bsg_people SET bsg_people.fname = %s, bsg_people.lname = %s, bsg_people.homeworld = NULL, bsg_people.age = NULL WHERE bsg_people.id = %s"
+
+#     # cursor = mysql.connection.cursor()
+#     cursor.execute(query, (id,))
+# cur.execute(query, (fname, lname, age, id))
+#     cursor.connection.commit()
+    # return redirect("/tasks")
+
+
 
 @app.route('/help', methods=['GET', 'POST'])
 def help():
@@ -139,7 +173,7 @@ def projects():
 			accountTeamID = session['accountTeamID']
 
 			insert_query = """
-		    INSERT INTO Projects (projectName, projectStart, projectEnd, accountTeamID, projectStatus) 
+		    INSERT INTO Projects (projectName, projectStart, projectEnd, accountTeamID, projectStatus)
 		    VALUES (%s, %s, %s, %s, %s)
 		    """
 			cursor.execute(insert_query, (projectName, projectStart, projectEnd, accountTeamID, projectStatus))
@@ -176,8 +210,8 @@ def projects():
 			newStatus = request.form['projectStatus']
 
 			update_query = """
-		    UPDATE Projects 
-		    SET projectStatus = %s 
+		    UPDATE Projects
+		    SET projectStatus = %s
 		    WHERE projectID = %s AND accountTeamID = %s
 		    """
 			cursor.execute(update_query, (newStatus, projectID, session['accountTeamID']))
