@@ -14,7 +14,7 @@ taskAssigned DATE NOT NULL,
 taskDue DATE NOT NULL,
 taskStatus INT NOT NULL,
 taskSprint INT NOT NULL,
-taskType VARCHAR(50),
+taskSubject VARCHAR(50),    // used to be taskType
 PRIMARY KEY (taskID),
 FOREIGN KEY (taskAssignee) REFERENCES Accounts(accountID)
 	ON UPDATE CASCADE
@@ -38,7 +38,7 @@ accountPassword VARCHAR(50) NOT NULL,
 accountTeamID INT NOT NULL,
 accountRole VARCHAR(50),
 -- accountTasksAssigned VARCHAR(50),
-PRIMARY KEY (accountID), 
+PRIMARY KEY (accountID),
 FOREIGN KEY (accountTeamID) REFERENCES AccountTeams(accountTeamID)
     ON UPDATE CASCADE
     ON DELETE CASCADE
@@ -95,11 +95,10 @@ projectID INT NOT NULL AUTO_INCREMENT,
 projectName VARCHAR(50) NOT NULL,
 projectStart DATE NOT NULL,
 projectEnd DATE NOT NULL,
-projectOwner VARCHAR(50) NOT NULL,
+accountTeamID INT,
 projectStatus VARCHAR(50) NOT NULL,
 PRIMARY KEY (projectID),
--- FOREIGN KEY (projectOwner) REFERENCES Accounts(accountID)
-FOREIGN KEY (projectOwner) REFERENCES Accounts(accountTeam)
+FOREIGN KEY (accountTeamID) REFERENCES AccountTeams(accountTeamID)
 	ON UPDATE CASCADE
     ON DELETE CASCADE
 );
@@ -120,7 +119,7 @@ INSERT INTO Accounts (accountUsername, accountFirstName, accountLastName, accoun
 
 -- INSERT SAMPLE DATA INTO STATUSES
 INSERT INTO Statuses (statusName) VALUES
-('Backlog'), ('In progress'), ('Completed');
+('Backlog'), ('In Progress'), ('Completed');
 
 -- INSERT SAMPLE DATA INTO PROJECTS
 INSERT INTO Projects (projectStart, projectEnd, projectOwner) VALUES

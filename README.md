@@ -10,5 +10,6 @@ Capstone Project: Opinionated Project Management Website
 
 
 Database ERD:
-![image](https://github.com/user-attachments/assets/c9fe5bcc-02ad-4a41-ad29-4883be525e96)
+![image](https://github.com/user-attachments/assets/b0655d96-99b4-4f0d-9ce4-b21775ba3f9d)
+
 

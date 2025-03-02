@@ -115,10 +115,44 @@ def tasks():
 			query = "INSERT INTO Tasks (taskAssignee, taskAssigned, taskDue, taskStatus, taskSprint, taskSubject) VALUES (%s, %s,%s,%s, %s, %s)"
 			cursor.execute(query, (tAssignee, tAssignedDate, tDueDate, tStatus, tSprint, tSubject ))
 			cursor.connection.commit()
-			# redirect back to people page
 			return redirect("/tasks")
+	# if request.method == "PUT":
+	# 	taskID = request.form["taskID"]
+	# 	taskStatus = request.form["taskStatus"]
+	# 	query = "UPDATE Tasks SET Tasks.taskStatus = %s WHERE Tasks.taskID = %s"
+	# 	cursor.execute(query, (taskStatus, taskID))
+	# 	cursor.connection.commit()
+	# 	return redirect("/tasks")
 	else:
 		return render_template("tasks.j2")
+
+@app.route("/updateTaskStatus", methods=['GET', 'POST'])
+def update_task_status():
+	try:
+		# Parse JSON request
+		data = request.get_json()
+		taskID = data.get("taskID")
+		taskStatus = data.get("taskStatus")
+		# Validate request data
+		if not taskID or not taskStatus:
+			return jsonify({"error": "Missing taskID or taskStatus"}), 400
+		query = "UPDATE Tasks SET taskStatus = %s WHERE taskID = %s"
+		cursor.execute(query, (taskStatus, taskID))
+		cursor.connection.commit()
+		return jsonify({"message": "Task status update success", "taskID": taskID, "newStatus": taskStatus}), 200
+	except Exception as e:
+		return jsonify({"error": str(e)}), 500
+
+#     query = "UPDATE Task SET taskStatus.fname = %s, bsg_people.lname = %s, bsg_people.homeworld = NULL, bsg_people.age = NULL WHERE bsg_people.id = %s"
+# 	# query = "UPDATE bsg_people SET bsg_people.fname = %s, bsg_people.lname = %s, bsg_people.homeworld = NULL, bsg_people.age = NULL WHERE bsg_people.id = %s"
+
+#     # cursor = mysql.connection.cursor()
+#     cursor.execute(query, (id,))
+# cur.execute(query, (fname, lname, age, id))
+#     cursor.connection.commit()
+    # return redirect("/tasks")
+
+
 
 @app.route('/help', methods=['GET', 'POST'])
 def help():
@@ -139,7 +173,7 @@ def projects():
 			accountTeamID = session['accountTeamID']
 
 			insert_query = """
-		    INSERT INTO Projects (projectName, projectStart, projectEnd, accountTeamID, projectStatus) 
+		    INSERT INTO Projects (projectName, projectStart, projectEnd, accountTeamID, projectStatus)
 		    VALUES (%s, %s, %s, %s, %s)
 		    """
 			cursor.execute(insert_query, (projectName, projectStart, projectEnd, accountTeamID, projectStatus))
@@ -176,8 +210,8 @@ def projects():
 			newStatus = request.form['projectStatus']
 
 			update_query = """
-		    UPDATE Projects 
-		    SET projectStatus = %s 
+		    UPDATE Projects
+		    SET projectStatus = %s
 		    WHERE projectID = %s AND accountTeamID = %s
 		    """
 			cursor.execute(update_query, (newStatus, projectID, session['accountTeamID']))
@@ -211,8 +245,7 @@ def accountCreation():
 	query = "SELECT * FROM Accounts;"
 	cursor = db.execute_query(db_connection=db_connection, query=query)
 	results = cursor.fetchall()
-	# results = json.dumps(cursor.fetchall())
-	# return results
+
 	if request.method == "POST":
 		if request.form.get("addAccountSubmit"):
 			accountUsername = request.form["accountUsername"]
@@ -236,8 +269,7 @@ def accountAdmin():
 	query = "SELECT * FROM Accounts;"
 	cursor = db.execute_query(db_connection=db_connection, query=query)
 	results = cursor.fetchall()
-	# results = json.dumps(cursor.fetchall())
-	# return results
+
 	if request.method == "POST":
 		if request.form.get("addAccountSubmit"):
 			accountUsername = request.form["accountUsername"]
@@ -259,19 +291,17 @@ def accountAdmin():
 
 @app.route("/delete_account/<int:id>")
 def delete_account(id):
-	print("Delete Account Reached")
-	# mySQL query to delete the person with our passed id
+	# mySQL query to delete the account with our passed id
 	query = "DELETE FROM Accounts WHERE accountID = '%s';"
 	cursor = db.execute_query(db_connection=db_connection, query=query, query_params=(id))
 	results = cursor.fetchall()
 
 	return redirect("/accounts")
 
-# route for edit functionality, updating the attributes of a person in bsg_people
+# route for edit functionality, updating the attributes of the account
 # similar to our delete route, we want to the pass the 'id' value of that person on button click (see HTML) via the route
 @app.route("/edit_accounts/<int:accountID>", methods=["POST", "GET"])
 def edit_accounts(accountID):
-	print("here")
 	if request.method == "GET":
 		query = "SELECT * FROM Accounts WHERE accountID = %s" % (accountID)
 		cursor = db.execute_query(db_connection=db_connection, query=query)
@@ -296,7 +326,7 @@ def update_account():
 	cursor = db.execute_query(db_connection=db_connection, query=query, query_params=(accountUsername, accountFirstName, accountLastName, accountPassword, accountTeamID, accountRole, accountID ))
 	cursor.connection.commit()
 
-	# redirect back to people page
+	# redirect back to accounts page
 	return redirect("/accounts")
 
 
