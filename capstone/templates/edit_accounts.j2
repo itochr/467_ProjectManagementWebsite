@@ -1,9 +1,9 @@
-<html>
-
-<head>
-	<title>Edit Account</title>
-    <link href="style.css" rel="stylesheet" type="text/css" />
-</head>
+{% extends 'nav.j2' %}
+{% block head %}
+<title>Help</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+{% endblock %}
+{% block body %}
 
 <body>
     <div>
@@ -74,4 +74,5 @@
                 <button type="submit" formaction="{{ url_for('update_account') }}" formmethod="post" name="update_account" value="Update Account">Update</button>
                 <a href='/accounts'><input class="btn" type="button" value="Cancel"></a>
             </form>
-</html>
+
+{% endblock %}
