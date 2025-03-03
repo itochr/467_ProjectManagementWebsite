@@ -156,7 +156,8 @@ def update_task_status():
 
 @app.route('/help', methods=['GET', 'POST'])
 def help():
-	return render_template("help.j2")
+	# return render_template("help.j2")
+	return render_template("help.j2", accountID=session['accountID'])
 
 @app.route('/projects', methods=['GET', 'POST'])
 def projects():
@@ -328,6 +329,34 @@ def update_account():
 
 	# redirect back to accounts page
 	return redirect("/accounts")
+
+@app.route("/edit_password/<int:accountID>", methods=["POST", "GET"])
+def edit_password(accountID):
+	if request.method == "GET":
+		query = "SELECT * FROM Accounts WHERE accountID = %s" % (accountID)
+		cursor = db.execute_query(db_connection=db_connection, query=query)
+		data = cursor.fetchall()
+
+		return render_template("edit_password.j2", data=data)
+
+@app.route("/update_password", methods=["POST"])
+def update_password():
+	# grab account form inputs
+	accountID = request.form["accountID"]
+	accountUsername = request.form["accountUsername"]
+	accountFirstName = request.form["accountFirstName"]
+	accountLastName = request.form["accountLastName"]
+	accountPassword = request.form["accountPassword"]
+	accountTeamID = request.form["accountTeamID"]
+	accountRole = request.form["accountRole"]
+
+	query = "UPDATE Accounts SET accountPassword = %s WHERE accountID = %s"
+	print(query)
+	cursor = db.execute_query(db_connection=db_connection, query=query, query_params=(accountPassword, accountID ))
+	cursor.connection.commit()
+
+	# redirect back to accounts page
+	return redirect("/help")
 
 
 # Listener

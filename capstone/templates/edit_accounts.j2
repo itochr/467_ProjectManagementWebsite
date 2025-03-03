@@ -37,6 +37,7 @@
             {% endif %} 
         </table>
 
+    <br>
     <div id="edit">
             <!-- form to edit data in bsg_people-->
             <form id="editAccount" action="/edit_accounts/{{data[0].id}}" method="post">
@@ -47,30 +48,30 @@
                     <input type="hidden" value="{{data[0].accountID}}" class="form-control" id="accountID" name="accountID" required>
 
                     <label for="accountUsername">Username:</label>
-                    <input type="text" class="form-control" id="accountUsername" name="accountUsername" pattern="[A-Za-z]{1,}" placeholder="{{data[0].accountUsername}}" required>
+                    <input type="text" class="form-control" id="accountUsername" name="accountUsername" pattern="[A-Za-z]{1,}" value="{{data[0].accountUsername}}" required>
 
-                    <label for="accountID">First name:</label>
-                    <input type="text" class="form-control" id="accountFirstName" name="accountFirstName" pattern="[A-Za-z]{1,}" placeholder="{{data[0].accountFirstName}}" required>
+                    <label for="accountFirstName">First name:</label>
+                    <input type="text" class="form-control" id="accountFirstName" name="accountFirstName" pattern="[A-Za-z]{1,}" value="{{data[0].accountFirstName}}" required>
                     
-                    <label for="accountFirstName">Last name:</label>
-                    <input type="text" class="form-control" id="accountLastName" name="accountLastName" pattern="[A-Za-z0-9]{1,}" placeholder="{{data[0].accountLastName}}" required>
+                    <label for="accountLastName">Last name:</label>
+                    <input type="text" class="form-control" id="accountLastName" name="accountLastName" pattern="[A-Za-z0-9]{1,}" value="{{data[0].accountLastName}}" required>
                     
-                    <label for="accountLastName">Password:</label>
-                    <input type="text" class="form-control" id="accountPassword" name="accountPassword" pattern="[A-Za-z0-9]{1,}" placeholder="{{data[0].accountPassword}}" required>
+                    <label for="accountPassword">Password:</label>
+                    <input type="text" class="form-control" id="accountPassword" name="accountPassword" pattern="[A-Za-z0-9]{1,}" value="{{data[0].accountPassword}}" required>
                     
-                    <label for="accountPassword">Team ID:</label>
-                    <input type="number" class="form-control" id="accountTeamID" name="accountTeamID" pattern="[A-Za-z0-9]{1,}" placeholder="{{data[0].accountTeamID}}" required>
+                    <label for="accountTeamID">Team ID:</label>
+                    <input type="number" class="form-control" id="accountTeamID" name="accountTeamID" pattern="[A-Za-z0-9]{1,}" value="{{data[0].accountTeamID}}" required>
                     
                     <label for="accountRole">Account Role:</label>
-                    <select class="form-control" id="accountRole" name="accountRole" pattern="[0-4]{1}" placeholder="" required> 
-                        <option value="">&nbsp;</option>
+                    <select class="form-control" id="accountRole" name="accountRole" pattern="[0-4]{1}" value="{{data[0].accountRole}}" required> 
                         <option value="Developer">Developer</option>
                         <option value="Scrum Master">Scrum Master</option>
                         <option value="Project Leader">Project Leader</option>
+                        <option value="CEO">CEO</option>
                     </select>
                 
                 </fieldset>
                 <button type="submit" formaction="{{ url_for('update_account') }}" formmethod="post" name="update_account" value="Update Account">Update</button>
-                <a href='/accounts'><input class="btn" type="button" value="cancel"></a>
+                <a href='/accounts'><input class="btn" type="button" value="Cancel"></a>
             </form>
 </html>
