@@ -43,6 +43,19 @@ h1 .username {
     text-decoration: underline;
 }
 
+.kanban-board {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    /* min-height: 100vh; */
+}
+
+.add-new-card {
+
+    width: max-content;
+}
+
 .status-column {
     /* background-color: lightslategray; */
     border: 1px solid black;

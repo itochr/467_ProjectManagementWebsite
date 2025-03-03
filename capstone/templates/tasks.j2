@@ -12,17 +12,14 @@
 <div id ="hello">
 	{# {% if accountUsername is defined %} #}
 	{# <h1><span class="username">{{accountUsername}}</span> Tasks</h1> #}
-	<h1><span class="username">{{accountFirstName}} {{accountLastName}}'s</span> Tasks</h1>
-	{# {% else %}
-		Welcome <span class="accountName"> Administrator </span> to Opinionated Project Management.
-		{% endif %}
-
-	{% if screenMsg is defined %}
-			<div class="announcement">{{ screenMsg }}</div> #}
-	{# {% endif %} #}
+	<h1><span class="username">{{accountFirstName}} {{accountLastName}}'s</span> Kanban Board</h1>
+	<h2><span class="username">{{teamTasks[0].accountTeamName}}</span> Tasks</h1>
 </div>
 
-<div class="kanban-board">
+
+
+
+{# <div class="kanban-board">
 {% for status in statuses %}
 <div class="status-column" data-status-id="{{status.statusID}}" data-status="{{status.statusName}}" ondrop="drop(event)" ondragover="allowDrop(event)">
             <h2>{{status.statusName}}</h2>
@@ -45,12 +42,12 @@
                 {% endfor %}
             </div>
         </div>
-{% endfor %}
-</div>
+{% endfor %} #}
+
 
 {# TEAM TASKS #}
 	{% if teamTasks[0].accountTeamID is defined %}
-	<h1><span class="username">{{teamTasks[0].accountTeamName}}</span> Tasks</h1>
+	{# <h1><span class="username">{{teamTasks[0].accountTeamName}}</span> Tasks</h1> #}
 
 
 <div class="kanban-board">
@@ -79,20 +76,11 @@
             </div>
         </div>
 {% endfor %}
+
 </div>
 
+
 {% endif %}
-
-
-
-<div class="project-card add-new-card" onclick="openCreateModal()">
-            <div class="project-content">
-                <div class="add-project-placeholder">
-                    <h3>Create New Task</h3>
-                    <span class="plus-symbol">+</span>
-                </div>
-            </div>
-        </div>
 
 
 <div id="addTaskDiv" class="modal">
@@ -232,17 +220,16 @@
 
 
 
-<button id="toggleTestSection" onclick="showHide('testDebugSection')">Toggle Test Section</button>
-<div id="testDebugSection" style="display: none;">
+{#<button id="toggleTestSection" onclick="showHide('testDebugSection')">Toggle Test Section</button>
+ <div id="testDebugSection" style="display: none;">
 <button id="myButton">Click me</button>
 <button id="hideButton" onclick="showHide(this)">Hide me</button>
 <button id="hideButton2" onclick="showHide2()" style="display: block;">Hide me2</button>
 <button id="hideButton3" onclick="showHide(this)" style="display: block;">Hide me3</button>
 <button id="hideButton4" onclick="showHide()" style="display: block;">Hide me4</button>
-
-<button id="hideButton5" onclick="showHide(this.id)" style="display: block;">Hide me5</button>  {# WORKSS!! #}
+<button id="hideButton5" onclick="showHide(this.id)" style="display: block;">Hide me5 - Works</button>
 <div class="project-card" onclick="divClick()">Click Me Function Alert Popup</div>
-</div>
+</div> #}
 
 
 </div>
