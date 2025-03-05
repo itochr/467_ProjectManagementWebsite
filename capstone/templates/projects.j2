@@ -5,56 +5,47 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
 {% endblock %}
 {% block body %}
-
 <div class="content">
     <h1><span class="username">{{accountUsername}}</span> Projects</h1>
+{% if screenMsg is defined %}
+    <div class="announcement">{{ screenMsg }}</div>
+{% endif %}
 
-    {% if screenMsg is defined %}
-          <div class="announcement">{{ screenMsg }}</div>
-    {% endif %}
-
-    <!-- kanban board with drag & drop -->
-    <div class="kanban-board">
-        <div class="status-column" data-status="Planning" ondrop="drop(event)" ondragover="allowDrop(event)">
-            <h2>Planning</h2>
-            <div class="column-content">
-                {% for project in projects %}
+<!-- Kanban board with drag & drop -->
+<div class="kanban-board">
+    {% for status in statuses %}
+    <div class="status-column" data-status="{{status.statusName}}" data-status-id="{{status.statusID}}" ondrop="drop(event)" ondragover="allowDrop(event)">
+        <h2>{{status.statusName}}</h2>
+        <div class="column-content">
+            {% for project in projects %}
+                {% if project.projectStatus == status.statusID %}
                 <div class="project-card"
                      draggable="true"
                      ondragstart="drag(event)"
-                     onclick='showProjectDetails({{ project|tojson|safe }})'
-                     id="project-{{ project.projectID }}">
+                     onclick='showProjectDetails(JSON.parse(this.getAttribute("data-project")))'
+                     id="project-{{ project.projectID }}"
+                     data-project='{{ project|tojson|safe }}'>
                     <div class="project-content">
                         <h3>{{ project.projectName }}</h3>
                         <p>Due: {{ project.projectEnd }}</p>
                     </div>
                 </div>
-                {% endfor %}
-            </div>
+                {% endif %}
+            {% endfor %}
         </div>
+    </div>
+    {% endfor %}
 
-        <div class="status-column" data-status="In Progress" ondrop="drop(event)" ondragover="allowDrop(event)">
-            <h2>In Progress</h2>
-            <div class="column-content">
-            </div>
-        </div>
-
-        <div class="status-column" data-status="Completed" ondrop="drop(event)" ondragover="allowDrop(event)">
-            <h2>Completed</h2>
-            <div class="column-content">
-            </div>
-        </div>
-
-        <!-- Keep your original Add New Project card -->
-        <div class="project-card add-new-card" onclick="openCreateModal()">
-            <div class="project-content">
-                <div class="add-project-placeholder">
-                    <h3>Create New Project</h3>
-                    <span class="plus-symbol">+</span>
-                </div>
+    <!-- Add New Project Card -->
+    <div class="project-card add-new-card" onclick="openCreateModal()">
+        <div class="project-content">
+            <div class="add-project-placeholder">
+                <h3>Create New Project</h3>
+                <span class="plus-symbol">+</span>
             </div>
         </div>
     </div>
+</div>
 </div>
 
 <!-- Create Project Modal -->
@@ -70,18 +61,18 @@
             <div class="form-group">
                 <label for="projectStatus">Status:</label>
                 <select name="projectStatus" required>
-                    <option value="Backlog">Backlog</option>
-                    <option value="In Progress">In Progress</option>
-                    <option value="Completed">Completed</option>
+                    {% for status in statuses %}
+                    <option value="{{status.statusID}}">{{status.statusName}}</option>
+                    {% endfor %}
                 </select>
             </div>
             <div class="form-group">
                 <label for="projectStart">Start Date:</label>
-                <input type="date" name="projectStart" required>
+                <input type="date" id="newProjectStart" name="projectStart" required>
             </div>
             <div class="form-group">
                 <label for="projectEnd">End Date:</label>
-                <input type="date" name="projectEnd" required>
+                <input type="date" id="newProjectEnd" name="projectEnd" required>
             </div>
             <div class="form-actions">
                 <button type="submit" name="createProject" class="submit-button">Create</button>
@@ -97,46 +88,105 @@
         <span class="close" onclick="closeModal('projectDetailsModal')">&times;</span>
         <h2>Project Details</h2>
 
-        <!-- Edit -->
-        <form action="{{ url_for('projects') }}" method="POST">
-            <input type="hidden" id="projectID" name="projectID">
-            <div class="form-group">
-                <label for="projectName">Project Name:</label>
-                <input type="text" id="editProjectName" name="projectName" required>
-            </div>
-            <div class="form-group">
-                <label for="projectStart">Start Date:</label>
-                <input type="date" id="editProjectStart" name="projectStart" required>
-            </div>
-            <div class="form-group">
-                <label for="projectEnd">End Date:</label>
-                <input type="date" id="editProjectEnd" name="projectEnd" required>
-            </div>
-            <div class="form-actions">
-                <button type="submit" name="editProject" class="button submit-button">Save</button>
-                <button type="button" class="button cancel-button" onclick="closeModal('projectDetailsModal')">Cancel</button>
-                <button type="button" class="button delete-button" onclick="confirmDelete()">Delete</button>
-            </div>
-        </form>
+    <!-- Edit Form -->
+    <form action="{{ url_for('projects') }}" method="POST">
+        <input type="hidden" id="projectID" name="projectID">
+        <div class="form-group">
+            <label for="projectName">Project Name:</label>
+            <input type="text" id="editProjectName" name="projectName" required>
+        </div>
+        <div class="form-group">
+            <label for="projectStatus">Status:</label>
+            <select id="editProjectStatus" name="projectStatus" required>
+                {% for status in statuses %}
+                <option value="{{status.statusID}}">{{status.statusName}}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="projectStart">Start Date:</label>
+            <input type="date" id="editProjectStart" name="projectStart" required>
+        </div>
+        <div class="form-group">
+            <label for="projectEnd">End Date:</label>
+            <input type="date" id="editProjectEnd" name="projectEnd" required>
+        </div>
+        <div class="form-actions">
+            <button type="submit" name="editProject" class="button submit-button">Save</button>
+            <button type="button" class="button cancel-button" onclick="closeModal('projectDetailsModal')">Cancel</button>
+            <button type="button" class="button delete-button" onclick="confirmDelete()">Delete</button>
+        </div>
+    </form>
 
-        <form id="deleteForm" action="{{ url_for('projects') }}" method="POST" style="display: none;">
-            <input type="hidden" id="deleteProjectID" name="projectID">
-            <input type="hidden" name="deleteProject" value="true">
-        </form>
-    </div>
+    <!-- Hidden Delete Form -->
+    <form id="deleteForm" action="{{ url_for('projects') }}" method="POST" style="display: none;">
+        <input type="hidden" id="deleteProjectID" name="projectID">
+        <input type="hidden" name="deleteProject" value="true">
+    </form>
 </div>
-
+</div>
 <script>
+function getTodayDate() {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
+
 function openCreateModal() {
+    // Set today's date as default for new projects
+    const todayDate = getTodayDate();
+    document.getElementById('newProjectStart').value = todayDate;
+    document.getElementById('newProjectEnd').value = todayDate;
+
     document.getElementById('createProjectModal').style.display = 'block';
 }
 
+function formatDate(dateString) {
+    if (!dateString) return ""; // Handle null or undefined
+
+    let dateObj = new Date(dateString);
+    if (isNaN(dateObj.getTime())) {
+        console.error("Invalid date:", dateString);
+        return ""; // Invalid date, return empty string
+    }
+
+    // Convert to YYYY-MM-DD format
+    const year = dateObj.getFullYear();
+    const month = String(dateObj.getMonth() + 1).padStart(2, '0'); // Ensure 2-digit month
+    const day = String(dateObj.getDate()).padStart(2, '0'); // Ensure 2-digit day
+
+    return `${year}-${month}-${day}`; // Return YYYY-MM-DD format
+}
+
+
 function showProjectDetails(project) {
-    console.log('Project:', project);
+    console.log('Opening project details:', project);
+
     document.getElementById('projectID').value = project.projectID;
     document.getElementById('editProjectName').value = project.projectName;
-    document.getElementById('editProjectStart').value = project.projectStart;
-    document.getElementById('editProjectEnd').value = project.projectEnd;
+
+    console.log('Raw Start Date:', project.projectStart);
+    console.log('Raw End Date:', project.projectEnd);
+
+    const formattedStartDate = formatDate(project.projectStart);
+    const formattedEndDate = formatDate(project.projectEnd);
+
+    document.getElementById('editProjectStart').value = formattedStartDate;
+    document.getElementById('editProjectEnd').value = formattedEndDate;
+
+    console.log('Assigned Start Date:', formattedStartDate);
+    console.log('Assigned End Date:', formattedEndDate);
+
+    const statusSelect = document.getElementById('editProjectStatus');
+    for (let i = 0; i < statusSelect.options.length; i++) {
+        if (statusSelect.options[i].value == project.projectStatus) {
+            statusSelect.selectedIndex = i;
+            break;
+        }
+    }
+
     document.getElementById('projectDetailsModal').style.display = 'block';
 }
 
@@ -152,9 +202,10 @@ function confirmDelete() {
     }
 }
 
-// drag and drop functions
+// Drag and Drop Functions
 function drag(event) {
     event.dataTransfer.setData("text", event.target.id);
+    event.stopPropagation();
 }
 
 function allowDrop(event) {
@@ -163,15 +214,64 @@ function allowDrop(event) {
 
 function drop(event) {
     event.preventDefault();
-    const projectId = event.dataTransfer.getData("text");
-    const projectCard = document.getElementById(projectId);
+    const projectCardId = event.dataTransfer.getData("text");
+    const projectCard = document.getElementById(projectCardId);
 
-    // Find the column-content div to append to
+    const projectId = projectCardId.replace("project-", "");
+
     const column = event.target.closest('.status-column');
     if (column) {
         const columnContent = column.querySelector('.column-content');
         columnContent.appendChild(projectCard);
+
+        const newStatusId = column.getAttribute('data-status-id');
+        const newStatusName = column.getAttribute('data-status');
+
+        updateProjectStatus(projectId, newStatusId);
+
+        let projectData = JSON.parse(projectCard.getAttribute('data-project'));
+        projectData.projectStatus = newStatusId; // Update status ID
+        projectCard.setAttribute('data-project', JSON.stringify(projectData));
+
+        console.log(`Project ${projectId} status updated to ${newStatusName} (${newStatusId})`);
     }
+}
+
+
+function updateProjectStatus(projectId, newStatusId) {
+    console.log(`Updating project ${projectId} to status ${newStatusId}`);
+
+    fetch('/updateProjectStatus', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            projectID: projectId,
+            projectStatus: newStatusId
+        }),
+        credentials: 'same-origin'
+    })
+    .then(response => {
+        console.log('Response status:', response.status);
+
+        if (!response.ok) {
+            return response.text().then(text => {
+                console.error('Error response:', text);
+                throw new Error(`Server returned ${response.status}: ${text}`);
+            });
+        }
+
+        return response.json();
+    })
+    .then(data => {
+        console.log('Success data:', data);
+
+    })
+    .catch((error) => {
+        console.error('Error details:', error);
+        alert('Failed to update project status: ' + error.message);
+    });
 }
 
 window.onclick = function(event) {
@@ -179,5 +279,16 @@ window.onclick = function(event) {
         event.target.style.display = 'none';
     }
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    const todayDate = getTodayDate();
+    const newStartInput = document.getElementById('newProjectStart');
+    const newEndInput = document.getElementById('newProjectEnd');
+
+    if (newStartInput && newEndInput) {
+        newStartInput.value = todayDate;
+        newEndInput.value = todayDate;
+    }
+});
 </script>
 {% endblock %}
