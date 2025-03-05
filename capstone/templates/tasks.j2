@@ -68,6 +68,8 @@
 						<p>Status: {{ teamTask.statusName }}</p>
 						<p>Start: {{ teamTask.taskAssigned }}</p>
                         <p>Due: {{ teamTask.taskDue }}</p>
+						<p>Sprint: {{ teamTask.sprintName }} | {{ teamTask.sprintStart }}-{{ teamTask.sprintEnd }}</p>
+						<p>Project: {{ teamTask.projectName }}</p>
 						<p>Assignee: {{ teamTask.accountFirstName }} {{ teamTask.accountLastName }}</p>
                     </div>
                 </div>
@@ -76,6 +78,16 @@
             </div>
         </div>
 {% endfor %}
+
+<!-- Keep your original Add New Project card -->
+        <div class="project-card add-new-card" onclick="openCreateModal()">
+            <div class="project-content">
+                <div class="add-project-placeholder">
+                    <h3>Create New Task</h3>
+                    <span class="plus-symbol">+</span>
+                </div>
+            </div>
+        </div>
 
 </div>
 
@@ -95,8 +107,8 @@
 		<div class="form-group">
 			<select name="tAssignee" id="tAssignee">
 				<option value="-1">Choose Assignee</option>
-				{% for teamTask in teamTasks| unique(attribute="accountID") | sort(attribute="accountFirstName") %}
-				<option value="{{teamTask.accountID}}">{{teamTask.accountFirstName}} {{teamTask.accountLastName}}</option>
+				{% for teamMember in team| unique(attribute="accountID") | sort(attribute="accountFirstName") %}
+				<option value="{{teamMember.accountID}}">{{teamMember.accountFirstName}} {{teamMember.accountLastName}}</option>
 				{% endfor %}
 			</select>
 			</div>
@@ -121,7 +133,16 @@
 			</div>
 
 			<div class="form-group">
-			<select name="tSprint" id="tSprint">
+			<select name="tProject" id="tProject">
+				<option value="-1">Choose Project</option>
+				{% for project in projects|  sort(attribute="projectName")%}
+				<option value="{{project.projectID}}">{{project.projectName}}</option>
+				{% endfor %}
+			</select>
+			</div>
+
+			<div class="form-group">
+			<select name="tSprint" id="tSprint" required>
 				<option value="-1">Choose Sprint</option>
 				{% for teamTask in teamTasks| unique(attribute="taskSprint") | sort(attribute="taskSprint") %}
 				<option value="{{teamTask.taskSprint}}">{{teamTask.taskSprint}} : {{teamTask.sprintStart}} - {{teamTask.sprintEnd}}</option>
@@ -138,6 +159,9 @@
 
 		<!-- Create 'Add Task' button -->
 		{# <input type="submit" value="Add Task" name="addTaskSubmit" class="btn btn-primary" style="margin:.5rem;"> #}
+
+
+
 		<div class="form-actions">
                 <button type="submit" name="addTaskSubmit" class="submit-button">Create</button>
                 <button type="button" class="cancel-button" onclick="closeModal('addTaskDiv')">Cancel</button>
@@ -164,7 +188,7 @@
   {% endfor %}
   </div> #}
 
-
+{#
 <button id="toggleTables" onclick="showHide('tasks-as-tables')">Toggle Tables</button>
 
 {% if userTasks %}
@@ -217,7 +241,7 @@
 {% endif %}
 {% endif %}
 {% endif %}
-
+ #}
 
 
 {#<button id="toggleTestSection" onclick="showHide('testDebugSection')">Toggle Test Section</button>

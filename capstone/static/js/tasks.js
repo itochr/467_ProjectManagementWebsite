@@ -53,8 +53,8 @@ if (x.style.display === "none") {
 }
 }
 
-
-document.getElementById("myButton").addEventListener("click", function() {
-    this.style.backgroundColor = "red"; // Changes background color to red on click
-    this.style.color = "white"; // Changes text color
-});
+// Was used for testing div and external JS file working
+// document.getElementById("myButton").addEventListener("click", function() {
+//     this.style.backgroundColor = "red"; // Changes background color to red on click
+//     this.style.color = "white"; // Changes text color
+// });
