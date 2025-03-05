@@ -63,23 +63,40 @@ def tasks():
 			screenMsg = 'Please login to continue'
 			return render_template('login.j2', screenMsg = screenMsg)
 		# query = 'SELECT * FROM Projects'					# [Vish]: Uncomment to use without parameters
+		# queryUserTasks = """
+		# SELECT * FROM Tasks t
+		# JOIN Accounts a ON t.taskAssignee=a.accountID
+		# JOIN Statuses stat on t.taskStatus=stat.statusID
+		# JOIN Sprints sp on t.taskSprint=sp.sprintID
+		# JOIN Projects p on sp.sprintProject=p.projectID
+		# WHERE t.taskAssignee = %s
+		# """
 		queryUserTasks = """
 		SELECT * FROM Tasks t
 		JOIN Accounts a ON t.taskAssignee=a.accountID
 		JOIN Statuses stat on t.taskStatus=stat.statusID
 		JOIN Sprints sp on t.taskSprint=sp.sprintID
-		JOIN Projects p on sp.sprintProject=p.projectID
+		JOIN Projects p on t.taskProject=p.projectID
 		WHERE t.taskAssignee = %s
 		"""
 
 		userInputs = (session['accountID'])
+		# queryTeamTasks = """
+		# SELECT * FROM Tasks t
+		# JOIN Accounts a ON t.taskAssignee=a.accountID
+		# JOIN AccountTeams at ON  a.accountTeamID=at.accountTeamID
+		# JOIN Statuses stat on t.taskStatus=stat.statusID
+		# JOIN Sprints sp on t.taskSprint=sp.sprintID
+		# JOIN Projects p on sp.sprintProject=p.projectID
+		# WHERE a.accountTeamID = %s
+		# """
 		queryTeamTasks = """
 		SELECT * FROM Tasks t
 		JOIN Accounts a ON t.taskAssignee=a.accountID
 		JOIN AccountTeams at ON  a.accountTeamID=at.accountTeamID
 		JOIN Statuses stat on t.taskStatus=stat.statusID
 		JOIN Sprints sp on t.taskSprint=sp.sprintID
-		JOIN Projects p on sp.sprintProject=p.projectID
+		JOIN Projects p on t.taskProject=p.projectID
 		WHERE a.accountTeamID = %s
 		"""
 
@@ -93,29 +110,40 @@ def tasks():
 		statusFetch = cursor.fetchall()
 		# cursor.execute(query)  									# [Vish]: Uncomment to use without parameters
 
+		queryTeamMembers = 'SELECT * FROM Accounts WHERE accountTeamID = %s'
+		cursor.execute(queryTeamMembers, teamInputs)
+		teamMemberFetch = cursor.fetchall()
+
+		queryTeamProjects = 'SELECT * FROM Projects WHERE accountTeamID = %s'
+		cursor.execute(queryTeamProjects, teamInputs)
+		teamProjects = cursor.fetchall()
+
 		if userTasksFetch and teamTasksFetch:
 			# screenMsg = json.dumps(userTasksFetch)				# [Vish]: Uncomment to get json of query
 			screenMsg = f"Printing Tasks for account {session['accountUsername']}"
 			# cursor.close()
-			return render_template('tasks.j2', screenMsg = screenMsg, accountUsername = session['accountUsername'], accountFirstName = session['accountFirstName'], accountLastName = session['accountLastName'], userTasks = userTasksFetch, teamTasks = teamTasksFetch, statuses = statusFetch)
+			return render_template('tasks.j2', screenMsg = screenMsg, accountUsername = session['accountUsername'], accountFirstName = session['accountFirstName'], accountLastName = session['accountLastName'], userTasks = userTasksFetch, teamTasks = teamTasksFetch, statuses = statusFetch, team = teamMemberFetch, projects = teamProjects)
 		else:
 			screenMsg = 'Please enter correct username and password'
 
 			return render_template('login.j2', screenMsg = screenMsg)
 
 	if request.method == "POST":
-		if request.form.get("addTaskSubmit"):
+		# if request.form.get("addTaskSubmit"):
+		if 'addTaskSubmit' in request.form:
 			tAssignee = request.form["tAssignee"]
 			tAssignedDate = request.form["tAssignedDate"]
 			tDueDate = request.form["tDueDate"]
 			tStatus = request.form["tStatus"]
 			tSprint = request.form["tSprint"]
+			tProject = request.form["tProject"]
 			tSubject = request.form["tSubject"]
 
-			query = "INSERT INTO Tasks (taskAssignee, taskAssigned, taskDue, taskStatus, taskSprint, taskSubject) VALUES (%s, %s,%s,%s, %s, %s)"
-			cursor.execute(query, (tAssignee, tAssignedDate, tDueDate, tStatus, tSprint, tSubject ))
+			query = "INSERT INTO Tasks (taskAssignee, taskAssigned, taskDue, taskStatus, taskSprint, taskProject, taskSubject) VALUES (%s, %s,%s,%s, %s, %s, %s)"
+			cursor.execute(query, (tAssignee, tAssignedDate, tDueDate, tStatus, tSprint, tProject, tSubject ))
 			cursor.connection.commit()
-			return redirect("/tasks")
+			# return redirect("/tasks")
+			return redirect(url_for('tasks'))
 	# if request.method == "PUT":
 	# 	taskID = request.form["taskID"]
 	# 	taskStatus = request.form["taskStatus"]
@@ -241,7 +269,7 @@ def projects():
 	statuses = cursor.fetchall()
 
 	query = '''
-    SELECT p.*, s.statusName 
+    SELECT p.*, s.statusName
     FROM Projects p
     LEFT JOIN Statuses s ON p.projectStatus = s.statusID
     WHERE p.accountTeamID = %s
@@ -306,6 +334,38 @@ def update_project_status():
 	except Exception as e:
 		print(f"Error in update_project_status: {str(e)}")
 		return jsonify({"error": str(e)}), 500
+
+@app.route('/sprints', methods=['GET', 'POST'])
+def sprints():
+	if request.method == "GET":
+		# querySprints = 'SELECT * FROM Sprints'
+		querySprints = '''
+		SELECT *
+		FROM Sprints
+		WHERE accountTeamID = %s
+		'''
+		queryInputs = (session['accountTeamID'])
+		# querySprints = '''
+		# SELECT *
+		# FROM Sprints sp
+		# LEFT JOIN Projects p ON p.projectID = sp.sprintProject
+		# LEFT JOIN Statuses s ON p.projectStatus = s.statusID
+		# LEFT JOIN AccountTeams a on a.accountTeamID = p.accountTeamID
+		# '''
+		# cursor.execute(querySprints)
+		cursor.execute(querySprints, queryInputs)
+
+		# cursor = db.execute_query(db_connection=db_connection, query=query)
+		sprintsFetch = cursor.fetchall()
+
+		# queryProjects = 'SELECT * FROM Projects'
+		# cursor.execute(queryProjects)
+		# projectFetch = cursor.fetchall()
+
+		return render_template("sprints.j2", sprints = sprintsFetch)
+
+	else:
+		return render_template("sprints.j2")
 
 @app.route('/account_creation', methods=['GET', 'POST'])
 def accountCreation():

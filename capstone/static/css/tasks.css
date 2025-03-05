@@ -99,6 +99,9 @@ h1 .username {
     text-decoration: underline;
 }
 
+.project-content p {
+    color:#333
+}
 
 .modal {
     display: none;
