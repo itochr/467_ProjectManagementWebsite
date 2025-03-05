@@ -1,11 +1,35 @@
 {% extends 'nav.j2' %}
 {% block head %}
 <title>Help</title>
-<link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
 {% endblock %}
 {% block body %}
 
 <div class="content">
+    <div class="instruction">
+        <table>
+        <thead>
+            <tr>
+                <th>Change Password</th>
+                <th>Edit Your Account</th>
+                <th>Delete Your Account</th>
+            </tr>
+        </thead>
+            <tbody>
+                <tr>
+                    <td><a href="edit_password/{{accountID}}" class="btn btn-default">Password</a></td>
+                    <td><a href="edit_accounts/{{accountID}}" class="btn btn-default">Edit</a></td>
+                    <td><a href="delete_account/{{accountID}}" class="btn btn-default">Delete</a></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+<br>
+<br>
+<br>
+<br>
+
 <p>Secret Admin Accounts Panel</p>
 
 <a href="/accounts">Admin Accounts Panel</a>

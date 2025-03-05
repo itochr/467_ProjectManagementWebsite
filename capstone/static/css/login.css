@@ -16,6 +16,7 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
+    font-family:Helvetica, sans-serif;
 }
 
 .login-container {
@@ -32,6 +33,13 @@ h1 {
     margin-bottom: 40px;
 }
 
+#site-title {
+    text-transform: uppercase;
+    /* text-shadow: 1px 1px red; */
+    text-decoration: underline;
+    text-decoration-color: #069;
+}
+
 .login-content {
     text-align: center;
 }
@@ -44,31 +52,38 @@ h1 {
 }
 
 .input {
-    background-color: #2b5d7d;
-    color: white;
+    /* background-color: #2b5d7d; */
+    color: black;
     padding: 10px 20px;
     display: flex;
     align-items: center;
-    min-width: 300px;
 }
 
 input[type="text"],
 input[type="password"] {
     border: none;
-    border-bottom: 1px solid white;
+    border-bottom: 1px solid black;
     background: transparent;
-    color: white;
+    color: black;
     outline: none;
-    width: 150px;
+    width: 100%;
+    padding: 10px;
 }
 
-.login-button {
+input[type="text"]:focus,
+input[type="password"]:focus  {
+    background-color: lightblue;
+    color: black;
+}
+
+#login-button {
     background-color: #2b5d7d;
     color: white;
     border: none;
     padding: 10px 40px;
     cursor: pointer;
     margin-top: 20px;
+    border-radius: 5px;
 }
 
 .login-button-admin {
@@ -79,3 +94,16 @@ input[type="password"] {
     cursor: pointer;
     margin-top: 0px;
 }
+
+#create-account-button {
+    background: none;
+    border: none;
+    padding: 0;
+    color: #069;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+#login-text {
+    text-transform: uppercase;
+  }
