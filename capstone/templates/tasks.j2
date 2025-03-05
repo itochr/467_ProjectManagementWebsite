@@ -77,6 +77,16 @@
         </div>
 {% endfor %}
 
+<!-- Keep your original Add New Project card -->
+        <div class="project-card add-new-card" onclick="openCreateModal()">
+            <div class="project-content">
+                <div class="add-project-placeholder">
+                    <h3>Create New Task</h3>
+                    <span class="plus-symbol">+</span>
+                </div>
+            </div>
+        </div>
+
 </div>
 
 
@@ -137,7 +147,10 @@
 		</fieldset>
 
 		<!-- Create 'Add Task' button -->
-		{# <input type="submit" value="Add Task" name="addTaskSubmit" class="btn btn-primary" style="margin:.5rem;"> #}
+		<input type="submit" value="Add Task" name="addTaskSubmit" class="btn btn-primary" style="margin:.5rem;">
+
+
+
 		<div class="form-actions">
                 <button type="submit" name="addTaskSubmit" class="submit-button">Create</button>
                 <button type="button" class="cancel-button" onclick="closeModal('addTaskDiv')">Cancel</button>
