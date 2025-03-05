@@ -159,11 +159,12 @@ def help():
 	# return render_template("help.j2")
 	return render_template("help.j2", accountID=session['accountID'])
 
+
 @app.route('/projects', methods=['GET', 'POST'])
 def projects():
 	if 'loggedin' not in session or not session['loggedin']:
 		screenMsg = 'Please login to continue'
-		return render_template('login.j2', screenMsg = screenMsg)
+		return render_template('login.j2', screenMsg=screenMsg)
 
 	if request.method == 'POST':
 		if 'createProject' in request.form:
@@ -173,17 +174,23 @@ def projects():
 			projectStatus = request.form['projectStatus']
 			accountTeamID = session['accountTeamID']
 
+			status_id = None
+			if isinstance(projectStatus, str) and not projectStatus.isdigit():
+				query = "SELECT statusID FROM Statuses WHERE statusName = %s"
+				cursor.execute(query, (projectStatus,))
+				status_result = cursor.fetchone()
+				if status_result:
+					status_id = status_result['statusID']
+				else:
+					status_id = 1
+			else:
+				status_id = projectStatus
+
 			insert_query = """
-		    INSERT INTO Projects (projectName, projectStart, projectEnd, accountTeamID, projectStatus)
-		    VALUES (%s, %s, %s, %s, %s)
-		    """
-			cursor.execute(insert_query, (projectName, projectStart, projectEnd, accountTeamID, projectStatus))
-# =======
-# 			INSERT INTO Projects (projectName, projectStart, projectEnd, accountTeamID)
-# 			VALUES (%s, %s, %s, %s)
-# 			"""
-# 			cursor.execute(insert_query, (projectName, projectStart, projectEnd, accountTeamID))
-# >>>>>>> vish-dev
+            INSERT INTO Projects (projectName, projectStart, projectEnd, accountTeamID, projectStatus)
+            VALUES (%s, %s, %s, %s, %s)
+            """
+			cursor.execute(insert_query, (projectName, projectStart, projectEnd, accountTeamID, status_id))
 			db_connection.commit()
 
 		elif 'editProject' in request.form:
@@ -191,13 +198,35 @@ def projects():
 			projectName = request.form['projectName']
 			projectStart = request.form['projectStart']
 			projectEnd = request.form['projectEnd']
+			projectStatus = request.form.get('projectStatus')
 
-			update_query = """
-					UPDATE Projects
-					SET projectName = %s, projectStart = %s, projectEnd = %s
-					WHERE projectID = %s AND accountTeamID = %s
-					"""
-			cursor.execute(update_query, (projectName, projectStart, projectEnd, projectID, session['accountTeamID']))
+			if projectStatus:
+				status_id = None
+				if isinstance(projectStatus, str) and not projectStatus.isdigit():
+					query = "SELECT statusID FROM Statuses WHERE statusName = %s"
+					cursor.execute(query, (projectStatus,))
+					status_result = cursor.fetchone()
+					if status_result:
+						status_id = status_result['statusID']
+				else:
+					status_id = projectStatus
+
+				update_query = """
+                UPDATE Projects
+                SET projectName = %s, projectStart = %s, projectEnd = %s, projectStatus = %s
+                WHERE projectID = %s AND accountTeamID = %s
+                """
+				cursor.execute(update_query,
+							   (projectName, projectStart, projectEnd, status_id, projectID, session['accountTeamID']))
+			else:
+				update_query = """
+                UPDATE Projects
+                SET projectName = %s, projectStart = %s, projectEnd = %s
+                WHERE projectID = %s AND accountTeamID = %s
+                """
+				cursor.execute(update_query,
+							   (projectName, projectStart, projectEnd, projectID, session['accountTeamID']))
+
 			db_connection.commit()
 
 		elif 'deleteProject' in request.form:
@@ -206,40 +235,77 @@ def projects():
 			cursor.execute(delete_query, (projectID, session['accountTeamID']))
 			db_connection.commit()
 
-		elif 'updateStatus' in request.form:
-			projectID = request.form['projectID']
-			newStatus = request.form['projectStatus']
-
-			update_query = """
-		    UPDATE Projects
-		    SET projectStatus = %s
-		    WHERE projectID = %s AND accountTeamID = %s
-		    """
-			cursor.execute(update_query, (newStatus, projectID, session['accountTeamID']))
-			db_connection.commit()
-
 		return redirect(url_for('projects'))
 
-	# query = 'SELECT * FROM Projects'					# [Vish]: Uncomment to use without parameters
-	query = 'SELECT * FROM Projects WHERE accountTeamID = %s'
+	cursor.execute('SELECT * FROM Statuses')
+	statuses = cursor.fetchall()
 
+	query = '''
+    SELECT p.*, s.statusName 
+    FROM Projects p
+    LEFT JOIN Statuses s ON p.projectStatus = s.statusID
+    WHERE p.accountTeamID = %s
+    '''
 	inputs = (session['accountTeamID'])
-
 	cursor.execute(query, inputs)
-	# cursor.execute(query)  							# [Vish]: Uncomment to use without parameters
-
-	# projects = cursor.fetchone()  					# [Vish]: Uncomment to get single record in query
-	# projects = json.dumps(cursor.fetchall()) 			# [Vish]: Uncomment to get json of query
 	projects = cursor.fetchall()
+
 	if projects:
-		# screenMsg = json.dumps(projects)				# [Vish]: Uncomment to get json of query
 		screenMsg = f"Printing Projects for accountTeamID {session['accountTeamID']}"
-
-		return render_template('projects.j2', screenMsg = screenMsg, accountUsername = session['accountUsername'], projects = projects)
+		return render_template('projects.j2', screenMsg=screenMsg, accountUsername=session['accountUsername'],
+							   projects=projects, statuses=statuses)
 	else:
+		screenMsg = 'No projects found for your team'
+		return render_template('projects.j2', screenMsg=screenMsg, accountUsername=session['accountUsername'],
+							   projects=[], statuses=statuses)
 
-		screenMsg = 'Please enter correct username and password'
-		return render_template('login.j2', screenMsg = screenMsg)
+
+@app.route("/updateProjectStatus", methods=['POST'])
+def update_project_status():
+	try:
+		if 'loggedin' not in session or not session['loggedin']:
+			return jsonify({"error": "Not logged in"}), 401
+
+		data = request.get_json()
+		if not data:
+			return jsonify({"error": "No JSON data received"}), 400
+
+		projectID = data.get("projectID")
+		projectStatus = data.get("projectStatus")
+
+		print(f"Received update request: projectID={projectID}, projectStatus={projectStatus}")
+
+		if not projectID or not projectStatus:
+			return jsonify({"error": "Missing projectID or projectStatus"}), 400
+
+		project_query = "SELECT * FROM Projects WHERE projectID = %s"
+		cursor.execute(project_query, (projectID,))
+		project = cursor.fetchone()
+
+		if not project:
+			return jsonify({"error": f"Project with ID {projectID} not found"}), 404
+
+		status_query = "SELECT * FROM Statuses WHERE statusID = %s"
+		cursor.execute(status_query, (projectStatus,))
+		status = cursor.fetchone()
+
+		if not status:
+			return jsonify({"error": f"Status with ID {projectStatus} not found"}), 404
+
+		query = "UPDATE Projects SET projectStatus = %s WHERE projectID = %s"
+		cursor.execute(query, (projectStatus, projectID))
+		cursor.connection.commit()
+
+		print(f"Successfully updated project {projectID} to status {projectStatus}")
+
+		return jsonify({
+			"message": "Project status updated successfully",
+			"projectID": projectID,
+			"newStatus": projectStatus
+		}), 200
+	except Exception as e:
+		print(f"Error in update_project_status: {str(e)}")
+		return jsonify({"error": str(e)}), 500
 
 @app.route('/account_creation', methods=['GET', 'POST'])
 def accountCreation():

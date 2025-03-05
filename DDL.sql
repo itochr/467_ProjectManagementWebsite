@@ -96,10 +96,13 @@ projectName VARCHAR(50) NOT NULL,
 projectStart DATE NOT NULL,
 projectEnd DATE NOT NULL,
 accountTeamID INT,
-projectStatus VARCHAR(50) NOT NULL,
+projectStatus INT NOT NULL,
 PRIMARY KEY (projectID),
+FOREIGN KEY (projectStatus) REFERENCES Statuses(statusID)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE,
 FOREIGN KEY (accountTeamID) REFERENCES AccountTeams(accountTeamID)
-	ON UPDATE CASCADE
+    ON UPDATE CASCADE
     ON DELETE CASCADE
 );
 
