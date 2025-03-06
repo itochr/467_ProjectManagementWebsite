@@ -118,11 +118,25 @@ def tasks():
 		cursor.execute(queryTeamProjects, teamInputs)
 		teamProjects = cursor.fetchall()
 
+		queryTeamSprints = 'SELECT * FROM Sprints WHERE accountTeamID = %s'
+		cursor.execute(queryTeamSprints, teamInputs)
+		sprintsFetch = cursor.fetchall()
+
 		if userTasksFetch and teamTasksFetch:
 			# screenMsg = json.dumps(userTasksFetch)				# [Vish]: Uncomment to get json of query
 			screenMsg = f"Printing Tasks for account {session['accountUsername']}"
 			# cursor.close()
-			return render_template('tasks.j2', screenMsg = screenMsg, accountUsername = session['accountUsername'], accountFirstName = session['accountFirstName'], accountLastName = session['accountLastName'], userTasks = userTasksFetch, teamTasks = teamTasksFetch, statuses = statusFetch, team = teamMemberFetch, projects = teamProjects)
+			return render_template('tasks.j2',
+						  screenMsg = screenMsg,
+						  accountUsername = session['accountUsername'],
+						  accountFirstName = session['accountFirstName'],
+						  accountLastName = session['accountLastName'],
+						  userTasks = userTasksFetch,
+						  teamTasks = teamTasksFetch,
+						  statuses = statusFetch,
+						  team = teamMemberFetch,
+						  projects = teamProjects,
+						  teamSprints = sprintsFetch)
 		else:
 			screenMsg = 'Please enter correct username and password'
 

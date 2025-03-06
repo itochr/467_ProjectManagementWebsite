@@ -1,36 +1,16 @@
-.nav-container {
-    display: flex;
-    justify-content: center;
-    padding: 1em;
-    background-color: #f5f5f5;
+/* General Page */
+* {
+    box-sizing: border-box;
 }
 
-.nav-buttons {
-    display: flex;
-    gap: 0;
-}
-
-.nav-button {
-    padding: 1em 2em;
-    text-decoration: none;
-    color: white;
-    background-color: #2B5875;
-    border: none;
+body {
     margin: 0;
-    min-width: 120px;
-    text-align: center;
+    padding: 0;
+    font-family: Arial, sans-serif;
 }
 
-.nav-button:hover {
-    opacity: 0.9;
-}
-
-.nav-button.tasks {
-    background-color: #6AB04C;
-}
-
-.content {
-    padding: 0 2em;
+h1 .username {
+    text-decoration: underline;
 }
 
 h1 {
@@ -39,37 +19,41 @@ h1 {
     margin-bottom: 2em;
 }
 
-h1 .username {
-    text-decoration: underline;
+.content {
+    padding: 0 2em;
 }
 
+/* Kanban Board */
 .kanban-board {
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start; /*Makes columns same level*/
     text-align: center;
     /* min-height: 100vh; */
 }
 
-.add-new-card {
-
-    width: max-content;
-}
-
 .status-column {
-    /* background-color: lightslategray; */
+    flex: 0 0 300px;
+    min-height: 500px;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    padding: 15px;
     border: 1px solid black;
+    margin: 10px;
 }
 
-.tasks-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 2em;
-    justify-content: center;
-    padding: 1em;
+.status-column h2 {
+    text-align: center;
+    margin-bottom: 15px;
+    color: #333;
 }
 
-.task-card {
+.status-column .project-card {
+    margin-bottom: 15px;
+}
+
+/* Task Card */
+/* .task-card {
     background-color: #8E44AD;
     color: white;
     text-decoration: none;
@@ -79,30 +63,70 @@ h1 .username {
     align-items: center;
     justify-content: center;
     border: 1px solid black;
-}
+} */
 
-.task-content {
-    font-size: 1.2em;
-}
-
-.task-button {
-    background-color: transparent;
-    border: none;
+.project-card {
+    background-color: #8e44ad;
     color: white;
-    font-size: 1.2em;
+    border-radius: 4px;
+    padding: 5px;
+    text-align: center;
     cursor: pointer;
-    padding: 0;
-    font-family: Arial, sans-serif;
+    box-shadow: 3px 3px 3px 3px #333;
 }
 
-.task-button:hover {
-    text-decoration: underline;
+
+/* .project-content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+} */
+
+.project-content h3 {
+    font-size: 24px;
+    margin: 0;
 }
 
 .project-content p {
-    color:#333
+    color:#333;
+    margin: 5px 0;
 }
 
+/* Add New Task Section */
+.project-card.add-new-card {
+    height: 80px !important;
+    min-height: 80px !important;
+    padding: 10px;
+    margin-top: 10px;
+    box-shadow: none;
+}
+
+.project-card.add-new-card .project-content {
+    padding: 0;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.add-project-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+}
+
+.add-project-placeholder h3 {
+    font-size: 16px;
+    margin: 0;
+}
+
+.plus-symbol {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* Modal */
 .modal {
     display: none;
     position: fixed;
@@ -140,7 +164,7 @@ h1 .username {
     cursor: pointer;
 }
 
-
+/* Add Task Form */
 button {
     padding: 12px;
     border: none;
@@ -152,8 +176,6 @@ button {
     border: black 1px solid;
     margin-top: 20px;
 }
-
-
 
 .form-group {
     margin-bottom: 20px;
@@ -174,18 +196,9 @@ button {
     font-size: 14px;
 }
 
+/* END */
 
-body {
-    margin: 0;
-    padding: 0;
-    font-family: Arial, sans-serif;
-}
-
-h1 .username {
-    text-decoration: underline;
-}
-
-.parent {
+/* .parent {
     float: left;
     margin-left: 5px;
     height: 200px;
@@ -198,8 +211,5 @@ h1 .username {
     width: 50px;
     background-color: khaki;
     border: 3px solid red;
-  }
+  } */
 
-* {
-    box-sizing: border-box;
-}
