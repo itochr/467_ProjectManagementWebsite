@@ -13,9 +13,9 @@ function closeModal(modalId) {
 }
 
 function confirmDelete() {
-    if (confirm('Are you sure you want to delete this project?')) {
-        const projectID = document.getElementById('projectID').value;
-        document.getElementById('deleteProjectID').value = projectID;
+    if (confirm('Are you sure you want to delete this task?')) {
+        const taskID = document.getElementById('taskID').value;
+        document.getElementById('deleteTaskID').value = taskID;
         document.getElementById('deleteForm').submit();
     }
 }
@@ -25,7 +25,10 @@ function showTaskDetails(task) {
 
     document.getElementById('taskID').value = task.taskID;
     document.getElementById('editTaskSubject').value = task.taskSubject;
+    document.getElementById('editTaskDescription').value = task.taskDescription;
 
+
+    console.log('Description:', task.taskDescription);
     console.log('Raw Start Date:', task.taskAssigned);
     console.log('Raw End Date:', task.taskDue);
 
@@ -86,7 +89,7 @@ function formatDate(dateString) {
     return `${year}-${month}-${day}`; // Return YYYY-MM-DD format
 }
 
-function showHide(elementID) {
+function toggleShowHide(elementID) {
 	var x = document.getElementById(elementID);
 	if (x.style.display === "none") {
 	  x.style.display = "block";
@@ -103,6 +106,43 @@ if (x.style.display === "none") {
 	x.style.display = "none";
 }
 }
+
+// function showTeamTasks() {
+//     var x = document.getElementById("teamTasks-div");
+//     var y = document.getElementById("userTasks-div");
+//     x.style.display = "block";
+//     y.style.display = "none";
+// }
+
+// function showUserTasks() {
+//     var x = document.getElementById("teamTasks-div");
+//     var y = document.getElementById("userTasks-div");
+//     y.style.display = "block";
+//     x.style.display = "none";
+// }
+function showTeamTasks() {
+    var x = document.getElementsByClassName("teamTasks-div");
+    var y = document.getElementsByClassName("userTasks-div");
+    for (var i = 0; i < x.length; i++) {
+        x[i].style.display = 'block';
+    }
+    for (var i = 0; i < y.length; i++) {
+    y[i].style.display = 'none';
+    }
+}
+
+function showUserTasks() {
+    var x = document.getElementsByClassName("teamTasks-div");
+    var y = document.getElementsByClassName("userTasks-div");
+    for (var i = 0; i < x.length; i++) {
+        x[i].style.display = 'none';
+    }
+    for (var i = 0; i < y.length; i++) {
+    y[i].style.display = 'block';
+    }
+}
+
+
 
 function drag(event) {
     event.dataTransfer.setData("text", event.target.id);
