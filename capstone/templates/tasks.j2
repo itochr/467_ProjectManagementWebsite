@@ -2,84 +2,50 @@
 {% block head %}
 <title>Tasks</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='css/tasks.css') }}">
-<link rel="stylesheet" href="{{ url_for('static', filename='css/projects.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+<script src="{{ url_for('static', filename='js/tasks.js') }}"></script>
 {% endblock %}
 {% block body %}
 
 <div class="content">
-
-<div id ="hello">
-	{# {% if accountUsername is defined %} #}
-	{# <h1><span class="username">{{accountUsername}}</span> Tasks</h1> #}
-	<h1><span class="username">{{accountFirstName}} {{accountLastName}}'s</span> Kanban Board</h1>
-	<h2><span class="username">{{teamTasks[0].accountTeamName}}</span> Tasks</h1>
-</div>
-
-
-
-
-{# <div class="kanban-board">
-{% for status in statuses %}
-<div class="status-column" data-status-id="{{status.statusID}}" data-status="{{status.statusName}}" ondrop="drop(event)" ondragover="allowDrop(event)">
+    <div id="greeting">
+        <h1><span class="username">{{accountFirstName}} {{accountLastName}}'s</span> Kanban Board</h1>
+        <h2><span class="username">{{teamTasks[0].accountTeamName}}</span> Tasks</h1>
+    </div>
+    <div class="kanban-board">
+        {% for status in statuses %}
+        <div class="status-column"
+		data-status-id="{{status.statusID}}"
+		data-status="{{status.statusName}}"
+		ondrop="drop(event)"
+		ondragover="allowDrop(event)">
             <h2>{{status.statusName}}</h2>
             <div class="column-content">
-			{% for userTask in userTasks %}
-			{% if userTask.taskStatus == status.statusID %}
+                {% for teamTask in teamTasks %}
+                {% if teamTask.taskStatus == status.statusID %}
                 <div class="project-card"
-                     draggable="true"
-                     ondragstart="drag(event)"
-
-                     id="{{ userTask.taskID }}">
-                    <div class="project-content">
-                        <h3>{{ userTask.taskSubject }}</h3>
-						<p>Status: {{ userTask.statusName }}</p>
-						<p>Start: {{ userTask.taskAssigned }}</p>
-                        <p>Due: {{ userTask.taskDue }}</p>
-                    </div>
-                </div>
-				{% endif %}
-                {% endfor %}
-            </div>
-        </div>
-{% endfor %} #}
-
-
-{# TEAM TASKS #}
-	{% if teamTasks[0].accountTeamID is defined %}
-	{# <h1><span class="username">{{teamTasks[0].accountTeamName}}</span> Tasks</h1> #}
-
-
-<div class="kanban-board">
-{% for status in statuses %}
-<div class="status-column" data-status-id="{{status.statusID}}" data-status="{{status.statusName}}" ondrop="drop(event)" ondragover="allowDrop(event)">
-
-            <h2>{{status.statusName}}</h2>
-            <div class="column-content">
-			{% for teamTask in teamTasks %}
-			{% if teamTask.taskStatus == status.statusID %}
-                <div class="project-card"
-                     draggable="true"
-                     ondragstart="drag(event)"
-
-                     id="{{ teamTask.taskID }}">
+				draggable="true"
+				ondragstart="drag(event)"
+				onclick='showTaskDetails(JSON.parse(this.getAttribute("data-project")))'
+				id="{{ teamTask.taskID }}"
+				data-project='{{ teamTask|tojson|safe }}' >
                     <div class="project-content">
                         <h3>{{ teamTask.taskSubject }}</h3>
-						<p>Status: {{ teamTask.statusName }}</p>
-						<p>Start: {{ teamTask.taskAssigned }}</p>
+                        <p>Status: {{ teamTask.statusName }}</p>
+                        <p>Start: {{ teamTask.taskAssigned }}</p>
                         <p>Due: {{ teamTask.taskDue }}</p>
-						<p>Sprint: {{ teamTask.sprintName }} | {{ teamTask.sprintStart }}-{{ teamTask.sprintEnd }}</p>
-						<p>Project: {{ teamTask.projectName }}</p>
-						<p>Assignee: {{ teamTask.accountFirstName }} {{ teamTask.accountLastName }}</p>
+                        <p>{{ teamTask.sprintName }} | {{ teamTask.sprintStart }}-{{ teamTask.sprintEnd }}</p>
+                        <p>Project: {{ teamTask.projectName }}</p>
+                        <p>Assignee: {{ teamTask.accountFirstName }} {{ teamTask.accountLastName }}</p>
                     </div>
                 </div>
-				{% endif %}
+                {% endif %}
                 {% endfor %}
             </div>
         </div>
-{% endfor %}
+        {% endfor %}
 
-<!-- Keep your original Add New Project card -->
+		{# Create New Task Card #}
         <div class="project-card add-new-card" onclick="openCreateModal()">
             <div class="project-content">
                 <div class="add-project-placeholder">
@@ -88,215 +54,147 @@
                 </div>
             </div>
         </div>
-
-</div>
-
-
-{% endif %}
-
-
-<div id="addTaskDiv" class="modal">
-<div class="modal-content">
-        <span class="close" onclick="closeModal('addTaskDiv')">&times;</span>
-	<!-- form to INSERT new data into Tasks-->
-
-	<form id="addTask" action="/tasks" method="post">
-		<legend><strong>Add Task</strong></legend>
-		<fieldset>
-
-		<div class="form-group">
-			<select name="tAssignee" id="tAssignee">
-				<option value="-1">Choose Assignee</option>
-				{% for teamMember in team| unique(attribute="accountID") | sort(attribute="accountFirstName") %}
-				<option value="{{teamMember.accountID}}">{{teamMember.accountFirstName}} {{teamMember.accountLastName}}</option>
-				{% endfor %}
-			</select>
-			</div>
-
-			<div class="form-group">
-			<label for="assigned">Assigned Date</label>
-			<input type="date" id="tAssignedDate" name="tAssignedDate" required>
-			</div>
-
-			<div class="form-group">
-			<label for="due">Due Date</label>
-			<input type="date" class="" id="tDueDate" name="tDueDate" required>
-			</div>
-
-			<div class="form-group">
-			<select name="tStatus" id="tStatus">
-				<option value="-1">Choose Status</option>
-				{% for status in statuses|  sort(attribute="statusName")%}
-				<option value="{{status.statusID}}">{{status.statusName}}</option>
-				{% endfor %}
-			</select>
-			</div>
-
-			<div class="form-group">
-			<select name="tProject" id="tProject">
-				<option value="-1">Choose Project</option>
-				{% for project in projects|  sort(attribute="projectName")%}
-				<option value="{{project.projectID}}">{{project.projectName}}</option>
-				{% endfor %}
-			</select>
-			</div>
-
-			<div class="form-group">
-			<select name="tSprint" id="tSprint" required>
-				<option value="-1">Choose Sprint</option>
-				{% for teamTask in teamTasks| unique(attribute="taskSprint") | sort(attribute="taskSprint") %}
-				<option value="{{teamTask.taskSprint}}">{{teamTask.taskSprint}} : {{teamTask.sprintStart}} - {{teamTask.sprintEnd}}</option>
-				{% endfor %}
-			</select>
-			</div>
-
-			<div class="form-group">
-			<label for="subject">Task Subject/Description</label>
-			<input type="text" class="" id="tSubject" name="tSubject" placeholder="" required>
-			</div>
-
-		</fieldset>
-
-		<!-- Create 'Add Task' button -->
-		{# <input type="submit" value="Add Task" name="addTaskSubmit" class="btn btn-primary" style="margin:.5rem;"> #}
-
-
-
-		<div class="form-actions">
-                <button type="submit" name="addTaskSubmit" class="submit-button">Create</button>
-                <button type="button" class="cancel-button" onclick="closeModal('addTaskDiv')">Cancel</button>
-            </div>
-	</form>
-	</div>
-</div>
-
-
-
-  {# {% for userTask in userTasks | unique(attribute="taskID") %}
-  <a class="task-card"><div class="task-content">{{userTask.taskSubject}}</div></a>
-  {% endfor %} #}
-
-{#
-  {% for userTask in userTasks %}
-  <div class="task-card" onclick='showProjectDetails({{ userTask|tojson|safe }})'>
-    <div class="task-content">
-      <h3>{{ userTask.taskSubject }}</h3>
-      <p>Status: {{ userTask.statusName }}</p>
-      <p>Due: {{ userTask.taskDue }}</p>
     </div>
-  </div>
-  {% endfor %}
-  </div> #}
 
-{#
-<button id="toggleTables" onclick="showHide('tasks-as-tables')">Toggle Tables</button>
+	{# Overlay Modal When Create New Task is clicked #}
+    <div id="addTaskDiv" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('addTaskDiv')">&times;</span>
+			{# form to INSERT new data into Tasks #}
+            <form id="addTask" action="/tasks" method="post">
+                <legend><strong>Add Task</strong></legend>
+                <fieldset>
+                    <div class="form-group">
+                        <select name="tAssignee" id="tAssignee">
+                            <option value="-1">Choose Assignee</option>
+                            {% for teamMember in team| unique(attribute="accountID") | sort(attribute="accountFirstName") %}
+                            <option value="{{teamMember.accountID}}">{{teamMember.accountFirstName}} {{teamMember.accountLastName}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="assigned">Assigned Date</label>
+                        <input type="date" id="tAssignedDate" name="tAssignedDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="due">Due Date</label>
+                        <input type="date" class="" id="tDueDate" name="tDueDate" required>
+                    </div>
+                    <div class="form-group">
+                        <select name="tStatus" id="tStatus">
+                            <option value="-1">Choose Status</option>
+                            {% for status in statuses| sort(attribute="statusName")%}
+                            <option value="{{status.statusID}}">{{status.statusName}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <select name="tProject" id="tProject">
+                            <option value="-1">Choose Project</option>
+                            {% for project in projects| sort(attribute="projectName")%}
+                            <option value="{{project.projectID}}">{{project.projectName}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <select name="tSprint" id="tSprint" required>
+                            <option value="-1">Choose Sprint</option>
 
-{% if userTasks %}
-{% if teamTasks %}
-{% if statuses %}
-<div id="tasks-as-tables" style="display: none;">
-<h2>User Tasks as a table</h2>
-		<div class="instruction">
-			<table>
-				<thead>
-					<tr>
-						{% for key in userTasks[0].keys() %}
-						<th>{{ key }}</th>
-						{% endfor %}
-					</tr>
-				<tbody>
-					{% for userTask in userTasks %}
-					<tr>
-						{% for key in userTask.keys() %}
-						<td>{{userTask[key]}}</td>
-						{% endfor %}
-					</tr>
-					{% endfor %}
-			</table>
-		</div>
+                            {% for teamTask in teamTasks| unique(attribute="taskSprint") | sort(attribute="taskSprint") %}
+                            <option value="{{teamTask.taskSprint}}">{{teamTask.sprintName}} : {{teamTask.sprintStart}} - {{teamTask.sprintEnd}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="subject">Task Subject/Description</label>
+                        <input type="text" class="" id="tSubject" name="tSubject" placeholder="" required>
+                    </div>
+                </fieldset>
+				{# Create 'Add Task' butto #}
+                <div class="form-actions">
+                    <button type="submit" name="addTaskSubmit" class="submit-button">Create</button>
+                    <button type="button" class="cancel-button" onclick="closeModal('addTaskDiv')">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div>
 
-<h2>Team Tasks as a table</h2>
-		<div class="instruction">
-			<table>
-				<thead>
-					<tr>
-						{% for key in teamTasks[0].keys() %}
-						<th>{{ key }}</th>
-						{% endfor %}
-					</tr>
-				<tbody>
-					{% for teamTask in teamTasks %}
-					<tr>
-						{% for key in teamTask.keys() %}
-						<td>{{teamTask[key]}}</td>
-						{% endfor %}
-					</tr>
-					{% endfor %}
-			</table>
-		</div>
+		{# Task Details Modal #}
+        <div id="taskDetailsModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal('taskDetailsModal')">&times;</span>
+                <h2>Task Details</h2>
+				{# Edit Form #}
+
+                <form id="editTask" action="{{ url_for('tasks') }}" method="POST">
+                    <input type="hidden" id="taskID" name="taskID">
+                    <div class="form-group">
+                        <label for="taskSubject">Task Description:</label>
+                        <input type="text" id="editTaskSubject" name="taskSubject" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="taskStatus">Status:</label>
+                        <select id="editTaskStatus" name="taskStatus" required>
+                            {% for status in statuses %}
+                            <option value="{{status.statusID}}">{{status.statusName}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+						<div class="form-group">
+                        <label for="taskProject">Task Owner:</label>
+                        <select id="editTaskProject" name="taskProject" required>
+
+                            {% for project in projects| sort(attribute="projectName")%}
+                            <option value="{{project.projectID}}">{{project.projectName}}</option>
+                            {% endfor %}
+
+                        </select>
+
+
+
+					 <div class="form-group">
+                        <label for="taskAssignee">Task Owner:</label>
+                        <select id="editTaskAssignee" name="taskAssignee" required>
+
+                            {% for teamMember in team| unique(attribute="accountID")%}
+                            <option value="{{teamMember.accountID}}">{{teamMember.accountFirstName}} {{teamMember.accountLastName}}</option>
+                            {% endfor %}
+
+                        </select>
+                    </div>
+
+					<div class="form-group">
+                        <label for="taskSprint">Task Sprint:</label>
+                        <select id="editTaskSprint" name="taskSprint" required>
+
+                            {% for sprint in teamSprints%}
+                            <option value="{{sprint.sprintID}}">{{sprint.sprintName}} : {{sprint.sprintStart}} - {{sprint.sprintEnd}}</option>
+                            {% endfor %}
+
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="taskAssigned">Start Date:</label>
+                        <input type="date" id="editTaskAssigned" name="taskAssigned" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="taskDue">End Date:</label>
+                        <input type="date" id="editTaskDue" name="taskDue" required>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" name="editTask" class="button submit-button">Save</button>
+                        <button type="button" class="button cancel-button" onclick="closeModal('taskDetailsModal')">Cancel</button>
+                        <button type="button" class="button delete-button" onclick="confirmDelete()">Delete</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
-
-
-
-{% endif %}
-{% endif %}
-{% endif %}
- #}
-
-
-{#<button id="toggleTestSection" onclick="showHide('testDebugSection')">Toggle Test Section</button>
- <div id="testDebugSection" style="display: none;">
-<button id="myButton">Click me</button>
-<button id="hideButton" onclick="showHide(this)">Hide me</button>
-<button id="hideButton2" onclick="showHide2()" style="display: block;">Hide me2</button>
-<button id="hideButton3" onclick="showHide(this)" style="display: block;">Hide me3</button>
-<button id="hideButton4" onclick="showHide()" style="display: block;">Hide me4</button>
-<button id="hideButton5" onclick="showHide(this.id)" style="display: block;">Hide me5 - Works</button>
-<div class="project-card" onclick="divClick()">Click Me Function Alert Popup</div>
-</div> #}
-
-
-</div>
-
-
-
-
-<script>
-function drag(event) {
-    event.dataTransfer.setData("text", event.target.id);
-}
-
-function allowDrop(event) {
-    event.preventDefault();
-}
-
-function drop(event) {
-    event.preventDefault();
-    const projectId = event.dataTransfer.getData("text");
-    const projectCard = document.getElementById(projectId);
-
-    // Find the closest status-column div
-    const column = event.target.closest('.status-column');
-    if (column) {
-        const columnContent = column.querySelector('.column-content');
-        columnContent.appendChild(projectCard);
-
-        // Get the new task status from the column's data-status attribute
-        const newStatusName = column.getAttribute('data-status');
-        const newStatusID = column.getAttribute('data-status-id');
-
-        // Send AJAX POST request to update the task status
-        var xhr = new XMLHttpRequest();
-        xhr.open("POST", "/updateTaskStatus", true);
-        xhr.setRequestHeader("Content-Type", "application/json");
-        xhr.send(JSON.stringify({
-            taskID: projectId, // The task ID from the dragged element
-            taskStatus: newStatusID // The new status from the drop target
-        }));
-    }
-}
-</script>
-<script src="{{ url_for('static', filename='js/tasks.js') }}" defer></script>
-
-{# <script src="/capstone/static/js/tasks.js"></script> #}
 {% endblock %}
+
+<script src="{{ url_for('static', filename='js/tasks.js') }}" defer></script>
