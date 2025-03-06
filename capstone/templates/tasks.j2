@@ -11,8 +11,8 @@
         <h1><span class="username">{{accountFirstName}} {{accountLastName}}'s</span> Kanban Board</h1>
         <h2><span class="username">{{teamTasks[0].accountTeamName}}</span> Tasks</h1>
     </div>
-<button id="showTaskByTeam-btn" onclick="showTeamTasks()">Tasks By Team</button>
-<button id="showTaskByUser-btn" onclick="showUserTasks()">Tasks By User</button>
+<button class="filterButtons" id="showTaskByTeam-btn" onclick="showTeamTasks()">Tasks By Team</button>
+<button class="filterButtons" id="showTaskByUser-btn" onclick="showUserTasks()">Tasks By User</button>
 
 
     <div class="kanban-board">
@@ -58,7 +58,6 @@
 				data-project='{{ teamTask|tojson|safe }}' >
                     <div class="project-content">
                         <h3>{{ teamTask.taskSubject }}</h3>
-						<p>userAccountID: {{userAccountID}}</p>
                         <p>Status: {{ teamTask.statusName }}</p>
                         <p>Start: {{ teamTask.taskAssigned }}</p>
                         <p>Due: {{ teamTask.taskDue }}</p>
