@@ -62,15 +62,6 @@ def tasks():
 		if 'loggedin' not in session or not session['loggedin']:
 			screenMsg = 'Please login to continue'
 			return render_template('login.j2', screenMsg = screenMsg)
-		# query = 'SELECT * FROM Projects'					# [Vish]: Uncomment to use without parameters
-		# queryUserTasks = """
-		# SELECT * FROM Tasks t
-		# JOIN Accounts a ON t.taskAssignee=a.accountID
-		# JOIN Statuses stat on t.taskStatus=stat.statusID
-		# JOIN Sprints sp on t.taskSprint=sp.sprintID
-		# JOIN Projects p on sp.sprintProject=p.projectID
-		# WHERE t.taskAssignee = %s
-		# """
 		queryUserTasks = """
 		SELECT * FROM Tasks t
 		JOIN Accounts a ON t.taskAssignee=a.accountID
@@ -81,15 +72,7 @@ def tasks():
 		"""
 
 		userInputs = (session['accountID'])
-		# queryTeamTasks = """
-		# SELECT * FROM Tasks t
-		# JOIN Accounts a ON t.taskAssignee=a.accountID
-		# JOIN AccountTeams at ON  a.accountTeamID=at.accountTeamID
-		# JOIN Statuses stat on t.taskStatus=stat.statusID
-		# JOIN Sprints sp on t.taskSprint=sp.sprintID
-		# JOIN Projects p on sp.sprintProject=p.projectID
-		# WHERE a.accountTeamID = %s
-		# """
+
 		queryTeamTasks = """
 		SELECT * FROM Tasks t
 		JOIN Accounts a ON t.taskAssignee=a.accountID
@@ -128,6 +111,7 @@ def tasks():
 			# cursor.close()
 			return render_template('tasks.j2',
 						  screenMsg = screenMsg,
+						  userAccountID = session['accountID'],
 						  accountUsername = session['accountUsername'],
 						  accountFirstName = session['accountFirstName'],
 						  accountLastName = session['accountLastName'],
@@ -143,7 +127,6 @@ def tasks():
 			return render_template('login.j2', screenMsg = screenMsg)
 
 	if request.method == "POST":
-		# if request.form.get("addTaskSubmit"):
 		if 'addTaskSubmit' in request.form:
 			tAssignee = request.form["tAssignee"]
 			tAssignedDate = request.form["tAssignedDate"]
@@ -152,21 +135,44 @@ def tasks():
 			tSprint = request.form["tSprint"]
 			tProject = request.form["tProject"]
 			tSubject = request.form["tSubject"]
+			tDescription = request.form["tDescription"]
 
-			query = "INSERT INTO Tasks (taskAssignee, taskAssigned, taskDue, taskStatus, taskSprint, taskProject, taskSubject) VALUES (%s, %s,%s,%s, %s, %s, %s)"
-			cursor.execute(query, (tAssignee, tAssignedDate, tDueDate, tStatus, tSprint, tProject, tSubject ))
+			query = """
+			INSERT INTO Tasks
+			(taskAssignee, taskAssigned, taskDue, taskStatus,
+			taskSprint, taskProject, taskSubject, taskDescription)
+			VALUES (%s, %s,%s,%s, %s, %s, %s, %s)"""
+			cursor.execute(query, (tAssignee, tAssignedDate, tDueDate, tStatus, tSprint, tProject, tSubject, tDescription))
 			cursor.connection.commit()
-			# return redirect("/tasks")
 			return redirect(url_for('tasks'))
-	# if request.method == "PUT":
-	# 	taskID = request.form["taskID"]
-	# 	taskStatus = request.form["taskStatus"]
-	# 	query = "UPDATE Tasks SET Tasks.taskStatus = %s WHERE Tasks.taskID = %s"
-	# 	cursor.execute(query, (taskStatus, taskID))
-	# 	cursor.connection.commit()
-	# 	return redirect("/tasks")
+		elif 'updateTask' in request.form:
+			taskID = request.form['taskID']
+			taskAssignee = request.form["taskAssignee"]
+			taskAssigned = request.form["taskAssigned"]
+			taskDue = request.form["taskDue"]
+			taskStatus = request.form["taskStatus"]
+			taskSprint = request.form["taskSprint"]
+			taskProject = request.form["taskProject"]
+			taskSubject = request.form["taskSubject"]
+			taskDescription = request.form["taskDescription"]
+			update_query = """
+                UPDATE Tasks
+                SET taskAssignee = %s, taskAssigned = %s, taskDue = %s,
+				taskStatus = %s, taskSprint = %s, taskProject = %s,
+				taskSubject = %s, taskDescription = %s
+                WHERE taskID = %s
+                """
+			cursor.execute(update_query,(taskAssignee, taskAssigned, taskDue, taskStatus, taskSprint, taskProject, taskSubject, taskDescription, taskID))
+			cursor.connection.commit()
+			return redirect(url_for('tasks'))
+		elif 'deleteTask' in request.form:
+			taskID = request.form['taskID']
+			delete_query = "DELETE FROM Tasks WHERE taskID = %s"
+			cursor.execute(delete_query, taskID)
+			cursor.connection.commit()
+			return redirect(url_for('tasks'))
 	else:
-		return render_template("tasks.j2")
+		return redirect(url_for('tasks'))
 
 @app.route("/updateTaskStatus", methods=['GET', 'POST'])
 def update_task_status():
@@ -352,30 +358,14 @@ def update_project_status():
 @app.route('/sprints', methods=['GET', 'POST'])
 def sprints():
 	if request.method == "GET":
-		# querySprints = 'SELECT * FROM Sprints'
 		querySprints = '''
 		SELECT *
 		FROM Sprints
 		WHERE accountTeamID = %s
 		'''
 		queryInputs = (session['accountTeamID'])
-		# querySprints = '''
-		# SELECT *
-		# FROM Sprints sp
-		# LEFT JOIN Projects p ON p.projectID = sp.sprintProject
-		# LEFT JOIN Statuses s ON p.projectStatus = s.statusID
-		# LEFT JOIN AccountTeams a on a.accountTeamID = p.accountTeamID
-		# '''
-		# cursor.execute(querySprints)
 		cursor.execute(querySprints, queryInputs)
-
-		# cursor = db.execute_query(db_connection=db_connection, query=query)
 		sprintsFetch = cursor.fetchall()
-
-		# queryProjects = 'SELECT * FROM Projects'
-		# cursor.execute(queryProjects)
-		# projectFetch = cursor.fetchall()
-
 		return render_template("sprints.j2", sprints = sprintsFetch)
 
 	else:

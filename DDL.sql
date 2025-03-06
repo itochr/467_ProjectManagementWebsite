@@ -16,6 +16,7 @@ taskStatus INT NOT NULL,
 taskSprint INT NOT NULL,
 taskProject INT NOT NULL,
 taskSubject VARCHAR(50),
+taskDescription VARCHAR(500),
 PRIMARY KEY (taskID),
 FOREIGN KEY (taskAssignee) REFERENCES Accounts(accountID)
 	ON UPDATE CASCADE
@@ -173,19 +174,19 @@ INSERT INTO Sprints (sprintName, sprintStart, sprintEnd, accountTeamID) VALUES
 ('Sprint Kappa', '2025-11-02', '2025-12-25','4');
 
 -- INSERT SAMPLE DATA INTO TASKS
-INSERT INTO Tasks (taskAssignee, taskAssigned, taskDue, taskStatus, taskSprint, taskProject, taskSubject) VALUES
-('1','2025-01-01','2025-02-01','1','1','1','TaskDescription1'),
-('1','2025-02-02','2025-03-01','2','1','1','TaskDescription2'),
-('1','2025-03-06','2025-04-01','3','1','1','TaskDescription3'),
-('2','2025-04-07','2025-05-01','1','3','4','TaskDescription4'),
-('2','2025-05-09','2025-06-01','2','3','4','TaskDescription5'),
-('2','2025-06-10','2025-07-01','3','3','4','TaskDescription6'),
-('3','2025-07-12','2025-08-01','1','5','7','TaskDescription7'),
-('3','2025-08-13','2025-09-01','2','5','7','TaskDescription8'),
-('3','2025-09-14','2025-10-01','3','5','7','TaskDescription9'),
-('4','2025-10-16','2025-11-01','1','7','10','TaskDescription10'),
-('4','2025-11-17','2025-12-01','2','7','10','TaskDescription11'),
-('4','2025-12-19','2026-01-01','3','7','10','TaskDescription12');
+INSERT INTO Tasks (taskAssignee, taskAssigned, taskDue, taskStatus, taskSprint, taskProject, taskSubject, taskDescription) VALUES
+('1','2025-01-01','2025-02-01','1','1','1','TaskDescription1', 'Description Placeholder1'),
+('1','2025-02-02','2025-03-01','2','1','1','TaskDescription2', 'Description Placeholder2'),
+('1','2025-03-06','2025-04-01','3','1','1','TaskDescription3', 'Description Placeholder3'),
+('2','2025-04-07','2025-05-01','1','3','4','TaskDescription4', 'Description Placeholder4'),
+('2','2025-05-09','2025-06-01','2','3','4','TaskDescription5', 'Description Placeholder5'),
+('2','2025-06-10','2025-07-01','3','3','4','TaskDescription6', 'Description Placeholder6'),
+('3','2025-07-12','2025-08-01','1','5','7','TaskDescription7', 'Description Placeholder7'),
+('3','2025-08-13','2025-09-01','2','5','7','TaskDescription8', 'Description Placeholder8'),
+('3','2025-09-14','2025-10-01','3','5','7','TaskDescription9', 'Description Placeholder9'),
+('4','2025-10-16','2025-11-01','1','7','10','TaskDescription10', 'Description Placeholder10'),
+('4','2025-11-17','2025-12-01','2','7','10','TaskDescription11', 'Description Placeholder11'),
+('4','2025-12-19','2026-01-01','3','7','10','TaskDescription12', 'Description Placeholder12');
 
 -- INSERT SAMPLE DATA INTO ACCOUNTTASKS (M:M)
 INSERT INTO AccountTasks (accountID, taskID) VALUES
