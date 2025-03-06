@@ -107,19 +107,6 @@ if (x.style.display === "none") {
 }
 }
 
-// function showTeamTasks() {
-//     var x = document.getElementById("teamTasks-div");
-//     var y = document.getElementById("userTasks-div");
-//     x.style.display = "block";
-//     y.style.display = "none";
-// }
-
-// function showUserTasks() {
-//     var x = document.getElementById("teamTasks-div");
-//     var y = document.getElementById("userTasks-div");
-//     y.style.display = "block";
-//     x.style.display = "none";
-// }
 function showTeamTasks() {
     var x = document.getElementsByClassName("teamTasks-div");
     var y = document.getElementsByClassName("userTasks-div");
@@ -141,8 +128,6 @@ function showUserTasks() {
     y[i].style.display = 'block';
     }
 }
-
-
 
 function drag(event) {
     event.dataTransfer.setData("text", event.target.id);
