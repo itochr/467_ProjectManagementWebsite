@@ -1,0 +1,63 @@
+{% extends 'nav.j2' %}
+{% block head %}
+<title>Projects</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/projects.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+{% endblock %}
+{% block body %}
+
+<div class="content">
+	<h1>Sprints</h1>
+		<div class="instruction">
+			<table>
+				<thead>
+					<tr>
+						{% for key in sprints[0].keys() %}
+						<th>{{ key }}</th>
+						{% endfor %}
+					</tr>
+				<tbody>
+					{% for sprint in sprints %}
+					<tr>
+						{% for key in sprint.keys() %}
+						<td>{{sprint[key]}}</td>
+						{% endfor %}
+						<td><a href="edit_sprints/{{sprint.sprintID}}" class="btn btn-default">Edit</a></td>
+						<td><a href="delete_sprint/{{sprint.sprintID}}" class="btn btn-default">Delete</a></td>
+					</tr>
+					{% endfor %}
+			</table>
+		</div>
+
+		<div id="addSprint">
+		<!-- form to INSERT new data into sprints-->
+		<form id="addSprint" action="/sprints" method="post">
+			<legend><strong>Add Sprint</strong></legend>
+			<fieldset>
+				<label for="sprintName">Sprint name: </label>
+				<input type="text" id ="sprintName" name="sprintName" required>
+
+				<label for="sprintStart">Sprint Start: </label>
+				<input type="date" id ="sprintStart" name="sprintStart" required>
+
+				<label for="sprintEnd">Sprint End: </label>
+				<input type="date" id ="sprintEnd" name="sprintEnd" required>
+
+				<label for="accountTeamID">Team ID</label>
+                <select type = "number" class="form-control" id="accountTeamID" name="accountTeamID" pattern="[0-4]{1}" placeholder="" required>
+				<!-- these are hard coded, but you can add code to make this dynamic -->
+					<option value=1>1</option>
+					<option value=2>2</option>
+					<option value=3>3</option>
+					<option value=4>4</option>
+				</select>
+
+            </fieldset>
+
+            <!-- Create 'Add Sprints' -->
+			<input type="submit" value="Add Sprint" name="addSprintSubmit" class="btn btn-primary" style="margin:.5rem;">
+        </form>
+
+	</div><!--insert-->
+</div>
+{% endblock %}
