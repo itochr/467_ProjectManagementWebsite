@@ -371,6 +371,26 @@ def sprints():
 	else:
 		return render_template("sprints.j2")
 
+@app.route("/delete_sprint/<int:id>")
+def delete_sprint(id):
+	# mySQL query to delete the account with our passed id
+	query = "DELETE FROM Accounts WHERE accountID = '%s';"
+	cursor = db.execute_query(db_connection=db_connection, query=query, query_params=(id))
+	results = cursor.fetchall()
+
+	return redirect("/sprints")
+
+# route for edit functionality, updating the attributes of the account
+# similar to our delete route, we want to the pass the 'id' value of that person on button click (see HTML) via the route
+@app.route("/edit_sprints/<int:sprintID>", methods=["POST", "GET"])
+def edit_accounts(sprintID):
+	if request.method == "GET":
+		query = "SELECT * FROM Accounts WHERE accountID = %s" % (sprintID)
+		cursor = db.execute_query(db_connection=db_connection, query=query)
+		data = cursor.fetchall()
+
+		return render_template("edit_sprints.j2", data=data)
+
 @app.route('/account_creation', methods=['GET', 'POST'])
 def accountCreation():
 	query = "SELECT * FROM Accounts;"
