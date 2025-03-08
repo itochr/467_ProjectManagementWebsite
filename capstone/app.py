@@ -368,24 +368,77 @@ def sprints():
 		sprintsFetch = cursor.fetchall()
 		return render_template("sprints.j2", sprints = sprintsFetch)
 
+	elif request.method == "POST":
+		if request.form.get("addSprintSubmit"):
+			sprintName = request.form["sprintName"]
+			sprintStart = request.form["sprintStart"]
+			sprintEnd = request.form["sprintEnd"]
+			accountTeamID = request.form["accountTeamID"]
+
+			query = "INSERT INTO Sprints (sprintName, sprintStart, sprintEnd, accountTeamID) VALUES (%s, %s, %s, %s)"
+			cursor.execute(query, (sprintName, sprintStart, sprintEnd, accountTeamID ))
+			cursor.connection.commit()
+
+			# redirect back to people page
+
+			return redirect("/sprints")
+
 	else:
 		return render_template("sprints.j2")
+	
+	# query = "SELECT * FROM Sprints;"
+	# cursor = db.execute_query(db_connection=db_connection, query=query)
+	# results = cursor.fetchall()
+
+	# if request.method == "POST":
+	# 	if request.form.get("addSprintSubmit"):
+	# 		sprintName = request.form["sprintName"]
+	# 		sprintStart = request.form["sprintStart"]
+	# 		sprintEnd = request.form["sprintEnd"]
+	# 		accountTeamID = request.form["accountTeamID"]
+
+	# 		query = "INSERT INTO Sprints (sprintName, sprintStart, sprintEnd, accountTeamID) VALUES (%s, %s, %s, %s)"
+	# 		cursor.execute(query, (sprintName, sprintStart, sprintEnd, accountTeamID ))
+	# 		cursor.connection.commit()
+
+	# 		# redirect back to people page
+
+	# 		return redirect("/sprints")
+
+	# return render_template("sprints.j2", data = results)
 
 @app.route("/delete_sprint/<int:id>")
 def delete_sprint(id):
 	# mySQL query to delete the account with our passed id
-	query = "DELETE FROM Accounts WHERE accountID = '%s';"
+	query = "DELETE FROM Sprints WHERE sprintID = '%s';"
 	cursor = db.execute_query(db_connection=db_connection, query=query, query_params=(id))
 	results = cursor.fetchall()
 
 	return redirect("/sprints")
 
+@app.route("/update_sprint", methods=["POST"])
+def update_sprint():
+	# grab sprint form inputs
+	sprintID = request.form["sprintID"]
+	sprintName = request.form["sprintName"]
+	sprintStart = request.form["sprintStart"]
+	sprintEnd = request.form["sprintEnd"]
+	accountTeamID = request.form["accountTeamID"]
+
+	query = "UPDATE Sprints SET sprintName = %s, sprintStart = %s, sprintEnd = %s, accountTeamID = %s WHERE sprintID = %s"
+	print(query)
+	cursor = db.execute_query(db_connection=db_connection, query=query, query_params=(sprintName, sprintStart, sprintEnd, accountTeamID, sprintID ))
+	cursor.connection.commit()
+
+	# redirect back to sprints page
+	return redirect("/sprints")
+
 # route for edit functionality, updating the attributes of the account
 # similar to our delete route, we want to the pass the 'id' value of that person on button click (see HTML) via the route
 @app.route("/edit_sprints/<int:sprintID>", methods=["POST", "GET"])
-def edit_accounts(sprintID):
+def edit_sprints(sprintID):
 	if request.method == "GET":
-		query = "SELECT * FROM Accounts WHERE accountID = %s" % (sprintID)
+		query = "SELECT * FROM Sprints WHERE sprintID = %s" % (sprintID)
 		cursor = db.execute_query(db_connection=db_connection, query=query)
 		data = cursor.fetchall()
 

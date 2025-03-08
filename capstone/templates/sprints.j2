@@ -22,9 +22,8 @@
 						{% for key in sprint.keys() %}
 						<td>{{sprint[key]}}</td>
 						{% endfor %}
-{# NEED TO BUILD SPRINTS ROUTE IN APP.py AND EDIT BELOW HTML TO ALLOW SPRINT EDITING #}
-						<td><a href="edit_accounts/{{sprint.sprintID}}" class="btn btn-default">Edit</a></td>
-						<td><a href="delete_account/{{sprint.sprintID}}" class="btn btn-default">Delete</a></td>
+						<td><a href="edit_sprints/{{sprint.sprintID}}" class="btn btn-default">Edit</a></td>
+						<td><a href="delete_sprint/{{sprint.sprintID}}" class="btn btn-default">Delete</a></td>
 					</tr>
 					{% endfor %}
 			</table>
@@ -41,7 +40,7 @@
 				<label for="sprintStart">Sprint Start: </label>
 				<input type="date" id ="sprintStart" name="sprintStart" required>
 
-				<label for="sprintEnd">Sprint Start: </label>
+				<label for="sprintEnd">Sprint End: </label>
 				<input type="date" id ="sprintEnd" name="sprintEnd" required>
 
 				<label for="accountTeamID">Team ID</label>
@@ -56,7 +55,7 @@
             </fieldset>
 
             <!-- Create 'Add Sprints' -->
-			<input type="submit" value="Add Sprint" name="addSpringSubmit" class="btn btn-primary" style="margin:.5rem;">
+			<input type="submit" value="Add Sprint" name="addSprintSubmit" class="btn btn-primary" style="margin:.5rem;">
         </form>
 
 	</div><!--insert-->
