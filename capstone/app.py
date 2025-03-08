@@ -379,33 +379,12 @@ def sprints():
 			cursor.execute(query, (sprintName, sprintStart, sprintEnd, accountTeamID ))
 			cursor.connection.commit()
 
-			# redirect back to people page
-
+			# redirect back to sptints page
 			return redirect("/sprints")
 
 	else:
 		return render_template("sprints.j2")
-	
-	# query = "SELECT * FROM Sprints;"
-	# cursor = db.execute_query(db_connection=db_connection, query=query)
-	# results = cursor.fetchall()
 
-	# if request.method == "POST":
-	# 	if request.form.get("addSprintSubmit"):
-	# 		sprintName = request.form["sprintName"]
-	# 		sprintStart = request.form["sprintStart"]
-	# 		sprintEnd = request.form["sprintEnd"]
-	# 		accountTeamID = request.form["accountTeamID"]
-
-	# 		query = "INSERT INTO Sprints (sprintName, sprintStart, sprintEnd, accountTeamID) VALUES (%s, %s, %s, %s)"
-	# 		cursor.execute(query, (sprintName, sprintStart, sprintEnd, accountTeamID ))
-	# 		cursor.connection.commit()
-
-	# 		# redirect back to people page
-
-	# 		return redirect("/sprints")
-
-	# return render_template("sprints.j2", data = results)
 
 @app.route("/delete_sprint/<int:id>")
 def delete_sprint(id):
@@ -463,7 +442,7 @@ def accountCreation():
 			cursor.execute(query, (accountUsername, accountFirstName, accountLastName, accountPassword, accountTeamID, accountRole ))
 			cursor.connection.commit()
 
-			# redirect back to people page
+			# redirect back to login page
 			return redirect(url_for('login'))
 
 	return render_template("account_creation.j2", data = results)
@@ -487,8 +466,7 @@ def accountAdmin():
 			cursor.execute(query, (accountUsername, accountFirstName, accountLastName, accountPassword, accountTeamID, accountRole ))
 			cursor.connection.commit()
 
-			# redirect back to people page
-
+			# redirect back to accounts page
 			return redirect("/accounts")
 
 	return render_template("accounts.j2", data = results)
