@@ -22,48 +22,40 @@
 						{% for key in sprint.keys() %}
 						<td>{{sprint[key]}}</td>
 						{% endfor %}
-{# NEED TO BUILD SPRINTS ROUTE IN APP.py AND EDIT BELOW HTML TO ALLOW SPRINT EDITING #}
-						<td><a href="edit_accounts/{{sprint.sprintID}}" class="btn btn-default">Edit</a></td>
-						<td><a href="delete_account/{{sprint.sprintID}}" class="btn btn-default">Delete</a></td>
+						<td><a href="edit_sprints/{{sprint.sprintID}}" class="btn btn-default">Edit</a></td>
+						<td><a href="delete_sprint/{{sprint.sprintID}}" class="btn btn-default">Delete</a></td>
 					</tr>
 					{% endfor %}
 			</table>
 		</div>
 
-		<div id="addAccount">
-		<!-- form to INSERT new data into accounts-->
-		<form id="addAccount" action="/accounts" method="post">
-			<legend><strong>Add Account</strong></legend>
+		<div id="addSprint">
+		<!-- form to INSERT new data into sprints-->
+		<form id="addSprint" action="/sprints" method="post">
+			<legend><strong>Add Sprint</strong></legend>
 			<fieldset>
-				<label for="username">Username: </label>
-				<input type="text" id ="accountUsername" name="accountUsername" required>
+				<label for="sprintName">Sprint name: </label>
+				<input type="text" id ="sprintName" name="sprintName" required>
 
-				<label for="first_name">First name: </label>
-				<input type="text" id="accountFirstName" name="accountFirstName" required>
+				<label for="sprintStart">Sprint Start: </label>
+				<input type="date" id ="sprintStart" name="sprintStart" required>
 
-				<label for="accountLastName">Last name: </label>
-				<input type="text" id="accountLastName" name="accountLastName" required>
+				<label for="sprintEnd">Sprint End: </label>
+				<input type="date" id ="sprintEnd" name="sprintEnd" required>
 
-				<label for="accountPassword">Password: </label>
-				<input type="text" class="" id="accountPassword" name="accountPassword" required>
-
-				<!-- Admin can create new accountTeamID. User will not be able when creating account. -->
 				<label for="accountTeamID">Team ID</label>
-				<input type="number" class="" id="accountTeamID" name="accountTeamID" required>
-
-				<label for="accountRole">Account Role:</label>
-				<select class="form-control" id="accountRole" name="accountRole" pattern="[0-4]{1}" placeholder="" required>
+                <select type = "number" class="form-control" id="accountTeamID" name="accountTeamID" pattern="[0-4]{1}" placeholder="" required>
 				<!-- these are hard coded, but you can add code to make this dynamic -->
-					<option value="">&nbsp;</option>
-					<option value="Developer">Developer</option>
-					<option value="Scrum Master">Scrum Master</option>
-					<option value="Project Leader">Project Leader</option>
+					<option value=1>1</option>
+					<option value=2>2</option>
+					<option value=3>3</option>
+					<option value=4>4</option>
 				</select>
 
             </fieldset>
 
-            <!-- Create 'Add accounts' -->
-			<input type="submit" value="Add Account" name="addAccountSubmit" class="btn btn-primary" style="margin:.5rem;">
+            <!-- Create 'Add Sprints' -->
+			<input type="submit" value="Add Sprint" name="addSprintSubmit" class="btn btn-primary" style="margin:.5rem;">
         </form>
 
 	</div><!--insert-->
