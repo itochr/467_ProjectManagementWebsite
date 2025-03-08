@@ -35,7 +35,6 @@ h1 {
 
 #site-title {
     text-transform: uppercase;
-    /* text-shadow: 1px 1px red; */
     text-decoration: underline;
     text-decoration-color: #069;
 }
@@ -52,7 +51,6 @@ h1 {
 }
 
 .input {
-    /* background-color: #2b5d7d; */
     color: black;
     padding: 10px 20px;
     display: flex;
