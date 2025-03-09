@@ -6,26 +6,172 @@
 {% block body %}
 
 <div class="content">
-	<h1>Opinionated Project Management</h1>
+    <h1>Opinionated Project Management</h1>
 
-	<div class="welcome">
-		{% if accountFirstName is defined %}
-		Welcome <span class= "accountName">{{ accountFirstName }} </span>  to Opinionated Project Management.
-		{% else %}
-		Welcome <span class="accountName"> Administrator </span> to Opinionated Project Management.
-		{% endif %}
-	</div>
+    <div class="welcome">
+       {% if accountFirstName is defined %}
+       Welcome <span class="accountName">{{ accountFirstName }} </span> to Opinionated Project Management.
+       {% else %}
+       Welcome <span class="accountName"> Administrator </span> to Opinionated Project Management.
+       {% endif %}
+    </div>
 
-	<div class="instruction">
-		To see your projects please click on the Projects page.
-	</div>
+    <div class="instruction">
+       Create a new project with predefined tasks:
+    </div>
 
-	<div class="instruction">
-		To see your tasks please click on the Tasks page.
-	</div>
+    <div class="project-buttons">
+        <button class="project-button backend" onclick="openProjectModal('Backend')">
+            <i class="fas fa-server"></i>
+            Backend
+        </button>
+        <button class="project-button frontend" onclick="openProjectModal('Frontend')">
+            <i class="fas fa-desktop"></i>
+            Frontend
+        </button>
+        <button class="project-button fullstack" onclick="openProjectModal('Fullstack')">
+            <i class="fas fa-code"></i>
+            Fullstack
+        </button>
+    </div>
 
-	<div class="instruction">
-		For FAQs and help please click on the HELP page.
-	</div>
+    <div class="instruction">
+       To see your projects please click on the Projects page.
+    </div>
+
+    <div class="instruction">
+       To see your tasks please click on the Tasks page.
+    </div>
+
+    <div class="instruction">
+       For FAQs and help please click on the HELP page.
+    </div>
+
+    <div id="notification"></div>
+
+    <div id="projectModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2 id="modalTitle">Create New Project</h2>
+            <form id="projectForm">
+                <input type="hidden" id="projectType" name="projectType">
+                <div class="form-group">
+                    <label for="projectName">Project Name:</label>
+                    <input type="text" id="projectName" name="projectName" required>
+                </div>
+                <div class="form-group">
+                    <label for="startDate">Start Date:</label>
+                    <input type="date" id="startDate" name="startDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="endDate">End Date:</label>
+                    <input type="date" id="endDate" name="endDate" required>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="cancel-button" onclick="closeModal()">Cancel</button>
+                    <button type="button" class="submit-button" onclick="createProject()">Create</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
+
+<script>
+function getTodayDate() {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
+
+function openProjectModal(projectType) {
+    document.getElementById('projectType').value = projectType;
+
+    document.getElementById('modalTitle').textContent = `Create New ${projectType} Project`;
+
+    const todayDate = getTodayDate();
+    document.getElementById('startDate').value = todayDate;
+
+    const endDate = new Date();
+    endDate.setDate(endDate.getDate() + 14);
+    const formattedEndDate = endDate.toISOString().split('T')[0];
+    document.getElementById('endDate').value = formattedEndDate;
+
+    document.getElementById('projectName').value = `${projectType} Project`;
+
+    document.getElementById('projectModal').style.display = 'block';
+}
+
+function closeModal() {
+    document.getElementById('projectModal').style.display = 'none';
+}
+
+function createProject() {
+    const projectType = document.getElementById('projectType').value;
+    const projectName = document.getElementById('projectName').value;
+    const startDate = document.getElementById('startDate').value;
+    const endDate = document.getElementById('endDate').value;
+
+    if (!projectName || !startDate || !endDate) {
+        showNotification('Please fill in all fields', 'error');
+        return;
+    }
+
+    const projectData = {
+        projectType: projectType,
+        projectName: projectName,
+        startDate: startDate,
+        endDate: endDate
+    };
+
+    fetch('/create_template_project', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(projectData)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        showNotification(`${projectName} created successfully with ${data.tasksCreated} tasks!`);
+        closeModal();
+    })
+    .catch(error => {
+        showNotification('Error creating project: ' + error.message, 'error');
+        console.error('Error:', error);
+    });
+}
+
+function showNotification(message, type = 'success') {
+    const notification = document.getElementById('notification');
+    notification.textContent = message;
+
+    if (type === 'error') {
+        notification.style.backgroundColor = '#f44336';
+    } else {
+        notification.style.backgroundColor = '#4CAF50';
+    }
+
+    notification.style.display = 'block';
+
+    setTimeout(() => {
+        notification.style.display = 'none';
+    }, 5000);
+}
+
+window.onclick = function(event) {
+    const modal = document.getElementById('projectModal');
+    if (event.target == modal) {
+        closeModal();
+    }
+}
+</script>
+
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 {% endblock %}

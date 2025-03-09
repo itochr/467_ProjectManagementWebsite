@@ -28,21 +28,26 @@
 .nav-button.active {
     background-color: #6AB04C;
 }
+
 .content {
     text-align: center;
     padding: 2em;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 h1 {
     text-decoration: underline;
     margin-bottom: 1.5em;
     font-size: 2em;
+    color: #333;
 }
 
 .instruction {
     margin: 1em 0;
     font-size: 1.1em;
     line-height: 1.5;
+    color: #555;
 }
 
 .welcome {
@@ -65,4 +70,179 @@ body {
 
 * {
     box-sizing: border-box;
+}
+
+/* Project Buttons Styling */
+.project-buttons {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 40px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+}
+
+.project-button {
+    background-color: #4285f4;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 20px 30px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+    width: 200px;
+    height: 150px;
+    margin: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.project-button:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+}
+
+.project-button:active {
+    transform: translateY(0);
+}
+
+.project-button.backend {
+    background-color: #0f9d58; /* Green */
+}
+
+.project-button.frontend {
+    background-color: #db4437; /* Red */
+}
+
+.project-button.fullstack {
+    background-color: #4285f4; /* Blue */
+}
+
+.project-button i {
+    font-size: 32px;
+    margin-bottom: 15px;
+}
+
+/* Modal styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+}
+
+.modal-content {
+    background-color: white;
+    margin: 10% auto;
+    padding: 20px;
+    width: 50%;
+    max-width: 500px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover {
+    color: black;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+    gap: 10px;
+}
+
+.submit-button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.cancel-button {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+/* Notification styling */
+#notification {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #4CAF50;
+    color: white;
+    padding: 16px;
+    border-radius: 4px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    display: none;
+    z-index: 1000;
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(100px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .project-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .project-button {
+        width: 80%;
+        max-width: 300px;
+        margin-bottom: 20px;
+    }
+
+    .modal-content {
+        width: 90%;
+    }
 }
