@@ -304,15 +304,136 @@ def update_project_status():
 			return jsonify({"error": f"Status with ID {projectStatus} not found"}), 404
 		query = "UPDATE Projects SET projectStatus = %s WHERE projectID = %s"
 		cursor.execute(query, (projectStatus, projectID))
+
+		updated_tasks_count = 0
+		if status['statusName'] == 'Completed' or int(projectStatus) == 3:
+			task_query = "UPDATE Tasks SET taskStatus = %s WHERE taskProject = %s"
+			completed_task_status_id = 3
+			cursor.execute(task_query, (completed_task_status_id, projectID))
+
+			updated_tasks_count = cursor.rowcount
+			print(f"Updated {updated_tasks_count} tasks to Completed status")
+
 		cursor.connection.commit()
 		print(f"Successfully updated project {projectID} to status {projectStatus}")
 		return jsonify({
 			"message": "Project status updated successfully",
 			"projectID": projectID,
-			"newStatus": projectStatus
+			"newStatus": projectStatus,
+			"tasksUpdated": updated_tasks_count
 		}), 200
 	except Exception as e:
 		print(f"Error in update_project_status: {str(e)}")
+		return jsonify({"error": str(e)}), 500
+
+
+@app.route('/create_template_project', methods=['POST'])
+def create_template_project():
+	try:
+		if 'loggedin' not in session or not session['loggedin']:
+			return jsonify({"error": "Not logged in"}), 401
+
+		data = request.get_json()
+		project_type = data.get('projectType')
+		project_name = data.get('projectName')
+		start_date = data.get('startDate')
+		end_date = data.get('endDate')
+
+		if not project_type or not project_name or not start_date or not end_date:
+			return jsonify({"error": "Missing required data"}), 400
+
+		account_team_id = session['accountTeamID']
+
+		status_query = "SELECT statusID FROM Statuses WHERE statusName = 'In Progress'"
+		cursor.execute(status_query)
+		status_result = cursor.fetchone()
+
+		if not status_result:
+			in_progress_status_id = 2
+		else:
+			in_progress_status_id = status_result['statusID']
+
+		project_query = """
+        INSERT INTO Projects (projectName, projectStart, projectEnd, accountTeamID, projectStatus)
+        VALUES (%s, %s, %s, %s, %s)
+        """
+		cursor.execute(project_query, (project_name, start_date, end_date, account_team_id, in_progress_status_id))
+		db_connection.commit()
+
+		project_id = cursor.lastrowid
+
+		sprint_name = f"Sprint for {project_name}"
+		sprint_query = """
+        INSERT INTO Sprints (sprintName, sprintStart, sprintEnd, accountTeamID)
+        VALUES (%s, %s, %s, %s)
+        """
+		cursor.execute(sprint_query, (sprint_name, start_date, end_date, account_team_id))
+		db_connection.commit()
+
+		sprint_id = cursor.lastrowid
+
+		user_id = session['accountID']
+
+		tasks = []
+		if project_type == 'Backend':
+			tasks = [
+				"Set up database schema",
+				"Create API endpoints",
+				"Implement authentication",
+				"Set up server configuration",
+				"Create data models"
+			]
+		elif project_type == 'Frontend':
+			tasks = [
+				"Design UI mockups",
+				"Implement component structure",
+				"Create CSS styles",
+				"Implement responsive design",
+				"Add client-side validation"
+			]
+		elif project_type == 'Fullstack':
+			tasks = [
+				"Design database schema",
+				"Create API endpoints",
+				"Design UI components",
+				"Implement authentication",
+				"Connect frontend to backend",
+				"Test end-to-end functionality",
+				"Configure deployment"
+			]
+
+		task_query = """
+        INSERT INTO Tasks (taskAssignee, taskAssigned, taskDue, taskStatus, 
+                          taskSprint, taskProject, taskSubject, taskDescription)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+        """
+
+		for task in tasks:
+			task_description = f"Complete the {task} for the {project_name}"
+			cursor.execute(task_query, (
+				user_id,
+				start_date,
+				end_date,
+				in_progress_status_id,
+				sprint_id,
+				project_id,
+				task,
+				task_description
+			))
+
+		db_connection.commit()
+
+		return jsonify({
+			"message": "Project and tasks created successfully",
+			"projectId": project_id,
+			"sprintId": sprint_id,
+			"projectName": project_name,
+			"tasksCreated": len(tasks)
+		}), 201
+
+	except Exception as e:
+		print(f"Error in create_template_project: {str(e)}")
+		db_connection.rollback()
 		return jsonify({"error": str(e)}), 500
 
 @app.route('/sprints', methods=['GET', 'POST'])
