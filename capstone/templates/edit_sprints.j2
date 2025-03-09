@@ -1,0 +1,66 @@
+{% extends 'nav.j2' %}
+{% block head %}
+<title>Help</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+{% endblock %}
+{% block body %}
+
+<body>
+    <div>
+        <table border="1" cellpadding="5"> 
+            <caption> Editing Sprint: </caption>
+            <!-- Access data tuple passed from app.py -->
+            {% if data %}
+                <thead>
+                    <tr>
+                        <!-- Iterate through each key in the first entry to get the column name -->
+                        {% for key in data[0].keys() %}
+
+                        <!-- Create a <th> tag with the key inside of it, this will be our header row -->
+                        <th scope="col" data-field="{{ key }}" data-filter-control="input">{{ key }}</th>
+                        
+                        <!-- End of this for loop -->
+                        {% endfor %} 
+                    </tr>
+
+                <tbody>
+                    <!-- Now, iterate through every item in data -->
+                    {% for item in data %}
+                    <tr>
+                        <!-- Then iterate through every key in the current item dictionary -->
+                        {% for key in item.keys() %}
+                        
+                        <!-- Create a <td> element with the value of that key in it -->
+                        <td>{{item[key]}}</td> {% endfor %} 
+                    </tr> 
+                    {% endfor %} 
+            {% endif %} 
+        </table>
+
+    <br>
+    <div id="edit">
+            <!-- form to edit data in sprints-->
+            <form id="editAccount" action="/edit_accounts/{{data[0].id}}" method="post">
+                <legend><strong>Edit Sprint:</strong></legend>
+                <fieldset>
+                    <!-- We can preset form inputs to match attributes currently stored for 'id' of sprint to be updated via value= and accessing our passed data tuple -->
+                    <!-- Create hidden form input to store the passed 'id' of the sprint we are editing so we can access it easily in our 'POST' method in our app.py -->
+                    <input type="hidden" value="{{data[0].sprintID}}" class="form-control" id="sprintID" name="sprintID" required>
+
+                    <label for="sprintName">Sprint name: </label>
+                    <input type="text" class="form-control" id="sprintName" name="sprintName" value="{{data[0].sprintName}}" required>
+
+                    <label for="sprintStart">Sprint Start: </label>
+                    <input type="date" class="form-control" id="sprintStart" name="sprintStart" value="{{data[0].sprintStart}}" required>
+
+                    <label for="sprintEnd">Sprint End: </label>
+                    <input type="date" class="form-control" id="sprintEnd" name="sprintEnd" value="{{data[0].sprintEnd}}" required>
+
+                    <input type="hidden" value="{{data[0].accountTeamID}}" class="form-control" id="accountTeamID" name="accountTeamID" required>
+                
+                </fieldset>
+                <button type="submit" formaction="{{ url_for('update_sprint') }}" formmethod="post" name="update_sprint" value="Update Sprint">Update</button>
+                <a href='/sprints'><input class="btn" type="button" value="Cancel"></a>
+            </form>
+
+{% endblock %}

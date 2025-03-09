@@ -327,8 +327,57 @@ def sprints():
 		cursor.execute(querySprints, queryInputs)
 		sprintsFetch = cursor.fetchall()
 		return render_template("sprints.j2", sprints = sprintsFetch)
+	elif request.method == "POST":
+		if request.form.get("addSprintSubmit"):
+			sprintName = request.form["sprintName"]
+			sprintStart = request.form["sprintStart"]
+			sprintEnd = request.form["sprintEnd"]
+			accountTeamID = request.form["accountTeamID"]
+			query = "INSERT INTO Sprints (sprintName, sprintStart, sprintEnd, accountTeamID) VALUES (%s, %s, %s, %s)"
+			cursor.execute(query, (sprintName, sprintStart, sprintEnd, accountTeamID ))
+			cursor.connection.commit()
+			# redirect back to sptints page
+			return redirect("/sprints")
 	else:
 		return render_template("sprints.j2")
+
+
+@app.route("/delete_sprint/<int:id>")
+def delete_sprint(id):
+	# mySQL query to delete the account with our passed id
+	query = "DELETE FROM Sprints WHERE sprintID = '%s';"
+	cursor = db.execute_query(db_connection=db_connection, query=query, query_params=(id))
+	results = cursor.fetchall()
+
+	return redirect("/sprints")
+
+@app.route("/update_sprint", methods=["POST"])
+def update_sprint():
+	# grab sprint form inputs
+	sprintID = request.form["sprintID"]
+	sprintName = request.form["sprintName"]
+	sprintStart = request.form["sprintStart"]
+	sprintEnd = request.form["sprintEnd"]
+	accountTeamID = request.form["accountTeamID"]
+
+	query = "UPDATE Sprints SET sprintName = %s, sprintStart = %s, sprintEnd = %s, accountTeamID = %s WHERE sprintID = %s"
+	print(query)
+	cursor = db.execute_query(db_connection=db_connection, query=query, query_params=(sprintName, sprintStart, sprintEnd, accountTeamID, sprintID ))
+	cursor.connection.commit()
+
+	# redirect back to sprints page
+	return redirect("/sprints")
+
+# route for edit functionality, updating the attributes of the account
+# similar to our delete route, we want to the pass the 'id' value of that person on button click (see HTML) via the route
+@app.route("/edit_sprints/<int:sprintID>", methods=["POST", "GET"])
+def edit_sprints(sprintID):
+	if request.method == "GET":
+		query = "SELECT * FROM Sprints WHERE sprintID = %s" % (sprintID)
+		cursor = db.execute_query(db_connection=db_connection, query=query)
+		data = cursor.fetchall()
+
+		return render_template("edit_sprints.j2", data=data)
 
 @app.route('/account_creation', methods=['GET', 'POST'])
 def accountCreation():
@@ -366,6 +415,7 @@ def accountAdmin():
 			query = "INSERT INTO Accounts (accountUsername, accountFirstName, accountLastName, accountPassword, accountTeamID, accountRole) VALUES (%s, %s, %s, %s, %s, %s)"
 			cursor.execute(query, (accountUsername, accountFirstName, accountLastName, accountPassword, accountTeamID, accountRole ))
 			cursor.connection.commit()
+			# Redirect back to Accounts page
 			return redirect("/accounts")
 	return render_template("accounts.j2", data = results)
 
