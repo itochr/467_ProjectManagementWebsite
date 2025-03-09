@@ -44,7 +44,6 @@ h1 {
 }
 
 .input {
-    /* background-color: #b7e3ff; */
     color: black;
     padding: 10px 20px;
     display: flex;
@@ -55,8 +54,6 @@ h1 {
 input[type="text"],
 
 input[type="password"] {
-    /* border: none;
-    border-bottom: 1px solid white; */
     background: transparent;
     color: black;
     outline: none;
@@ -71,4 +68,3 @@ input[type="password"] {
     cursor: pointer;
     margin-top: 20px;
 }
-

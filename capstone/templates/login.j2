@@ -4,21 +4,14 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
 </head>
 <body>
-{# <h1>Login Screen</h1> #}
 <h1 id="site-title">Opinionated Project Management</h1>
 <div class="login-container">
 	<div class="login-content">
-		{# <h2><u>Opinionated Project Management</u></h2> #}
 		<h2 id="login-text">Login</h2>
-
-		{# <p>Thank you for using our project management website. Please enter your user credentials below:</p> #}
-
 		<form action="/login" method="POST">
 			{% if screenMsg is defined and screenMsg %}
 			<div class="announcement">{{ screenMsg }}</div>
 			{% endif %}
-
-
 			<div class="form">
 				<div class="input">
 					<label for="accountUsername">Username:</label>
@@ -37,10 +30,7 @@
 		</form>
 
 		<form action="/account_creation" method="POST"><button class="button" type="submit" id="create-account-button">Create an Account</button></form>
-
-		{# <form action="/main" method="POST"><button type="submit" class="login-button-admin">Login BYPASS</button></form>
-		<form action="/login" method="POST"><button type="submit" class="login-button-admin">Page Refresh</button></form> #}
-	</div>
+</div>
 </div>
 </body>
 </html>

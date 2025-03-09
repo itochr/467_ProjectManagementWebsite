@@ -14,7 +14,6 @@
 <button class="filterButtons" id="showTaskByTeam-btn" onclick="showTeamTasks()">Tasks By Team</button>
 <button class="filterButtons" id="showTaskByUser-btn" onclick="showUserTasks()">Tasks By User</button>
 
-
     <div class="kanban-board">
         {% for status in statuses %}
         <div class="status-column"
@@ -70,7 +69,6 @@
 				{% endif %}
                 {% endfor %}
             </div>
-
 
         </div>
         {% endfor %}
@@ -240,7 +238,6 @@
         <input type="hidden" id="deleteTaskID" name="taskID">
         <input type="hidden" name="deleteTask" value="true">
     </form>
-
 
 {% endblock %}
 
