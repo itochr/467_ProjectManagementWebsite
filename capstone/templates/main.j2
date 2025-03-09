@@ -4,10 +4,8 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
 {% endblock %}
 {% block body %}
-
 <div class="content">
 	<h1>Opinionated Project Management</h1>
-
 	<div class="welcome">
 		{% if accountFirstName is defined %}
 		Welcome <span class= "accountName">{{ accountFirstName }} </span>  to Opinionated Project Management.
@@ -15,15 +13,12 @@
 		Welcome <span class="accountName"> Administrator </span> to Opinionated Project Management.
 		{% endif %}
 	</div>
-
 	<div class="instruction">
 		To see your projects please click on the Projects page.
 	</div>
-
 	<div class="instruction">
 		To see your tasks please click on the Tasks page.
 	</div>
-
 	<div class="instruction">
 		For FAQs and help please click on the HELP page.
 	</div>

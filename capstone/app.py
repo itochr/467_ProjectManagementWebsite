@@ -6,10 +6,8 @@ import database.db_connector as db
 # Configuration
 app = Flask(__name__)
 app.secret_key = 'secretsecretsecret'
-# app.config['SESSION_TYPE'] = 'filesystem'
 db_connection = db.connect_to_database()
 cursor = db_connection.cursor(pymysql.cursors.DictCursor)
-
 
 # Routes
 @app.route('/')
@@ -32,7 +30,6 @@ def login():
 			session['accountTeamID'] = user['accountTeamID']
 			session['accountRole'] = user['accountRole']
 			screenMsg = 'Logged in successfully !'
-
 			return redirect(url_for('main'))
 		else:
 			screenMsg = 'Please enter correct username / password!'
@@ -49,7 +46,6 @@ def logout():
 	session.pop('accountTeamID', None)
 	session.pop('accountRole', None)
 	session.pop('accountPassword', None)
-
 	return redirect(url_for('login'))
 
 @app.route('/main', methods=['GET', 'POST'])
@@ -70,9 +66,7 @@ def tasks():
 		JOIN Projects p on t.taskProject=p.projectID
 		WHERE t.taskAssignee = %s
 		"""
-
 		userInputs = (session['accountID'])
-
 		queryTeamTasks = """
 		SELECT * FROM Tasks t
 		JOIN Accounts a ON t.taskAssignee=a.accountID
@@ -82,33 +76,32 @@ def tasks():
 		JOIN Projects p on t.taskProject=p.projectID
 		WHERE a.accountTeamID = %s
 		"""
-
+		# Get Statuses
 		queryStatuses = 'SELECT * FROM Statuses'
 		teamInputs = (session['accountTeamID'])
+		# Get User Tasks
 		cursor.execute(queryUserTasks, userInputs)
 		userTasksFetch = cursor.fetchall()
+		# Get Team Tasks
 		cursor.execute(queryTeamTasks, teamInputs)
 		teamTasksFetch = cursor.fetchall()
 		cursor.execute(queryStatuses)
 		statusFetch = cursor.fetchall()
-		# cursor.execute(query)  									# [Vish]: Uncomment to use without parameters
-
+		# Get Team Members
 		queryTeamMembers = 'SELECT * FROM Accounts WHERE accountTeamID = %s'
 		cursor.execute(queryTeamMembers, teamInputs)
 		teamMemberFetch = cursor.fetchall()
-
+		# Get Team Projects
 		queryTeamProjects = 'SELECT * FROM Projects WHERE accountTeamID = %s'
 		cursor.execute(queryTeamProjects, teamInputs)
 		teamProjects = cursor.fetchall()
-
+		# Get Team Sprints
 		queryTeamSprints = 'SELECT * FROM Sprints WHERE accountTeamID = %s'
 		cursor.execute(queryTeamSprints, teamInputs)
 		sprintsFetch = cursor.fetchall()
-
+		# Render Page if DB queries execute
 		if userTasksFetch and teamTasksFetch:
-			# screenMsg = json.dumps(userTasksFetch)				# [Vish]: Uncomment to get json of query
 			screenMsg = f"Printing Tasks for account {session['accountUsername']}"
-			# cursor.close()
 			return render_template('tasks.j2',
 						  screenMsg = screenMsg,
 						  userAccountID = session['accountID'],
@@ -123,9 +116,7 @@ def tasks():
 						  teamSprints = sprintsFetch)
 		else:
 			screenMsg = 'Please enter correct username and password'
-
 			return render_template('login.j2', screenMsg = screenMsg)
-
 	if request.method == "POST":
 		if 'addTaskSubmit' in request.form:
 			tAssignee = request.form["tAssignee"]
@@ -136,7 +127,7 @@ def tasks():
 			tProject = request.form["tProject"]
 			tSubject = request.form["tSubject"]
 			tDescription = request.form["tDescription"]
-
+			# Task Query for Insert
 			query = """
 			INSERT INTO Tasks
 			(taskAssignee, taskAssigned, taskDue, taskStatus,
@@ -145,6 +136,7 @@ def tasks():
 			cursor.execute(query, (tAssignee, tAssignedDate, tDueDate, tStatus, tSprint, tProject, tSubject, tDescription))
 			cursor.connection.commit()
 			return redirect(url_for('tasks'))
+		# Task Query for Update
 		elif 'updateTask' in request.form:
 			taskID = request.form['taskID']
 			taskAssignee = request.form["taskAssignee"]
@@ -165,6 +157,7 @@ def tasks():
 			cursor.execute(update_query,(taskAssignee, taskAssigned, taskDue, taskStatus, taskSprint, taskProject, taskSubject, taskDescription, taskID))
 			cursor.connection.commit()
 			return redirect(url_for('tasks'))
+		# Task Query for Delete
 		elif 'deleteTask' in request.form:
 			taskID = request.form['taskID']
 			delete_query = "DELETE FROM Tasks WHERE taskID = %s"
@@ -174,6 +167,7 @@ def tasks():
 	else:
 		return redirect(url_for('tasks'))
 
+# Route to update Task based on Drag & Drop
 @app.route("/updateTaskStatus", methods=['GET', 'POST'])
 def update_task_status():
 	try:
@@ -191,29 +185,16 @@ def update_task_status():
 	except Exception as e:
 		return jsonify({"error": str(e)}), 500
 
-#     query = "UPDATE Task SET taskStatus.fname = %s, bsg_people.lname = %s, bsg_people.homeworld = NULL, bsg_people.age = NULL WHERE bsg_people.id = %s"
-# 	# query = "UPDATE bsg_people SET bsg_people.fname = %s, bsg_people.lname = %s, bsg_people.homeworld = NULL, bsg_people.age = NULL WHERE bsg_people.id = %s"
-
-#     # cursor = mysql.connection.cursor()
-#     cursor.execute(query, (id,))
-# cur.execute(query, (fname, lname, age, id))
-#     cursor.connection.commit()
-    # return redirect("/tasks")
-
-
-
 @app.route('/help', methods=['GET', 'POST'])
 def help():
-	# return render_template("help.j2")
 	return render_template("help.j2", accountID=session['accountID'])
-
 
 @app.route('/projects', methods=['GET', 'POST'])
 def projects():
 	if 'loggedin' not in session or not session['loggedin']:
 		screenMsg = 'Please login to continue'
 		return render_template('login.j2', screenMsg=screenMsg)
-
+	# Project query for Create
 	if request.method == 'POST':
 		if 'createProject' in request.form:
 			projectName = request.form['projectName']
@@ -221,7 +202,6 @@ def projects():
 			projectEnd = request.form['projectEnd']
 			projectStatus = request.form['projectStatus']
 			accountTeamID = session['accountTeamID']
-
 			status_id = None
 			if isinstance(projectStatus, str) and not projectStatus.isdigit():
 				query = "SELECT statusID FROM Statuses WHERE statusName = %s"
@@ -233,21 +213,19 @@ def projects():
 					status_id = 1
 			else:
 				status_id = projectStatus
-
 			insert_query = """
             INSERT INTO Projects (projectName, projectStart, projectEnd, accountTeamID, projectStatus)
             VALUES (%s, %s, %s, %s, %s)
             """
 			cursor.execute(insert_query, (projectName, projectStart, projectEnd, accountTeamID, status_id))
 			db_connection.commit()
-
+		#  Project query for Update
 		elif 'editProject' in request.form:
 			projectID = request.form['projectID']
 			projectName = request.form['projectName']
 			projectStart = request.form['projectStart']
 			projectEnd = request.form['projectEnd']
 			projectStatus = request.form.get('projectStatus')
-
 			if projectStatus:
 				status_id = None
 				if isinstance(projectStatus, str) and not projectStatus.isdigit():
@@ -258,7 +236,6 @@ def projects():
 						status_id = status_result['statusID']
 				else:
 					status_id = projectStatus
-
 				update_query = """
                 UPDATE Projects
                 SET projectName = %s, projectStart = %s, projectEnd = %s, projectStatus = %s
@@ -274,20 +251,16 @@ def projects():
                 """
 				cursor.execute(update_query,
 							   (projectName, projectStart, projectEnd, projectID, session['accountTeamID']))
-
 			db_connection.commit()
-
+		# Project query for Delete
 		elif 'deleteProject' in request.form:
 			projectID = request.form['projectID']
 			delete_query = "DELETE FROM Projects WHERE projectID = %s AND accountTeamID = %s"
 			cursor.execute(delete_query, (projectID, session['accountTeamID']))
 			db_connection.commit()
-
 		return redirect(url_for('projects'))
-
 	cursor.execute('SELECT * FROM Statuses')
 	statuses = cursor.fetchall()
-
 	query = '''
     SELECT p.*, s.statusName
     FROM Projects p
@@ -297,7 +270,6 @@ def projects():
 	inputs = (session['accountTeamID'])
 	cursor.execute(query, inputs)
 	projects = cursor.fetchall()
-
 	if projects:
 		screenMsg = f"Printing Projects for accountTeamID {session['accountTeamID']}"
 		return render_template('projects.j2', screenMsg=screenMsg, accountUsername=session['accountUsername'],
@@ -307,45 +279,33 @@ def projects():
 		return render_template('projects.j2', screenMsg=screenMsg, accountUsername=session['accountUsername'],
 							   projects=[], statuses=statuses)
 
-
 @app.route("/updateProjectStatus", methods=['POST'])
 def update_project_status():
 	try:
 		if 'loggedin' not in session or not session['loggedin']:
 			return jsonify({"error": "Not logged in"}), 401
-
 		data = request.get_json()
 		if not data:
 			return jsonify({"error": "No JSON data received"}), 400
-
 		projectID = data.get("projectID")
 		projectStatus = data.get("projectStatus")
-
 		print(f"Received update request: projectID={projectID}, projectStatus={projectStatus}")
-
 		if not projectID or not projectStatus:
 			return jsonify({"error": "Missing projectID or projectStatus"}), 400
-
 		project_query = "SELECT * FROM Projects WHERE projectID = %s"
 		cursor.execute(project_query, (projectID,))
 		project = cursor.fetchone()
-
 		if not project:
 			return jsonify({"error": f"Project with ID {projectID} not found"}), 404
-
 		status_query = "SELECT * FROM Statuses WHERE statusID = %s"
 		cursor.execute(status_query, (projectStatus,))
 		status = cursor.fetchone()
-
 		if not status:
 			return jsonify({"error": f"Status with ID {projectStatus} not found"}), 404
-
 		query = "UPDATE Projects SET projectStatus = %s WHERE projectID = %s"
 		cursor.execute(query, (projectStatus, projectID))
 		cursor.connection.commit()
-
 		print(f"Successfully updated project {projectID} to status {projectStatus}")
-
 		return jsonify({
 			"message": "Project status updated successfully",
 			"projectID": projectID,
@@ -367,21 +327,17 @@ def sprints():
 		cursor.execute(querySprints, queryInputs)
 		sprintsFetch = cursor.fetchall()
 		return render_template("sprints.j2", sprints = sprintsFetch)
-
 	elif request.method == "POST":
 		if request.form.get("addSprintSubmit"):
 			sprintName = request.form["sprintName"]
 			sprintStart = request.form["sprintStart"]
 			sprintEnd = request.form["sprintEnd"]
 			accountTeamID = request.form["accountTeamID"]
-
 			query = "INSERT INTO Sprints (sprintName, sprintStart, sprintEnd, accountTeamID) VALUES (%s, %s, %s, %s)"
 			cursor.execute(query, (sprintName, sprintStart, sprintEnd, accountTeamID ))
 			cursor.connection.commit()
-
 			# redirect back to sptints page
 			return redirect("/sprints")
-
 	else:
 		return render_template("sprints.j2")
 
@@ -428,7 +384,6 @@ def accountCreation():
 	query = "SELECT * FROM Accounts;"
 	cursor = db.execute_query(db_connection=db_connection, query=query)
 	results = cursor.fetchall()
-
 	if request.method == "POST":
 		if request.form.get("addAccountSubmit"):
 			accountUsername = request.form["accountUsername"]
@@ -437,14 +392,11 @@ def accountCreation():
 			accountPassword = request.form["accountPassword"]
 			accountTeamID = request.form["accountTeamID"]
 			accountRole = request.form["accountRole"]
-
 			query = "INSERT INTO Accounts (accountUsername, accountFirstName, accountLastName, accountPassword, accountTeamID, accountRole) VALUES (%s, %s, %s, %s, %s, %s)"
 			cursor.execute(query, (accountUsername, accountFirstName, accountLastName, accountPassword, accountTeamID, accountRole ))
 			cursor.connection.commit()
-
-			# redirect back to login page
+			# Redirect back to Login page
 			return redirect(url_for('login'))
-
 	return render_template("account_creation.j2", data = results)
 
 @app.route('/accounts', methods=['GET', 'POST'])
@@ -452,7 +404,6 @@ def accountAdmin():
 	query = "SELECT * FROM Accounts;"
 	cursor = db.execute_query(db_connection=db_connection, query=query)
 	results = cursor.fetchall()
-
 	if request.method == "POST":
 		if request.form.get("addAccountSubmit"):
 			accountUsername = request.form["accountUsername"]
@@ -461,36 +412,30 @@ def accountAdmin():
 			accountPassword = request.form["accountPassword"]
 			accountTeamID = request.form["accountTeamID"]
 			accountRole = request.form["accountRole"]
-
 			query = "INSERT INTO Accounts (accountUsername, accountFirstName, accountLastName, accountPassword, accountTeamID, accountRole) VALUES (%s, %s, %s, %s, %s, %s)"
 			cursor.execute(query, (accountUsername, accountFirstName, accountLastName, accountPassword, accountTeamID, accountRole ))
 			cursor.connection.commit()
-
-			# redirect back to accounts page
+			# Redirect back to Accounts page
 			return redirect("/accounts")
-
 	return render_template("accounts.j2", data = results)
 
 @app.route("/delete_account/<int:id>")
 def delete_account(id):
-	# mySQL query to delete the account with our passed id
+	# MySQL query to delete the account with our passed id
 	query = "DELETE FROM Accounts WHERE accountID = '%s';"
 	cursor = db.execute_query(db_connection=db_connection, query=query, query_params=(id))
 	results = cursor.fetchall()
-
 	return redirect("/accounts")
 
-# route for edit functionality, updating the attributes of the account
-# similar to our delete route, we want to the pass the 'id' value of that person on button click (see HTML) via the route
+# Route for edit functionality, updating the attributes of the account
+# Similar to our delete route, we want to the pass the 'id' value of that person on button click (see HTML) via the route
 @app.route("/edit_accounts/<int:accountID>", methods=["POST", "GET"])
 def edit_accounts(accountID):
 	if request.method == "GET":
 		query = "SELECT * FROM Accounts WHERE accountID = %s" % (accountID)
 		cursor = db.execute_query(db_connection=db_connection, query=query)
 		data = cursor.fetchall()
-
 		return render_template("edit_accounts.j2", data=data)
-
 
 @app.route("/update_account", methods=["POST"])
 def update_account():
@@ -502,13 +447,11 @@ def update_account():
 	accountPassword = request.form["accountPassword"]
 	accountTeamID = request.form["accountTeamID"]
 	accountRole = request.form["accountRole"]
-
 	query = "UPDATE Accounts SET accountUsername = %s, accountFirstName = %s, accountLastName = %s, accountPassword = %s, accountTeamID = %s, accountRole = %s WHERE accountID = %s"
 	print(query)
 	cursor = db.execute_query(db_connection=db_connection, query=query, query_params=(accountUsername, accountFirstName, accountLastName, accountPassword, accountTeamID, accountRole, accountID ))
 	cursor.connection.commit()
-
-	# redirect back to accounts page
+	# Redirect back to accounts page
 	return redirect("/accounts")
 
 @app.route("/edit_password/<int:accountID>", methods=["POST", "GET"])
@@ -517,12 +460,11 @@ def edit_password(accountID):
 		query = "SELECT * FROM Accounts WHERE accountID = %s" % (accountID)
 		cursor = db.execute_query(db_connection=db_connection, query=query)
 		data = cursor.fetchall()
-
 		return render_template("edit_password.j2", data=data)
 
 @app.route("/update_password", methods=["POST"])
 def update_password():
-	# grab account form inputs
+	# Grab account form inputs
 	accountID = request.form["accountID"]
 	accountUsername = request.form["accountUsername"]
 	accountFirstName = request.form["accountFirstName"]
@@ -530,15 +472,12 @@ def update_password():
 	accountPassword = request.form["accountPassword"]
 	accountTeamID = request.form["accountTeamID"]
 	accountRole = request.form["accountRole"]
-
 	query = "UPDATE Accounts SET accountPassword = %s WHERE accountID = %s"
 	print(query)
 	cursor = db.execute_query(db_connection=db_connection, query=query, query_params=(accountPassword, accountID ))
 	cursor.connection.commit()
-
-	# redirect back to accounts page
+	# Redirect back to Help page
 	return redirect("/help")
-
 
 # Listener
 if __name__ == "__main__":
