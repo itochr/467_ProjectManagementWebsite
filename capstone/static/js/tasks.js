@@ -20,6 +20,18 @@ function confirmDelete() {
     }
 }
 
+function confirmDeleteAllTeamTasks() {
+    if (confirm('Are you sure you want to delete ALL Team Tasks?')) {
+        document.getElementById('deleteTeamTasksForm').submit();
+    }
+}
+
+function confirmDeleteAllUserTasks() {
+    if (confirm('Are you sure you want to delete ALL User Tasks?')) {
+        document.getElementById('deleteUserTasksForm').submit();
+    }
+}
+
 function showTaskDetails(task) {
     document.getElementById('taskID').value = task.taskID;
     document.getElementById('editTaskSubject').value = task.taskSubject;

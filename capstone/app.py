@@ -100,23 +100,19 @@ def tasks():
 		cursor.execute(queryTeamSprints, teamInputs)
 		sprintsFetch = cursor.fetchall()
 		# Render Page if DB queries execute
-		if userTasksFetch and teamTasksFetch:
-			screenMsg = f"Printing Tasks for account {session['accountUsername']}"
-			return render_template('tasks.j2',
-						  screenMsg = screenMsg,
-						  userAccountID = session['accountID'],
-						  accountUsername = session['accountUsername'],
-						  accountFirstName = session['accountFirstName'],
-						  accountLastName = session['accountLastName'],
-						  userTasks = userTasksFetch,
-						  teamTasks = teamTasksFetch,
-						  statuses = statusFetch,
-						  team = teamMemberFetch,
-						  projects = teamProjects,
-						  teamSprints = sprintsFetch)
-		else:
-			screenMsg = 'Please enter correct username and password'
-			return render_template('login.j2', screenMsg = screenMsg)
+		screenMsg = f"Printing Tasks for account {session['accountUsername']}"
+		return render_template('tasks.j2',
+						screenMsg = screenMsg,
+						userAccountID = session['accountID'],
+						accountUsername = session['accountUsername'],
+						accountFirstName = session['accountFirstName'],
+						accountLastName = session['accountLastName'],
+						userTasks = userTasksFetch,
+						teamTasks = teamTasksFetch,
+						statuses = statusFetch,
+						team = teamMemberFetch,
+						projects = teamProjects,
+						teamSprints = sprintsFetch)
 	if request.method == "POST":
 		if 'addTaskSubmit' in request.form:
 			tAssignee = request.form["tAssignee"]
@@ -162,6 +158,22 @@ def tasks():
 			taskID = request.form['taskID']
 			delete_query = "DELETE FROM Tasks WHERE taskID = %s"
 			cursor.execute(delete_query, taskID)
+			cursor.connection.commit()
+			return redirect(url_for('tasks'))
+		elif 'deleteTasksTeam' in request.form:
+			accountTeamID = session['accountTeamID']
+			delete_query_team = '''
+			DELETE t FROM Tasks t
+			JOIN Accounts a ON t.taskAssignee=a.accountID
+			WHERE a.accountTeamID = %s
+			'''
+			cursor.execute(delete_query_team, accountTeamID)
+			cursor.connection.commit()
+			return redirect(url_for('tasks'))
+		elif 'deleteTasksUser' in request.form:
+			taskAssignee = session['accountID']
+			delete_query_user = "DELETE FROM Tasks WHERE taskAssignee = %s"
+			cursor.execute(delete_query_user, taskAssignee)
 			cursor.connection.commit()
 			return redirect(url_for('tasks'))
 	else:
@@ -344,20 +356,20 @@ def create_template_project():
 
 		account_team_id = session['accountTeamID']
 
-		status_query = "SELECT statusID FROM Statuses WHERE statusName = 'In Progress'"
+		status_query = "SELECT statusID FROM Statuses WHERE statusName = 'Backlog'"
 		cursor.execute(status_query)
 		status_result = cursor.fetchone()
 
 		if not status_result:
-			in_progress_status_id = 2
+			backlog_status_id = 1
 		else:
-			in_progress_status_id = status_result['statusID']
+			backlog_status_id = status_result['statusID']
 
 		project_query = """
         INSERT INTO Projects (projectName, projectStart, projectEnd, accountTeamID, projectStatus)
         VALUES (%s, %s, %s, %s, %s)
         """
-		cursor.execute(project_query, (project_name, start_date, end_date, account_team_id, in_progress_status_id))
+		cursor.execute(project_query, (project_name, start_date, end_date, account_team_id, backlog_status_id))
 		db_connection.commit()
 
 		project_id = cursor.lastrowid
@@ -403,7 +415,7 @@ def create_template_project():
 			]
 
 		task_query = """
-        INSERT INTO Tasks (taskAssignee, taskAssigned, taskDue, taskStatus, 
+        INSERT INTO Tasks (taskAssignee, taskAssigned, taskDue, taskStatus,
                           taskSprint, taskProject, taskSubject, taskDescription)
         VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
         """
@@ -414,7 +426,7 @@ def create_template_project():
 				user_id,
 				start_date,
 				end_date,
-				in_progress_status_id,
+				backlog_status_id,
 				sprint_id,
 				project_id,
 				task,
@@ -453,7 +465,7 @@ def sprints():
 			sprintName = request.form["sprintName"]
 			sprintStart = request.form["sprintStart"]
 			sprintEnd = request.form["sprintEnd"]
-			accountTeamID = request.form["accountTeamID"]
+			accountTeamID = session['accountTeamID']
 			query = "INSERT INTO Sprints (sprintName, sprintStart, sprintEnd, accountTeamID) VALUES (%s, %s, %s, %s)"
 			cursor.execute(query, (sprintName, sprintStart, sprintEnd, accountTeamID ))
 			cursor.connection.commit()
