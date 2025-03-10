@@ -180,22 +180,23 @@ def tasks():
 		return redirect(url_for('tasks'))
 
 # Route to update Task based on Drag & Drop
-@app.route("/updateTaskStatus", methods=['GET', 'POST'])
+@app.route("/updateTaskStatus", methods=['POST'])
 def update_task_status():
-	try:
-		# Parse JSON request
-		data = request.get_json()
-		taskID = data.get("taskID")
-		taskStatus = data.get("taskStatus")
-		# Validate request data
-		if not taskID or not taskStatus:
-			return jsonify({"error": "Missing taskID or taskStatus"}), 400
-		query = "UPDATE Tasks SET taskStatus = %s WHERE taskID = %s"
-		cursor.execute(query, (taskStatus, taskID))
+	# Parse JSON request
+	data = request.get_json()
+	taskID = data.get("taskID")
+	taskStatus = data.get("taskStatus")
+	# Validate request data
+	if not taskID or not taskStatus:
+		return jsonify({"error": "Missing taskID or taskStatus"}), 400
+	if taskID and taskStatus:
+		update_query = """
+		UPDATE Tasks SET taskStatus = %s WHERE taskID = %s
+		"""
+		cursor.execute(update_query,(taskStatus, taskID))
 		cursor.connection.commit()
-		return jsonify({"message": "Task status update success", "taskID": taskID, "newStatus": taskStatus}), 200
-	except Exception as e:
-		return jsonify({"error": str(e)}), 500
+		return redirect(url_for('tasks'))
+	return redirect(url_for('tasks'))
 
 @app.route('/help', methods=['GET', 'POST'])
 def help():

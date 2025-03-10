@@ -31,10 +31,9 @@
                 <div class="project-card" draggable="true" ondragstart="drag(event)" onclick='showTaskDetails(JSON.parse(this.getAttribute("data-project")))' id="{{ teamTask.taskID }}" data-project='{{ teamTask|tojson|safe }}'>
                     <div class="project-content">
                         <h3>{{ teamTask.taskSubject }}</h3>
-                        <p>Status: {{ teamTask.statusName }}</p>
                         <p>Start: {{ teamTask.taskAssigned }}</p>
                         <p>Due: {{ teamTask.taskDue }}</p>
-                        <p>{{ teamTask.sprintName }} | {{ teamTask.sprintStart }}-{{ teamTask.sprintEnd }}</p>
+                        <p>{{ teamTask.sprintName }} <br> {{ teamTask.sprintStart }} || {{ teamTask.sprintEnd }}</p>
                         <p>Project: {{ teamTask.projectName }}</p>
                         <p>Assignee: {{ teamTask.accountFirstName }} {{ teamTask.accountLastName }}</p>
                     </div>
@@ -54,10 +53,9 @@
                 <div class="project-card" draggable="true" ondragstart="drag(event)" onclick='showTaskDetails(JSON.parse(this.getAttribute("data-project")))' id="{{ teamTask.taskID }}" data-project='{{ teamTask|tojson|safe }}'>
                     <div class="project-content">
                         <h3>{{ teamTask.taskSubject }}</h3>
-                        <p>Status: {{ teamTask.statusName }}</p>
                         <p>Start: {{ teamTask.taskAssigned }}</p>
                         <p>Due: {{ teamTask.taskDue }}</p>
-                        <p>{{ teamTask.sprintName }} | {{ teamTask.sprintStart }}-{{ teamTask.sprintEnd }}</p>
+                        <p>{{ teamTask.sprintName }} <br> {{ teamTask.sprintStart }} || {{ teamTask.sprintEnd }}</p>
                         <p>Project: {{ teamTask.projectName }}</p>
                         <p>Assignee: {{ teamTask.accountFirstName }} {{ teamTask.accountLastName }}</p>
                     </div>
@@ -72,7 +70,7 @@
         {% endfor %}
         <div id="task-filter-container">
             {# Create New Task Card #}
-            <div class="project-card add-new-card" onclick="openCreateModal()">
+            <div class="project-card add-new-card filterButtons" onclick="openCreateModal()">
                 <div class="project-content">
                     <div class="add-project-placeholder">
                         <h3>Create New Task</h3>
@@ -81,7 +79,7 @@
                 </div>
             </div>
             <br>
-            <div class="project-card add-new-card" onclick="confirmDeleteAllTeamTasks()">
+            <div class="project-card add-new-card filterButtons" onclick="confirmDeleteAllTeamTasks()">
                 <div class="project-content">
                     <div class="add-project-placeholder">
                         <h3>Delete Team Tasks</h3>
@@ -90,7 +88,7 @@
                 </div>
             </div>
             <br>
-            <div class="project-card add-new-card" onclick="confirmDeleteAllUserTasks()">
+            <div class="project-card add-new-card filterButtons" onclick="confirmDeleteAllUserTasks()">
                 <div class="project-content">
                     <div class="add-project-placeholder">
                         <h3>Delete User Tasks</h3>
