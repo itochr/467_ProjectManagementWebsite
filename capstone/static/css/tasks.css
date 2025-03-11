@@ -92,11 +92,16 @@ h1 {
 
 /* Add New Task Section */
 .project-card.add-new-card {
-    height: 80px !important;
-    min-height: 80px !important;
+    /* height: 80px !important; */
+    /* min-height: 80px !important; */
     padding: 10px;
     margin-top: 10px;
     box-shadow: none;
+    /* flex-direction: column; */
+}
+
+#task-filter-container {
+    flex-direction: column;
 }
 
 .project-card.add-new-card .project-content {

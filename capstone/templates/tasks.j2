@@ -7,87 +7,102 @@
 {% endblock %}
 {% block body %}
 <div class="content">
+    {% if userTasks is defined %}
+    {% if teamTasks is defined %}
     <div id="greeting">
         <h1><span class="username">{{accountFirstName}} {{accountLastName}}'s</span> Kanban Board</h1>
+        {% if teamTasks[0] is defined %}
         <h2><span class="username">{{teamTasks[0].accountTeamName}}</span> Tasks</h1>
+        {% endif %}
     </div>
-<button class="filterButtons" id="showTaskByTeam-btn" onclick="showTeamTasks()">Tasks By Team</button>
-<button class="filterButtons" id="showTaskByUser-btn" onclick="showUserTasks()">Tasks By User</button>
-
+    {% endif %}
+    {% endif %}
+    <button class="filterButtons" id="showTaskByTeam-btn" onclick="showTeamTasks()">Tasks By Team</button>
+    <button class="filterButtons" id="showTaskByUser-btn" onclick="showUserTasks()">Tasks By User</button>
     <div class="kanban-board">
         {% for status in statuses %}
-        <div class="status-column"
-		data-status-id="{{status.statusID}}"
-		data-status="{{status.statusName}}"
-		ondrop="drop(event)"
-		ondragover="allowDrop(event)">
+        <div class="status-column" data-status-id="{{status.statusID}}" data-status="{{status.statusName}}" ondrop="drop(event)" ondragover="allowDrop(event)">
             <h2>{{status.statusName}}</h2>
             <div class="column-content teamTasks-div">
+                {% if userTasks is defined %}
+                {% if teamTasks is defined %}
                 {% for teamTask in teamTasks %}
                 {% if teamTask.taskStatus == status.statusID %}
-                <div class="project-card"
-				draggable="true"
-				ondragstart="drag(event)"
-				onclick='showTaskDetails(JSON.parse(this.getAttribute("data-project")))'
-				id="{{ teamTask.taskID }}"
-				data-project='{{ teamTask|tojson|safe }}' >
+                <div class="project-card" draggable="true" ondragstart="drag(event)" onclick='showTaskDetails(JSON.parse(this.getAttribute("data-project")))' id="{{ teamTask.taskID }}" data-project='{{ teamTask|tojson|safe }}'>
                     <div class="project-content">
                         <h3>{{ teamTask.taskSubject }}</h3>
-                        <p>Status: {{ teamTask.statusName }}</p>
                         <p>Start: {{ teamTask.taskAssigned }}</p>
                         <p>Due: {{ teamTask.taskDue }}</p>
-                        <p>{{ teamTask.sprintName }} | {{ teamTask.sprintStart }}-{{ teamTask.sprintEnd }}</p>
+                        <p>{{ teamTask.sprintName }} <br> {{ teamTask.sprintStart }} || {{ teamTask.sprintEnd }}</p>
                         <p>Project: {{ teamTask.projectName }}</p>
                         <p>Assignee: {{ teamTask.accountFirstName }} {{ teamTask.accountLastName }}</p>
                     </div>
                 </div>
                 {% endif %}
                 {% endfor %}
-            </div>
+                {% endif %}
+                {% endif %}
 
- 			<div class="column-content userTasks-div" style="display: none;">
+            </div>
+            <div class="column-content userTasks-div" style="display: none;">
+                {% if userTasks is defined %}
+                {% if teamTasks is defined %}
                 {% for teamTask in teamTasks %}
                 {% if teamTask.taskStatus == status.statusID %}
-				{% if teamTask.taskAssignee == userAccountID%}
-                <div class="project-card"
-				draggable="true"
-				ondragstart="drag(event)"
-				onclick='showTaskDetails(JSON.parse(this.getAttribute("data-project")))'
-				id="{{ teamTask.taskID }}"
-				data-project='{{ teamTask|tojson|safe }}' >
+                {% if teamTask.taskAssignee == userAccountID%}
+                <div class="project-card" draggable="true" ondragstart="drag(event)" onclick='showTaskDetails(JSON.parse(this.getAttribute("data-project")))' id="{{ teamTask.taskID }}" data-project='{{ teamTask|tojson|safe }}'>
                     <div class="project-content">
                         <h3>{{ teamTask.taskSubject }}</h3>
-                        <p>Status: {{ teamTask.statusName }}</p>
                         <p>Start: {{ teamTask.taskAssigned }}</p>
                         <p>Due: {{ teamTask.taskDue }}</p>
-                        <p>{{ teamTask.sprintName }} | {{ teamTask.sprintStart }}-{{ teamTask.sprintEnd }}</p>
+                        <p>{{ teamTask.sprintName }} <br> {{ teamTask.sprintStart }} || {{ teamTask.sprintEnd }}</p>
                         <p>Project: {{ teamTask.projectName }}</p>
                         <p>Assignee: {{ teamTask.accountFirstName }} {{ teamTask.accountLastName }}</p>
                     </div>
                 </div>
                 {% endif %}
-				{% endif %}
+                {% endif %}
                 {% endfor %}
+                {% endif %}
+                {% endif %}
             </div>
-
         </div>
         {% endfor %}
-		{# Create New Task Card #}
-        <div class="project-card add-new-card" onclick="openCreateModal()">
-            <div class="project-content">
-                <div class="add-project-placeholder">
-                    <h3>Create New Task</h3>
-                    <span class="plus-symbol">+</span>
+        <div id="task-filter-container">
+            {# Create New Task Card #}
+            <div class="project-card add-new-card filterButtons" onclick="openCreateModal()">
+                <div class="project-content">
+                    <div class="add-project-placeholder">
+                        <h3>Create New Task</h3>
+                        <span class="plus-symbol">+</span>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div class="project-card add-new-card filterButtons" onclick="confirmDeleteAllTeamTasks()">
+                <div class="project-content">
+                    <div class="add-project-placeholder">
+                        <h3>Delete Team Tasks</h3>
+                        <span class="plus-symbol">-</span>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div class="project-card add-new-card filterButtons" onclick="confirmDeleteAllUserTasks()">
+                <div class="project-content">
+                    <div class="add-project-placeholder">
+                        <h3>Delete User Tasks</h3>
+                        <span class="plus-symbol">-</span>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-
-	{# Overlay Modal When Create New Task is clicked #}
+    {# Overlay Modal When Create New Task is clicked #}
     <div id="addTaskDiv" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal('addTaskDiv')">&times;</span>
-			{# form to INSERT new data into Tasks #}
+            {# form to INSERT new data into Tasks #}
             <form id="addTask" action="/tasks" method="post">
                 <legend><strong>Add Task</strong></legend>
                 <fieldset>
@@ -99,8 +114,7 @@
                             {% endfor %}
                         </select>
                     </div>
-
-					<div class="form-group">
+                    <div class="form-group">
                         <select name="tStatus" id="tStatus">
                             <option value="-1">Choose Status</option>
                             {% for status in statuses| sort(attribute="statusName")%}
@@ -108,8 +122,7 @@
                             {% endfor %}
                         </select>
                     </div>
-
-					<div class="form-group">
+                    <div class="form-group">
                         <select name="tProject" id="tProject">
                             <option value="-1">Choose Project</option>
                             {% for project in projects| sort(attribute="projectName")%}
@@ -117,8 +130,7 @@
                             {% endfor %}
                         </select>
                     </div>
-
-					<div class="form-group">
+                    <div class="form-group">
                         <select name="tSprint" id="tSprint" required>
                             <option value="-1">Choose Sprint</option>
                             {% for sprint in teamSprints| sort(attribute="sprintID") %}
@@ -126,7 +138,6 @@
                             {% endfor %}
                         </select>
                     </div>
-
                     <div class="form-group">
                         <label for="assigned">Start Date:</label>
                         <input type="date" id="tAssignedDate" name="tAssignedDate" required>
@@ -135,19 +146,16 @@
                         <label for="due">Due Date:</label>
                         <input type="date" class="" id="tDueDate" name="tDueDate" required>
                     </div>
-
                     <div class="form-group">
                         <label for="subject">Task Subject</label>
                         <input type="text" class="" id="tSubject" name="tSubject" placeholder="" required>
                     </div>
-
-					<div class="form-group">
+                    <div class="form-group">
                         <label for="description">Task Description</label>
                         <input type="text" class="" id="tDescription" name="tDescription" placeholder="">
                     </div>
-
                 </fieldset>
-				{# Create 'Add Task' butto #}
+                {# Create 'Add Task' butto #}
                 <div class="form-actions">
                     <button type="submit" name="addTaskSubmit" class="submit-button">Create</button>
                     <button type="button" class="cancel-button" onclick="closeModal('addTaskDiv')">Cancel</button>
@@ -156,17 +164,15 @@
         </div>
     </div>
     <div>
-
-		{# Task Details Modal #}
+        {# Task Details Modal #}
         <div id="taskDetailsModal" class="modal">
             <div class="modal-content">
                 <span class="close" onclick="closeModal('taskDetailsModal')">&times;</span>
                 <h2>Task Details</h2>
-				{# Edit Form #}
+                {# Edit Form #}
                 <form id="updateTask" action="{{ url_for('tasks') }}" method="POST">
                     <input type="hidden" id="taskID" name="taskID">
-
-					<div class="form-group">
+                    <div class="form-group">
                         <label for="taskAssignee">Task Owner:</label>
                         <select id="editTaskAssignee" name="taskAssignee" required>
                             {% for teamMember in team| unique(attribute="accountID")%}
@@ -174,8 +180,7 @@
                             {% endfor %}
                         </select>
                     </div>
-
-					<div class="form-group">
+                    <div class="form-group">
                         <label for="taskStatus">Status:</label>
                         <select id="editTaskStatus" name="taskStatus" required>
                             {% for status in statuses %}
@@ -183,17 +188,15 @@
                             {% endfor %}
                         </select>
                     </div>
-
-					<div class="form-group">
+                    <div class="form-group">
                         <label for="taskProject">Project:</label>
                         <select id="editTaskProject" name="taskProject" required>
                             {% for project in projects| sort(attribute="projectName")%}
                             <option value="{{project.projectID}}">{{project.projectName}}</option>
                             {% endfor %}
                         </select>
-					</div>
-
-					<div class="form-group">
+                    </div>
+                    <div class="form-group">
                         <label for="taskSprint">Task Sprint:</label>
                         <select id="editTaskSprint" name="taskSprint" required>
                             {% for sprint in teamSprints%}
@@ -201,27 +204,22 @@
                             {% endfor %}
                         </select>
                     </div>
-
-					<div class="form-group">
+                    <div class="form-group">
                         <label for="taskAssigned">Start Date:</label>
                         <input type="date" id="editTaskAssigned" name="taskAssigned" required>
                     </div>
-
                     <div class="form-group">
                         <label for="taskDue">End Date:</label>
                         <input type="date" id="editTaskDue" name="taskDue" required>
                     </div>
-
-				    <div class="form-group">
+                    <div class="form-group">
                         <label for="taskSubject">Task Subject:</label>
                         <input type="text" id="editTaskSubject" name="taskSubject" required>
                     </div>
-
-					<div class="form-group">
+                    <div class="form-group">
                         <label for="taskDescription">Task Description:</label>
                         <input type="text" id="editTaskDescription" name="taskDescription">
                     </div>
-
                     <div class="form-actions">
                         <button type="submit" name="updateTask" class="button submit-button">Save</button>
                         <button type="button" class="button cancel-button" onclick="closeModal('taskDetailsModal')">Cancel</button>
@@ -232,13 +230,16 @@
         </div>
     </div>
 </div>
-
-    <!-- Hidden Delete Form -->
-    <form id="deleteForm" action="{{ url_for('tasks') }}" method="POST" style="display: none;">
-        <input type="hidden" id="deleteTaskID" name="taskID">
-        <input type="hidden" name="deleteTask" value="true">
-    </form>
-
+<!-- Hidden Delete Forms -->
+<form id="deleteForm" action="{{ url_for('tasks') }}" method="POST" style="display: none;">
+    <input type="hidden" id="deleteTaskID" name="taskID">
+    <input type="hidden" name="deleteTask" value="true">
+</form>
+<form id="deleteTeamTasksForm" action="{{ url_for('tasks') }}" method="POST" style="display: none;">
+    <input type="hidden" name="deleteTasksTeam" value="true">
+</form>
+<form id="deleteUserTasksForm" action="{{ url_for('tasks') }}" method="POST" style="display: none;">
+    <input type="hidden" name="deleteTasksUser" value="true">
+</form>
 {% endblock %}
-
 <script src="{{ url_for('static', filename='js/tasks.js') }}" defer></script>

@@ -1,7 +1,7 @@
 {% extends 'nav.j2' %}
 {% block head %}
-<title>Projects</title>
-<link rel="stylesheet" href="{{ url_for('static', filename='css/projects.css') }}">
+<title>Sprints</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/sprints.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
 {% endblock %}
 {% block body %}
@@ -15,6 +15,8 @@
 						{% for key in sprints[0].keys() %}
 						<th>{{ key }}</th>
 						{% endfor %}
+						<th>Edit</th>
+						<th>Delete</th>
 					</tr>
 				<tbody>
 					{% for sprint in sprints %}
@@ -22,8 +24,8 @@
 						{% for key in sprint.keys() %}
 						<td>{{sprint[key]}}</td>
 						{% endfor %}
-						<td><a href="edit_sprints/{{sprint.sprintID}}" class="btn btn-default">Edit</a></td>
-						<td><a href="delete_sprint/{{sprint.sprintID}}" class="btn btn-default">Delete</a></td>
+						<td><a href="edit_sprints/{{sprint.sprintID}}" class="btn btn-default edit-button">Edit</a></td>
+						<td><a href="delete_sprint/{{sprint.sprintID}}" class="btn btn-default delete-button">Delete</a></td>
 					</tr>
 					{% endfor %}
 			</table>
@@ -34,7 +36,7 @@
 		<form id="addSprint" action="/sprints" method="post">
 			<legend><strong>Add Sprint</strong></legend>
 			<fieldset>
-				<label for="sprintName">Sprint name: </label>
+				<label for="sprintName">Sprint Name: </label>
 				<input type="text" id ="sprintName" name="sprintName" required>
 
 				<label for="sprintStart">Sprint Start: </label>
@@ -43,21 +45,12 @@
 				<label for="sprintEnd">Sprint End: </label>
 				<input type="date" id ="sprintEnd" name="sprintEnd" required>
 
-				<label for="accountTeamID">Team ID</label>
-                <select type = "number" class="form-control" id="accountTeamID" name="accountTeamID" pattern="[0-4]{1}" placeholder="" required>
-				<!-- these are hard coded, but you can add code to make this dynamic -->
-					<option value=1>1</option>
-					<option value=2>2</option>
-					<option value=3>3</option>
-					<option value=4>4</option>
-				</select>
-
             </fieldset>
 
             <!-- Create 'Add Sprints' -->
-			<input type="submit" value="Add Sprint" name="addSprintSubmit" class="btn btn-primary" style="margin:.5rem;">
+			<input type="submit" value="Add Sprint" name="addSprintSubmit" class="btn btn-primary submit-button" style="margin:.5rem;">
         </form>
 
-	</div><!--insert-->
+	</div>
 </div>
 {% endblock %}

@@ -20,6 +20,18 @@ function confirmDelete() {
     }
 }
 
+function confirmDeleteAllTeamTasks() {
+    if (confirm('Are you sure you want to delete ALL Team Tasks?')) {
+        document.getElementById('deleteTeamTasksForm').submit();
+    }
+}
+
+function confirmDeleteAllUserTasks() {
+    if (confirm('Are you sure you want to delete ALL User Tasks?')) {
+        document.getElementById('deleteUserTasksForm').submit();
+    }
+}
+
 function showTaskDetails(task) {
     document.getElementById('taskID').value = task.taskID;
     document.getElementById('editTaskSubject').value = task.taskSubject;
@@ -66,12 +78,8 @@ function formatDate(dateString) {
         console.error("Invalid date:", dateString);
         return ""; // Invalid date, return empty string
     }
-    // Convert to YYYY-MM-DD format
-    const year = dateObj.getFullYear();
-    const month = String(dateObj.getMonth() + 1).padStart(2, '0'); // Ensure 2-digit month
-    const day = String(dateObj.getDate()).padStart(2, '0'); // Ensure 2-digit day
-
-    return `${year}-${month}-${day}`; // Return YYYY-MM-DD format
+    const mysqlDate = dateObj.toISOString().split('T')[0];
+    return mysqlDate;
 }
 
 function toggleShowHide(elementID) {
@@ -135,13 +143,20 @@ function drop(event) {
         // Get the new task status from the column's data-status attribute
         const newStatusName = column.getAttribute('data-status');
         const newStatusID = column.getAttribute('data-status-id');
-        // Send AJAX POST request to update the task status
-        var xhr = new XMLHttpRequest();
-        xhr.open("POST", "/updateTaskStatus", true);
-        xhr.setRequestHeader("Content-Type", "application/json");
-        xhr.send(JSON.stringify({
-            taskID: taskID, // The task ID from the dragged element
-            taskStatus: newStatusID // The new status from the drop target
-        }));
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", "/updateTaskStatus");
+        xhr.setRequestHeader("Content-Type", "application/json; charset=UTF-8");
+        const body = JSON.stringify({
+            taskID: taskID,
+            taskStatus: newStatusID
+        });
+        xhr.onload = () => {
+        if (xhr.readyState == 4 && xhr.status == 201) {
+            console.log(JSON.parse(xhr.responseText));
+        } else {
+            console.log(`Error: ${xhr.status}`);
+        }
+        };
+        xhr.send(body);
     }
 }
