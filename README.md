@@ -3,7 +3,7 @@ In today's software development landscape, effective project management is essen
 
 Modern software teams often struggle with "configuration fatigue" - spending excessive time setting up and customizing project management tools rather than focusing on development. By making intentional design decisions that prioritize simplicity and standard practices, our application aims to eliminate this common pain point. The system provides just enough functionality to effectively manage Agile projects while maintaining a clean, uncluttered user experience.
 
-Our tool's design was heavily influenced by Agile methodologies, particularly Scrum and Kanban. We've incorporated essential elements from these frameworks, such as sprints, task management, and visual workflow boards, while deliberately excluding features that add complexity without proportional value. This balance ensures that teams have the necessary tools to manage their work efficiently without becoming overwhelmed by excessive options.
+For our capstone project, we designed a full-stack project management web application to achieve this functionality. Our tool's design was heavily influenced by Agile methodologies, particularly Scrum and Kanban. We've incorporated essential elements from these frameworks, such as sprints, task management, and visual workflow boards, while deliberately excluding features that add complexity without proportional value. This balance ensures that teams have the necessary tools to manage their work efficiently without becoming overwhelmed by excessive options.
 
 Database ERD:
 ![image](https://github.com/user-attachments/assets/b0655d96-99b4-4f0d-9ce4-b21775ba3f9d)
